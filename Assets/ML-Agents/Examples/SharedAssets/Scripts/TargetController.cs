@@ -31,6 +31,7 @@ namespace Unity.MLAgentsExamples
         [System.Serializable]
         public class TriggerEvent : UnityEvent<Collider>
         {
+
         }
 
         [Header("Trigger Callbacks")]

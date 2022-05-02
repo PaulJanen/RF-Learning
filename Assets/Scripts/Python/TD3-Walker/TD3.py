@@ -1,12 +1,13 @@
 import torch
-import Actor as Actor
-import Critic as Critic
+from Actor import Actor
+from Critic import Critic
 import torch.nn.functional as F
+import numpy as np
 
 
 class TD3(object):
   
-  def __init__(self, state_dim, action_dim, max_action):
+  def __init__(self, state_dim, action_dim, max_action, min_action):
     self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     self.actor = Actor(state_dim, action_dim, max_action).to(self.device)
     self.actor_target = Actor(state_dim, action_dim, max_action).to(self.device)
@@ -17,6 +18,7 @@ class TD3(object):
     self.critic_target.load_state_dict(self.critic.state_dict())
     self.critic_optimizer = torch.optim.Adam(self.critic.parameters())
     self.max_action = max_action
+    self.min_action = min_action
 
   def select_action(self, state):
     state = torch.Tensor(state.reshape(1, -1)).to(self.device)
@@ -41,7 +43,7 @@ class TD3(object):
       # Creates batch of actions tensor with batch_actions size where each value is sampled from N(0, deviation)
       noise = torch.Tensor(batch_actions).data.normal_(0, policy_noise).to(self.device)
       noise = noise.clamp(-noise_clip, noise_clip)
-      next_action = (next_action + noise).clamp(-self.max_action, self.max_action)
+      next_action = (next_action + noise).clamp(torch.tensor(-self.max_action), torch.tensor(self.max_action))
       
       # Step 7: The two Critic targets take each the couple (s’, a’) as input and return two Q-values Qt1(s’,a’) and Qt2(s’,a’) as outputs
       target_Q1, target_Q2 = self.critic_target(next_state, next_action)
@@ -87,3 +89,18 @@ class TD3(object):
   def load(self, filename, directory):
     self.actor.load_state_dict(torch.load('%s/%s_actor.pth' % (directory, filename)))
     self.critic.load_state_dict(torch.load('%s/%s_critic.pth' % (directory, filename)))
+
+  def evaluate_policy(self, env, eval_episodes=10):
+    avg_reward = 0.
+    for _ in range(eval_episodes):
+      obs = env.reset()
+      done = False
+      while not done:
+        action = self.select_action(np.array(obs))
+        obs, reward, done = env.step(action)
+        avg_reward += reward
+    avg_reward /= eval_episodes
+    print ("---------------------------------------")
+    print ("Average Reward over the Evaluation Step: %f" % (avg_reward))
+    print ("---------------------------------------")
+    return avg_reward

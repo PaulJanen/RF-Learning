@@ -1,7 +1,21 @@
-import torch
-import Actor as Actor
-import Critic as Critic
-import ReplayBuffer as ReplayBuffer
+from abc import ABCMeta, abstractmethod
 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+class Client(metaclass = ABCMeta):
+    def __init__(self):
+        pass
+    
+    @abstractmethod
+    def SendAction(self, action):
+        pass
 
+    @abstractmethod
+    def SendReset(self):
+        pass
+
+    @abstractmethod
+    def SendClose(self):
+        pass
+
+
+
+    

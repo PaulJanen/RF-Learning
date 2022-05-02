@@ -4,9 +4,11 @@ using Unity.MLAgents.Actuators;
 using Unity.MLAgentsExamples;
 using Unity.MLAgents.Sensors;
 using Random = UnityEngine.Random;
+using System.Collections.Generic;
+using System;
 
-[RequireComponent(typeof(JointDriveController))] // Required to set joint forces
-public class CrawlerAgent : Agent
+[RequireComponent(typeof(JointDriveController2))] // Required to set joint forces
+public class CrawlerAgent2 : MonoBehaviour
 {
 
     [Header("Walk Speed")]
@@ -21,8 +23,16 @@ public class CrawlerAgent : Agent
         "During inference, VariableSpeed agents will modify their behavior based on this value " +
         "whereas the CrawlerDynamic & CrawlerStatic agents will run at the speed specified during training "
     )]
+
     //The walking speed to try and achieve
     private float m_TargetWalkingSpeed = m_maxWalkingSpeed;
+    public List<double> currentStateData;
+    public double m_Reward = 0;
+    public bool done;
+    private bool stopTraining = false;
+    public const int decisionPeriod = 5;
+    public int decisionStep = 0;
+    public Action stepCallBack;
 
     const float m_maxWalkingSpeed = 15; //The max walking speed
 
@@ -38,7 +48,7 @@ public class CrawlerAgent : Agent
     public Transform TargetPrefab; //Target prefab to use in Dynamic envs
     private Transform m_Target; //Target the agent will walk towards during training.
 
-    [Header("Body Parts")] [Space(10)] public Transform body;
+    [Header("Body Parts")][Space(10)] public Transform body;
     public Transform leg0Upper;
     public Transform leg0Lower;
     public Transform leg1Upper;
@@ -54,7 +64,7 @@ public class CrawlerAgent : Agent
 
     //The indicator graphic gameobject that points towards the target
     DirectionIndicator m_DirectionIndicator;
-    JointDriveController m_JdController;
+    JointDriveController2 m_JdController;
 
     [Header("Foot Grounded Visualization")]
     [Space(10)]
@@ -67,13 +77,20 @@ public class CrawlerAgent : Agent
     public Material groundedMaterial;
     public Material unGroundedMaterial;
 
-    public override void Initialize()
+    private void Awake()
+    {
+        Initialize();
+    }
+
+    public void Initialize()
     {
         SpawnTarget(TargetPrefab, transform.position); //spawn target
-
+        
         m_OrientationCube = GetComponentInChildren<OrientationCubeController>();
         m_DirectionIndicator = GetComponentInChildren<DirectionIndicator>();
-        m_JdController = GetComponent<JointDriveController>();
+        m_JdController = GetComponent<JointDriveController2>();
+        currentStateData = new List<double>();
+        stopTraining = true;
 
         //Setup each body part
         m_JdController.SetupBodyPart(body);
@@ -100,8 +117,11 @@ public class CrawlerAgent : Agent
     /// <summary>
     /// Loop over body parts and reset them to initial conditions.
     /// </summary>
-    public override void OnEpisodeBegin()
+    public void OnEpisodeBegin()
     {
+        done = false;
+        stopTraining = false;
+        decisionStep = 0;
         foreach (var bodyPart in m_JdController.bodyPartsDict.Values)
         {
             bodyPart.Reset(bodyPart);
@@ -119,22 +139,26 @@ public class CrawlerAgent : Agent
     /// <summary>
     /// Add relevant information on each body part to observations.
     /// </summary>
-    public void CollectObservationBodyPart(BodyPart bp, VectorSensor sensor)
+    private void CollectObservationBodyPart(BodyPart2 bp)
     {
         //GROUND CHECK
-        sensor.AddObservation(bp.groundContact.touchingGround); // Is this bp touching the ground
+        if (bp.groundContact.touchingGround)
+            currentStateData.Add(1);
+        else
+            currentStateData.Add(0);
 
         if (bp.rb.transform != body)
         {
-            sensor.AddObservation(bp.currentStrength / m_JdController.maxJointForceLimit);
+            currentStateData.Add(bp.currentStrength / m_JdController.maxJointForceLimit);
         }
     }
 
     /// <summary>
     /// Loop over body parts to add them to observation.
     /// </summary>
-    public override void CollectObservations(VectorSensor sensor)
+    public void CollectObservations()
     {
+        currentStateData = new List<double>();
         var cubeForward = m_OrientationCube.transform.forward;
 
         //velocity we want to match
@@ -143,62 +167,77 @@ public class CrawlerAgent : Agent
         var avgVel = GetAvgVelocity();
 
         //current ragdoll velocity. normalized
-        sensor.AddObservation(Vector3.Distance(velGoal, avgVel));
+        currentStateData.Add(Vector3.Distance(velGoal, avgVel));
         //avg body vel relative to cube
-        sensor.AddObservation(m_OrientationCube.transform.InverseTransformDirection(avgVel));
+        Vector3 values = m_OrientationCube.transform.InverseTransformDirection(avgVel);
+        currentStateData.Add(values.x);
+        currentStateData.Add(values.y);
+        currentStateData.Add(values.z);
         //vel goal relative to cube
-        sensor.AddObservation(m_OrientationCube.transform.InverseTransformDirection(velGoal));
+        values = m_OrientationCube.transform.InverseTransformDirection(velGoal);
+        currentStateData.Add(values.x);
+        currentStateData.Add(values.y);
+        currentStateData.Add(values.z);
         //rotation delta
-        sensor.AddObservation(Quaternion.FromToRotation(body.forward, cubeForward));
+        Quaternion QuaternionValues = Quaternion.FromToRotation(body.forward, cubeForward);
+        currentStateData.Add(QuaternionValues.x);
+        currentStateData.Add(QuaternionValues.y);
+        currentStateData.Add(QuaternionValues.z);
+        currentStateData.Add(QuaternionValues.w);
 
         //Add pos of target relative to orientation cube
-        sensor.AddObservation(m_OrientationCube.transform.InverseTransformPoint(m_Target.transform.position));
+        values = m_OrientationCube.transform.InverseTransformPoint(m_Target.transform.position);
+        currentStateData.Add(values.x);
+        currentStateData.Add(values.y);
+        currentStateData.Add(values.z);
 
         RaycastHit hit;
         float maxRaycastDist = 10;
         if (Physics.Raycast(body.position, Vector3.down, out hit, maxRaycastDist))
         {
-            sensor.AddObservation(hit.distance / maxRaycastDist);
+            currentStateData.Add(hit.distance / maxRaycastDist);
         }
         else
-            sensor.AddObservation(1);
+            currentStateData.Add(1);
 
         foreach (var bodyPart in m_JdController.bodyPartsList)
         {
-            CollectObservationBodyPart(bodyPart, sensor);
+            CollectObservationBodyPart(bodyPart);
         }
     }
 
-    public override void OnActionReceived(ActionBuffers actionBuffers)
+    public void ActionReceived(List<double> actionBuffers)
     {
         // The dictionary with all the body parts in it are in the jdController
         var bpDict = m_JdController.bodyPartsDict;
-
-        var continuousActions = actionBuffers.ContinuousActions;
         var i = -1;
         // Pick a new target joint rotation
-        bpDict[leg0Upper].SetJointTargetRotation(continuousActions[++i], continuousActions[++i], 0);
-        bpDict[leg1Upper].SetJointTargetRotation(continuousActions[++i], continuousActions[++i], 0);
-        bpDict[leg2Upper].SetJointTargetRotation(continuousActions[++i], continuousActions[++i], 0);
-        bpDict[leg3Upper].SetJointTargetRotation(continuousActions[++i], continuousActions[++i], 0);
-        bpDict[leg0Lower].SetJointTargetRotation(continuousActions[++i], 0, 0);
-        bpDict[leg1Lower].SetJointTargetRotation(continuousActions[++i], 0, 0);
-        bpDict[leg2Lower].SetJointTargetRotation(continuousActions[++i], 0, 0);
-        bpDict[leg3Lower].SetJointTargetRotation(continuousActions[++i], 0, 0);
+        bpDict[leg0Upper].SetJointTargetRotation(actionBuffers[++i], actionBuffers[++i], 0);
+        bpDict[leg1Upper].SetJointTargetRotation(actionBuffers[++i], actionBuffers[++i], 0);
+        bpDict[leg2Upper].SetJointTargetRotation(actionBuffers[++i], actionBuffers[++i], 0);
+        bpDict[leg3Upper].SetJointTargetRotation(actionBuffers[++i], actionBuffers[++i], 0);
+        bpDict[leg0Lower].SetJointTargetRotation(actionBuffers[++i], 0, 0);
+        bpDict[leg1Lower].SetJointTargetRotation(actionBuffers[++i], 0, 0);
+        bpDict[leg2Lower].SetJointTargetRotation(actionBuffers[++i], 0, 0);
+        bpDict[leg3Lower].SetJointTargetRotation(actionBuffers[++i], 0, 0);
 
         // Update joint strength
-        bpDict[leg0Upper].SetJointStrength(continuousActions[++i]);
-        bpDict[leg1Upper].SetJointStrength(continuousActions[++i]);
-        bpDict[leg2Upper].SetJointStrength(continuousActions[++i]);
-        bpDict[leg3Upper].SetJointStrength(continuousActions[++i]);
-        bpDict[leg0Lower].SetJointStrength(continuousActions[++i]);
-        bpDict[leg1Lower].SetJointStrength(continuousActions[++i]);
-        bpDict[leg2Lower].SetJointStrength(continuousActions[++i]);
-        bpDict[leg3Lower].SetJointStrength(continuousActions[++i]);
+        bpDict[leg0Upper].SetJointStrength(actionBuffers[++i]);
+        bpDict[leg1Upper].SetJointStrength(actionBuffers[++i]);
+        bpDict[leg2Upper].SetJointStrength(actionBuffers[++i]);
+        bpDict[leg3Upper].SetJointStrength(actionBuffers[++i]);
+        bpDict[leg0Lower].SetJointStrength(actionBuffers[++i]);
+        bpDict[leg1Lower].SetJointStrength(actionBuffers[++i]);
+        bpDict[leg2Lower].SetJointStrength(actionBuffers[++i]);
+        bpDict[leg3Lower].SetJointStrength(actionBuffers[++i]);
     }
 
     void FixedUpdate()
     {
+        if (stopTraining)
+            return;
+        decisionStep += 1;
+
         UpdateOrientationObjects();
 
         // If enabled the feet will light up green when the foot is grounded.
@@ -231,6 +270,11 @@ public class CrawlerAgent : Agent
         var lookAtTargetReward = (Vector3.Dot(cubeForward, body.forward) + 1) * .5F;
 
         AddReward(matchSpeedReward * lookAtTargetReward);
+        if (stepCallBack != null && decisionStep >= decisionPeriod)
+        {
+            decisionStep = 0;
+            stepCallBack();
+        }
     }
 
     /// <summary>
@@ -286,6 +330,36 @@ public class CrawlerAgent : Agent
     public void TouchedTarget()
     {
         AddReward(1f);
+        EndEpisode();
     }
 
+    public void SetReward(float reward)
+    {
+        //Utilities.DebugCheckNanAndInfinity(reward, "reward", "SetReward");
+        //m_CumulativeReward += reward - m_Reward;
+        m_Reward = reward;
+    }
+
+    public void AddReward(float increment)
+    {
+        //Utilities.DebugCheckNanAndInfinity(increment, "increment", "AddReward");
+        m_Reward += increment;
+        //m_CumulativeReward += increment;
+    }
+
+    public void EndEpisode()
+    {
+        done = true;
+        decisionStep = 0;
+        if (stepCallBack != null)
+        {
+            stepCallBack();
+        }
+    }
+
+    public void StopTraining()
+    {
+        stepCallBack = null;
+        stopTraining = true;
+    }
 }

@@ -339,8 +339,8 @@ public class CrawlerAgent2 : MonoBehaviour
     {
         //Utilities.DebugCheckNanAndInfinity(reward, "reward", "SetReward");
         //m_CumulativeReward += reward - m_Reward;
-        //m_Reward = reward;
-        m_Reward += reward;
+        m_Reward = reward;
+        //m_Reward += reward;
     }
 
     public void AddReward(float increment)

@@ -2,14 +2,15 @@
 import zmq
 
 class WalkerClient():
-
-
+    
+    def __init__(self, port):
+        self.address = "tcp://localhost:" + str(port)
 
     def SendAction(self, action):
         self.ctx = zmq.Context()
         self.soc = self.ctx.socket(zmq.REQ)
         self.soc.setsockopt(zmq.LINGER, 1)
-        self.soc.connect("tcp://localhost:5555")
+        self.soc.connect(self.address)
 
         data = {
         'command': "Step",
@@ -25,7 +26,7 @@ class WalkerClient():
         self.ctx = zmq.Context()
         self.soc = self.ctx.socket(zmq.REQ)
         self.soc.setsockopt(zmq.LINGER, 1)
-        self.soc.connect("tcp://localhost:5555")
+        self.soc.connect(self.address)
 
         data = {
         'command': "Reset",

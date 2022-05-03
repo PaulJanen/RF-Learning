@@ -22,7 +22,7 @@ public class Data
 public class CrawlerClient : MonoBehaviour
 {
     private bool receiveMessage = true;
-    public string tcp = "tcp://localhost:5555";
+    public string tcp = "tcp://localhost";
 
     public int _port = 5555;
     Action callback;
@@ -58,7 +58,6 @@ public class CrawlerClient : MonoBehaviour
         switch (data.command)
         {
             case "Reset":
-
                 ResetCommand();
                 break;
             case "Step":

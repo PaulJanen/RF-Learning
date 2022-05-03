@@ -19,13 +19,18 @@ class TD3(object):
     self.critic_optimizer = torch.optim.Adam(self.critic.parameters())
     self.max_action = max_action
     self.min_action = min_action
+    self.isTraining = False
+    self.agentsSelectingActionCount = 0
 
   def select_action(self, state):
+    self.agentsSelectingActionCount += 1
     state = torch.Tensor(state.reshape(1, -1)).to(self.device)
+    self.agentsSelectingActionCount -= 1
     return self.actor(state).cpu().data.numpy().flatten()
 
   def train(self, replay_buffer, iterations, batch_size=100, discount=0.99, tau=0.005, policy_noise=0.2, noise_clip=0.5, policy_freq=2):
-    
+    self.isTraining = True
+
     for it in range(iterations):
       
       # Step 4: We sample a batch of transitions (s, s’, a, r) from the memory
@@ -79,6 +84,8 @@ class TD3(object):
         # Step 15: Still once every two iterations, we update the weights of the Critic target by polyak averaging
         for param, target_param in zip(self.critic.parameters(), self.critic_target.parameters()):
           target_param.data.copy_(tau * param.data + (1 - tau) * target_param.data)
+    
+    self.isTraining = False
   
   # Making a save method to save a trained model
   def save(self, filename, directory):

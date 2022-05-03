@@ -18,8 +18,8 @@ def mkdir(base, name):
 env_name = "Walker"
 seed = 0 # Random seed number
 max_timesteps = 1e6 # Total number of iterations/timesteps
-start_timesteps = (int)(max_timesteps*0.15) # Number of iterations/timesteps before which the model randomly chooses an action, and after which it starts to use the policy network
-eval_freq = 100#5e3 # How often the evaluation step is performed (after how many timesteps)
+start_timesteps = (int)(max_timesteps*0.01) # Number of iterations/timesteps before which the model randomly chooses an action, and after which it starts to use the policy network
+eval_freq = 5e3 # How often the evaluation step is performed (after how many timesteps)
 save_models = True # Boolean checker whether or not to save the pre-trained model
 expl_noise = 0.1 # Exploration noise - STD value of exploration Gaussian noise
 batch_size = 100 # Size of the batch
@@ -65,7 +65,6 @@ if save_models and not os.path.exists("./pytorch_models"):
 ### TRAINING
 
 while total_timesteps < max_timesteps:
-
   # If the episode is done
   if done:
     # If we are not at the very beginning, we start the training process of the model
@@ -102,16 +101,15 @@ while total_timesteps < max_timesteps:
   # The agent performs the action in the environment, then reaches the next state and receives the reward
   new_obs, reward, done = env.step(action)
 
+  if(episode_timesteps + 1 == env.max_episode_steps):
+    done = True
   # We check if the episode is done
   done_bool = 0 if episode_timesteps + 1 == env.max_episode_steps else float(done)
-  print(episode_timesteps)
-
   # We increase the total reward
   episode_reward += reward
   
   # We store the new transition into the Experience Replay memory (ReplayBuffer)
   replay_buffer.add((obs, new_obs, action, reward, done_bool))
-
   # We update the state, the episode timestep, the total timesteps, and the timesteps since the evaluation of the policy
   obs = new_obs
   episode_timesteps += 1

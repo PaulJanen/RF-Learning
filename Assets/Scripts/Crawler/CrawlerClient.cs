@@ -90,12 +90,10 @@ public class CrawlerClient : MonoBehaviour
         receiveMessage = false;
         agent.ActionReceived(data.actions.ToList());
         agent.stepCallBack = SendStepInfo;
-        Debug.Log("callback initialized, " + agent.decisionStep);
     }
 
     private void DoneTrainingCommand()
     {
-        Debug.Log("done training!");
         receiveMessage = false;
         Data data = new Data();
         string send = JsonUtility.ToJson(data);
@@ -114,9 +112,7 @@ public class CrawlerClient : MonoBehaviour
         data.command = "Step";
         agent.m_Reward = 0;
         string send = JsonUtility.ToJson(data);
-        Debug.Log("sending step info");
         _server.SendFrame(send);
-        Debug.Log("step info sent");
     }
 
 

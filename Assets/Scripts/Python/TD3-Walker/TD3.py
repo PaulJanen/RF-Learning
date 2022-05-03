@@ -95,10 +95,14 @@ class TD3(object):
     for _ in range(eval_episodes):
       obs = env.reset()
       done = False
+      episode_timesteps = 0
       while not done:
         action = self.select_action(np.array(obs))
         obs, reward, done = env.step(action)
         avg_reward += reward
+        episode_timesteps += 1
+        if(episode_timesteps == env.max_episode_steps):
+          done = True
     avg_reward /= eval_episodes
     print ("---------------------------------------")
     print ("Average Reward over the Evaluation Step: %f" % (avg_reward))

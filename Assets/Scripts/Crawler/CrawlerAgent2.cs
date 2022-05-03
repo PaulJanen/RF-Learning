@@ -79,6 +79,9 @@ public class CrawlerAgent2 : MonoBehaviour
 
     private void Awake()
     {
+        Time.fixedDeltaTime = 0.01333f;
+        Time.maximumDeltaTime = 0.15f;
+        
         Initialize();
     }
 
@@ -268,10 +271,9 @@ public class CrawlerAgent2 : MonoBehaviour
         // b. Rotation alignment with target direction.
         //This reward will approach 1 if it faces the target direction perfectly and approach zero as it deviates
         var lookAtTargetReward = (Vector3.Dot(cubeForward, body.forward) + 1) * .5F;
-
         AddReward(matchSpeedReward * lookAtTargetReward);
         if (stepCallBack != null && decisionStep >= decisionPeriod)
-        {
+        { 
             decisionStep = 0;
             stepCallBack();
         }
@@ -337,7 +339,8 @@ public class CrawlerAgent2 : MonoBehaviour
     {
         //Utilities.DebugCheckNanAndInfinity(reward, "reward", "SetReward");
         //m_CumulativeReward += reward - m_Reward;
-        m_Reward = reward;
+        //m_Reward = reward;
+        m_Reward += reward;
     }
 
     public void AddReward(float increment)

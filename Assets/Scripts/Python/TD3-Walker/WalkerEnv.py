@@ -9,7 +9,7 @@ class WalkerEnv():
         self.observation_space = np.empty((32,))
         self.maxAction = np.array([1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1])
         self.minAction = np.array([-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1])
-        self.max_episode_steps = 1000
+        self.max_episode_steps = 200
 
     def step(self, action):
         observation, reward, done = self.client.SendAction(action)

@@ -35,7 +35,7 @@ public class CrawlerAgent2 : MonoBehaviour
     public Action stepCallBack;
 
     const float m_maxWalkingSpeed = 15; //The max walking speed
-
+    const float m_minWalkingSpeed = 10;
     //The current target walking speed. Clamped because a value of zero will cause NaNs
     public float TargetWalkingSpeed
     {
@@ -77,6 +77,12 @@ public class CrawlerAgent2 : MonoBehaviour
     public Material groundedMaterial;
     public Material unGroundedMaterial;
 
+    Vector3 m_DirToTarget;
+    Matrix4x4 m_TargetDirMatrix;
+    Quaternion m_LookRotation;
+    float m_MovingTowardsDot;
+    float m_FacingDot;
+
     private void Awake()
     {
         Time.fixedDeltaTime = 0.01333f;
@@ -88,6 +94,7 @@ public class CrawlerAgent2 : MonoBehaviour
     public void Initialize()
     {
         SpawnTarget(TargetPrefab, transform.position); //spawn target
+        m_DirToTarget = m_Target.position - body.position;
         
         m_OrientationCube = GetComponentInChildren<OrientationCubeController>();
         m_DirectionIndicator = GetComponentInChildren<DirectionIndicator>();
@@ -136,7 +143,7 @@ public class CrawlerAgent2 : MonoBehaviour
         UpdateOrientationObjects();
 
         //Set our goal walking speed
-        TargetWalkingSpeed = Random.Range(0.1f, m_maxWalkingSpeed);
+        TargetWalkingSpeed = Random.Range(m_minWalkingSpeed, m_maxWalkingSpeed);
     }
 
     /// <summary>
@@ -150,8 +157,26 @@ public class CrawlerAgent2 : MonoBehaviour
         else
             currentStateData.Add(0);
 
+        var velocityRelativeToLookRotationToTarget = m_TargetDirMatrix.inverse.MultiplyVector(bp.rb.velocity);
+        currentStateData.Add(velocityRelativeToLookRotationToTarget.x);
+        currentStateData.Add(velocityRelativeToLookRotationToTarget.y);
+        currentStateData.Add(velocityRelativeToLookRotationToTarget.z);
+
+        var angularVelocityRelativeToLookRotationToTarget = m_TargetDirMatrix.inverse.MultiplyVector(bp.rb.angularVelocity);
+        currentStateData.Add(angularVelocityRelativeToLookRotationToTarget.x);
+        currentStateData.Add(angularVelocityRelativeToLookRotationToTarget.y);
+        currentStateData.Add(angularVelocityRelativeToLookRotationToTarget.z);
+
         if (bp.rb.transform != body)
         {
+            var localPosRelToBody = body.InverseTransformPoint(bp.rb.position);
+            currentStateData.Add(localPosRelToBody.x);
+            currentStateData.Add(localPosRelToBody.y);
+            currentStateData.Add(localPosRelToBody.z);
+            currentStateData.Add(bp.currentXNormalizedRot); // Current x rot
+            currentStateData.Add(bp.currentYNormalizedRot); // Current y rot
+            currentStateData.Add(bp.currentZNormalizedRot); // Current z rot
+
             currentStateData.Add(bp.currentStrength / m_JdController.maxJointForceLimit);
         }
     }
@@ -162,6 +187,33 @@ public class CrawlerAgent2 : MonoBehaviour
     public void CollectObservations()
     {
         currentStateData = new List<double>();
+
+        m_JdController.GetCurrentJointForces();
+        m_DirToTarget = m_Target.position - body.position;
+        m_LookRotation = Quaternion.LookRotation(m_DirToTarget);
+        m_TargetDirMatrix = Matrix4x4.TRS(Vector3.zero, m_LookRotation, Vector3.one);
+
+        RaycastHit hit;
+        float maxRaycastDist = 10;
+        if (Physics.Raycast(body.position, Vector3.down, out hit, maxRaycastDist))
+        {
+            currentStateData.Add(hit.distance / maxRaycastDist);
+        }
+        else
+            currentStateData.Add(1);
+
+        var bodyForwardRelativeToLookRotationToTarget = m_TargetDirMatrix.inverse.MultiplyVector(body.forward);
+        currentStateData.Add(bodyForwardRelativeToLookRotationToTarget.x);
+        currentStateData.Add(bodyForwardRelativeToLookRotationToTarget.y);
+        currentStateData.Add(bodyForwardRelativeToLookRotationToTarget.z);
+
+        var bodyUpRelativeToLookRotationToTarget = m_TargetDirMatrix.inverse.MultiplyVector(body.up);
+        currentStateData.Add(bodyUpRelativeToLookRotationToTarget.x);
+        currentStateData.Add(bodyUpRelativeToLookRotationToTarget.y);
+        currentStateData.Add(bodyUpRelativeToLookRotationToTarget.z);
+
+        
+
         var cubeForward = m_OrientationCube.transform.forward;
 
         //velocity we want to match
@@ -173,6 +225,7 @@ public class CrawlerAgent2 : MonoBehaviour
         currentStateData.Add(Vector3.Distance(velGoal, avgVel));
         //avg body vel relative to cube
         Vector3 values = m_OrientationCube.transform.InverseTransformDirection(avgVel);
+        /*
         currentStateData.Add(values.x);
         currentStateData.Add(values.y);
         currentStateData.Add(values.z);
@@ -193,15 +246,7 @@ public class CrawlerAgent2 : MonoBehaviour
         currentStateData.Add(values.x);
         currentStateData.Add(values.y);
         currentStateData.Add(values.z);
-
-        RaycastHit hit;
-        float maxRaycastDist = 10;
-        if (Physics.Raycast(body.position, Vector3.down, out hit, maxRaycastDist))
-        {
-            currentStateData.Add(hit.distance / maxRaycastDist);
-        }
-        else
-            currentStateData.Add(1);
+        */
 
         foreach (var bodyPart in m_JdController.bodyPartsList)
         {
@@ -260,18 +305,39 @@ public class CrawlerAgent2 : MonoBehaviour
                 ? groundedMaterial
                 : unGroundedMaterial;
         }
-
+        
         var cubeForward = m_OrientationCube.transform.forward;
 
         // Set reward for this step according to mixture of the following elements.
         // a. Match target speed
         //This reward will approach 1 if it matches perfectly and approach zero as it deviates
-        var matchSpeedReward = GetMatchingVelocityReward(cubeForward * TargetWalkingSpeed, GetAvgVelocity());
 
+        var matchSpeedReward = GetMatchingVelocityReward(cubeForward * TargetWalkingSpeed, GetAvgVelocity());
+        /*
         // b. Rotation alignment with target direction.
         //This reward will approach 1 if it faces the target direction perfectly and approach zero as it deviates
         var lookAtTargetReward = (Vector3.Dot(cubeForward, body.forward) + 1) * .5F;
         AddReward(matchSpeedReward * lookAtTargetReward);
+        */
+
+        foreach (var bodyPart in m_JdController.bodyPartsList)
+        {
+            if (bodyPart.targetContact && !done && bodyPart.targetContact.touchingTarget)
+            {
+                TouchedTarget();
+            }
+        }
+
+        m_DirToTarget = m_Target.position - body.position;
+        m_MovingTowardsDot = Vector3.Dot(m_JdController.bodyPartsDict[body].rb.velocity, m_DirToTarget.normalized);
+        AddReward(0.03f * m_MovingTowardsDot);
+
+        AddReward(0.03f * matchSpeedReward);
+
+        m_FacingDot = Vector3.Dot(m_DirToTarget.normalized, body.forward);
+        AddReward(0.01f * m_FacingDot );
+
+
         if (stepCallBack != null && decisionStep >= decisionPeriod)
         { 
             decisionStep = 0;
@@ -364,5 +430,34 @@ public class CrawlerAgent2 : MonoBehaviour
     {
         stepCallBack = null;
         stopTraining = true;
+    }
+
+    public void FreezeRigidBody(bool freeze)
+    {
+        for (int i = 0; i < m_JdController.bodyPartsList.Count; i++)
+        {
+            if (freeze)
+            {
+                stopTraining = true;
+                if (m_JdController.bodyPartsList[i].isAlreadyFroozen == false)
+                {
+                    m_JdController.bodyPartsList[i].isAlreadyFroozen = true;
+                    m_JdController.bodyPartsList[i].SaveVelocity();
+                    m_JdController.bodyPartsList[i].rb.constraints = RigidbodyConstraints.FreezePosition;
+                    m_JdController.bodyPartsList[i].rb.isKinematic = true;
+                }
+            }
+            else
+            {
+                stopTraining = false;
+                if (m_JdController.bodyPartsList[i].isAlreadyFroozen == true)
+                {
+                    m_JdController.bodyPartsList[i].isAlreadyFroozen = false;
+                    m_JdController.bodyPartsList[i].rb.isKinematic = false;
+                    m_JdController.bodyPartsList[i].rb.constraints = RigidbodyConstraints.None;
+                    m_JdController.bodyPartsList[i].LoadSavedVelocity();
+                }
+            }
+        }        
     }
 }

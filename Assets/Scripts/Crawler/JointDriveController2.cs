@@ -16,7 +16,7 @@ public class JointDriveController2 : MonoBehaviour
     [HideInInspector] public Dictionary<Transform, BodyPart2> bodyPartsDict = new Dictionary<Transform, BodyPart2>();
 
     [HideInInspector] public List<BodyPart2> bodyPartsList = new List<BodyPart2>();
-    internal const float k_MaxAngularVelocity = 50.0f;
+    internal const float k_MaxAngularVelocity = 100f;
 
     /// <summary>
     /// Create BodyPart object and add it to dictionary.
@@ -127,6 +127,10 @@ public class BodyPart2
     public AnimationCurve jointForceCurve = new AnimationCurve();
     public AnimationCurve jointTorqueCurve = new AnimationCurve();
 
+    public Vector3 prvVelocity;
+    public Vector3 prvAngularVelocity;
+    public bool isAlreadyFroozen = false;
+
     /// <summary>
     /// Reset body part to initial configuration.
     /// </summary>
@@ -186,5 +190,17 @@ public class BodyPart2
         };
         joint.slerpDrive = jd;
         currentStrength = jd.maximumForce;
+    }
+
+    public void SaveVelocity()
+    {
+        prvVelocity = rb.velocity;
+        prvAngularVelocity = rb.angularVelocity;
+    }
+
+    public void LoadSavedVelocity()
+    {
+        rb.velocity = prvVelocity;
+        rb.angularVelocity = prvAngularVelocity;
     }
 }

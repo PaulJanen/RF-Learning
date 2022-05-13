@@ -41,52 +41,60 @@ public class CrawlerClient : MonoBehaviour
         _server.Bind($"tcp://*:{_port}");
 
         Assert.IsNotNull(_server);
-        receiveMessage = true;
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
         if (receiveMessage)
+        {
             ReceiveMessage();
+        }
     }
 
     void ReceiveMessage()
     {
-        string recv = _server.ReceiveFrameString();
+        string recv = "";
+        _server.TryReceiveFrameString(out recv);
         Data data = JsonUtility.FromJson<Data>(recv);
-        switch (data.command)
+        if (data != null)
         {
-            case "Reset":
-                ResetCommand();
-                break;
-            case "Step":
-                StepCommand(data);
-                break;
-            case "DoneTraining":
-                DoneTrainingCommand();
-                break;
-            default:
-                break;
+            agent.FreezeRigidBody(false);
+            receiveMessage = false;
+            switch (data.command)
+            {
+                case "Reset":
+                    ResetCommand();
+                    break;
+                case "Step":
+                    StepCommand(data);
+                    break;
+                case "DoneTraining":
+                    DoneTrainingCommand();
+                    break;
+                default:
+                    break;
+            }
         }
+        else
+            agent.FreezeRigidBody(true);
     }
 
     private void ResetCommand()
     {
         agent.OnEpisodeBegin();
         agent.CollectObservations();
-        receiveMessage = true;
 
         Data data = new Data();
         data.command = "Reset";
         data.state = agent.currentStateData.ToArray();
         string send = JsonUtility.ToJson(data);
         _server.SendFrame(send);
+        receiveMessage = true;
     }
     
     private void StepCommand(Data data)
     {
-        receiveMessage = false;
         agent.ActionReceived(data.actions.ToList());
         agent.stepCallBack = SendStepInfo;
     }
@@ -95,13 +103,13 @@ public class CrawlerClient : MonoBehaviour
     {
         receiveMessage = false;
         Data data = new Data();
+        data.command = "DoneTraining";
         string send = JsonUtility.ToJson(data);
         _server.SendFrame(send);
     }
 
     private void SendStepInfo()
     {
-        receiveMessage = true;
         agent.stepCallBack = null;
         Data data = new Data();
         agent.CollectObservations();
@@ -112,6 +120,7 @@ public class CrawlerClient : MonoBehaviour
         agent.m_Reward = 0;
         string send = JsonUtility.ToJson(data);
         _server.SendFrame(send);
+        receiveMessage = true;
     }
 
 

@@ -1,0 +1,820 @@
+\documentclass[a4paper, 12pt]{article}
+
+% ------------------------------------------------------------------------------
+%
+%        VGTU FMF MSK BAKALAURINIO DARBO ŠABLONAS
+%        Pagrindinių paketų rinkinys, viršelis ir bazinė dokumento struktūra
+%
+%        Autorius: Tomas Rekašius      tomas.rekasius@vgtu.lt
+%
+%         Sukurta: 2015-05-28
+%       Pataisyta: 2017-05-14
+%         Versija: 1.1
+%
+
+% ------------------------------------------------------------------------------
+%  PREAMBULĖ
+% ------------------------------------------------------------------------------
+
+\usepackage[utf8]{inputenc}            % naudojama, kai .tex failas UTF-8 koduotės
+\usepackage[L7x]{fontenc}              % nurodoma lietuviško teksto koduotė Latin-7
+\usepackage[lithuanian]{babel}         % nurodoma, kad dokumentas yra lietuviškas
+
+\usepackage{lmodern}                   % dokumente naudojamas šriftas Latin Modern
+\usepackage{microtype}                 % optimizuojami atstumai tarp raidžių žodyje
+\usepackage{indentfirst}               % atitraukiama pirmoji naujo skyriaus eilutė
+\usepackage{icomma}                    % po kablelio skaičiaus viduryje nebus tarpo
+\usepackage{amsmath, amssymb, amsthm, bbold}  % matematiniai simboliai ir konstrukcijos
+\usepackage{graphicx}                  % grafinių failų įterpimas ir kiti nustatymai
+\usepackage{booktabs}                  % reikalingas tvarkingoms lentelėms sudaryti
+\usepackage{caption}                   % paveiksliukų ir lentelių užrašų formavimas
+\usepackage{geometry}                  % paraščių ir kitų lapo parametrų nustatymai
+\usepackage{hyperref}                  % interaktyvioms nuorodoms dokumente sukurti
+\usepackage{array}
+\usepackage[ruled,vlined]{algorithm2e}
+\usepackage{algorithmic}
+
+\geometry{      left = 2.5cm,          % paketo geometry parametrų nustatymai
+               right = 2.0cm, 
+                 top = 2.0cm, 
+              bottom = 2.0cm
+}
+
+\captionsetup{format = hang,           % paketo caption parametrų nustatymai
+           labelfont = bf,
+           tablename = lentelė,
+          figurename = pav,  
+            labelsep = period
+}
+
+\hypersetup{ unicode = true,           % paketo hyperref parametrų nustatymai
+         linktocpage = false, 
+          colorlinks = true, 
+           linkcolor = red,
+           citecolor = blue,
+            pdftitle = {VGTU FMF MSK bakalaurinio darbo šablonas},
+           pdfauthor = {Paulius Janėnas}
+}
+
+
+% PAPILDOMI PAKETAI IR NUSTATYMAI ----------------------------------------------
+
+\usepackage{titlesec}                  % leidžia keisti skyriaus pavadinimo stilių
+\titlelabel{\thetitle.\quad}           % dedamas taškas po skyriaus numeriu tekste
+
+\let\tocnumdot\numberline              % uždeda tašką po skyriaus numeriu turinyje
+\def\numberline#1{\tocnumdot{#1.}}     
+
+
+\linespread{1.3}                       % nustatomas 1,5 dydžio tarpas tarp eilučių
+
+\graphicspath{{figures/}}              % nustatome kelią iki paveiksliukų katalogo 
+\SetKw{KwBy}{by}
+\newcommand\mycommfont[1]{\footnotesize\ttfamily\textcolor{blue}{#1}}
+\SetCommentSty{mycommfont}
+
+% ------------------------------------------------------------------------------
+%  DOKUMENTO PRADŽIA
+% ------------------------------------------------------------------------------
+\begin{document}
+
+
+% ------------------------------------------------------------------ VIRŠELIS --
+
+\begin{titlepage}
+\setcounter{page}{-2}
+\centering
+%
+\includegraphics[scale = 0.6]{vgtu_herbas}\\[0.5\baselineskip]
+%
+{\Large\scshape Vilniaus Gedimino Technikos Universitetas}\\[0.2\baselineskip]
+{\large\scshape Fundamentinių mokslų fakultetas}\\[0.2\baselineskip]
+{\large\scshape Matematinės statistikos katedra}\\[0.2\baselineskip]
+%
+\vspace{\fill}
+%
+{\Large Justina Marcinkėnaitė}\\[3.0\baselineskip]
+
+\MakeUppercase{\Large\bfseries Statistinė inkstų veiklos sutrikimo analizė}\\[0.3\baselineskip]
+{\Large The statistical analysis of renal dysfunction}\\[1.0\baselineskip]
+
+{\Large Baigiamasis bakalauro darbas}
+
+\vspace{\fill}
+
+Taikomosios statistikos ir ekonometrijos studijų programa, valstybinis kodas 612G31001
+
+Statistikos studijų kryptis
+
+
+\vspace{\fill}
+%
+Vilnius, \the\year
+\end{titlepage}
+
+
+% ----------------------------------------------------------------- TITULINIS --
+
+\begin{titlepage}
+\setcounter{page}{-1}
+\centering
+%
+{\Large\scshape Vilniaus Gedimino Technikos Universitetas}\\[0.2\baselineskip]
+{\large\scshape Fundamentinių mokslų fakultetas}\\[0.2\baselineskip]
+{\large\scshape Matematinės statistikos katedra}\\[0.2\baselineskip]
+%
+\vspace{\fill}
+%
+\begin{flushright}
+\parbox{6cm}{%
+TVIRTINU\\Katedros vedėjas
+\bigskip
+\begin{center}
+\hrule\medskip
+{\footnotesize (Parašas)}\\[\baselineskip]
+\hrule\medskip
+{\footnotesize (Vardas, pavardė)}\\[\baselineskip]
+\hrule\medskip
+{\footnotesize (Data)}
+\end{center}
+}
+\end{flushright}
+%
+\vspace{\fill}
+%
+{\Large Justina Marcinkėnaitė}\\[3.0\baselineskip]
+
+\MakeUppercase{\Large\bfseries Statistinė inkstų veiklos sutrikimo analizė}\\[0.3\baselineskip]
+{\Large The statistical analysis of renal dysfunction}\\[1.0\baselineskip]
+
+{\Large Baigiamasis bakalauro darbas}
+
+\vspace{\fill}
+
+Taikomosios statistikos ir ekonometrijos studijų programa, valstybinis kodas 612G31001
+
+Statistikos studijų kryptis
+
+\vspace{\fill}
+%
+\begin{minipage}[t]{0.15\textwidth}
+\bfseries Vadovas
+\end{minipage}
+%
+\hspace{\fill}
+%
+\begin{minipage}[t]{0.4\textwidth}
+\centering\hrule\medskip\scriptsize (Pedagoginis vardas, vardas, pavardė)
+\end{minipage}
+%
+\hspace{\fill}
+%
+\begin{minipage}[t]{0.2\textwidth}
+\centering\hrule\medskip\scriptsize (Parašas)
+\end{minipage}
+%
+\hspace{\fill}
+%
+\begin{minipage}[t]{0.15\textwidth}
+\centering\hrule\medskip\scriptsize (Data)
+\end{minipage}
+
+
+\vspace{\fill}
+%
+Vilnius, \the\year
+\end{titlepage}
+
+
+% ------------------------------------------------------------------- TURINYS --
+\tableofcontents
+\newpage
+
+\cleardoublepage
+\phantomsection
+\addcontentsline{toc}{section}{\listfigurename}
+\listoffigures
+\newpage
+
+\cleardoublepage
+\phantomsection
+\addcontentsline{toc}{section}{\listtablename}
+\listoftables
+\newpage
+
+
+
+% -------------------------------------------------------------------- ĮVADAS --
+\section*{Įvadas}
+\phantomsection
+\addcontentsline{toc}{section}{Įvadas}
+%
+Šių laikų žaidimų industrijoje sukurti žaidimo agentą, kuris realistiškai reaguoja į aplinką, yra sudėtinga užduotis reikalaujanti daug laiko bei pastangų. Taip pat neretai prie laiko kaštų prisideda ir tai, kad prieš kuriant žaidimo agentą tam reikia tinkamai paruošti aplinką – sukurti pagalbinius įrankius leidžiančius supaprastinti programavimo procesą. Tačiau net įdedant pastangas programuojant agentus, rezultatai yra dažnai prasti, jie nėra pakankamai protingi, žaidėjui nėra didžiulio iššūkio juos įveikti. Tai priveda prie didžiausio žaidėjų nepasitenkinimo – agentu sukčiavimo. Norint agentus padaryti protingesniais jiems suteikiama žaidimo informacija, kuri yra neprieinama įprastiems žaidėjams. 
+
+Per pastarajį dešimtmetį įvykus neuroninių tinklų proveržiui buvo dedama daug vilčių, kad jie sugebės sukurti protingesnius žaidimo agentus. Tačiau neuroniai tinklai tėra funkcijos aproksimacijos metodas ir sunkiausia šio išukio dalis greitai atsiskleidė - kaip sukurti funkciją, kuri padėtų agentams tobulėti, tapti protingesniams? Šis klausimas buvo nagrinėtas per pastaruosius 70 metų, įtraukiant tokias mokslo šakas kaip dinaminis programavimas, markovo modeliai, neuromokslai. Atradimai minėtose šakose privedė prie skatinamojo mokslo gimimo, kuomet 1987 metais šio mokslo pradininkai Sutton, R. bei Barto, A. moksliniame straipsnyje \cite{TDSutton} pirmieji sukūrė optimizavimo funkciją, pavadinta "Temporal difference" (toliau TD), padedančia agentams mokytis iš praeities rezultatų, siekiant pasirinkti tokius ateities veiksmus, kurie pagerintų ateities rezultatą. Funkcijos principas remiasi skatinimo metodais, kaip siunčiant paskatinimo impulsus agentui, jei jis atliko teisinga veiksmą, bei nubaudžiamas jei atliko neteisingą veiksmą. Tokiu principu agentas sukuria pozityvias bei negatyvias asociacijas su galimais veiksmais, kuriuos jis gali atlikti. Šį principą puikiai iliustruoja pavlovo šunų eksperimentas. Sekančius dešimtmečius sekė šios funkcijos gerinimas, optimizavimas, bandymas išspręsti didelės dimensijos problemą - kuo didesnė dimensija, tuo ilgiau užtrunka skaičiavimai. Ši problema buvo išspresta pasitelkiant neuroninius tinklus, kurie aproksimuodavo TD funkciją. Šio metodo kulminacija įvyko 2016 metais, kuomet Google AlphaGo sugebėjo įveikti stalo žaidimą Go, kurio nesugebėjo įveikti nei viena komanda prieš tai dirbusi prie pirmųjų algoritmų, įveikusių šachmatų čempionus. Šiuo metu skaitinamieji metodai aprėpia daugybe sričių: automobilių autonominis vairavimas, logistikos grandžių optimizavimas, robotikos judėjimo problemos ir dar daugybe kitų sričių. 
+
+Šiame darbe bus išanalizuojamas skatinamasis mokymasis bei įgyvendintas vienas iš šio mokslo metodų - TD3. Teorinėje dalyje bus analizuojama šio metodo veikimo principai. Tai atlikus praktinėje dalyje šis metodas bus pritaikytas išspręsti roboto voro fizinio judėjimo aplinkoje problemą.
+
+
+
+%
+\paragraph{Darbo aktualumas.} Dirbtiniui intelektui sugebėjus įveikti šachmatų čempionus buvo manoma, kad žmonių dominavimas tradiciniuose stalo žaidimuose pasibaigė. Tačiau programuotojų ambicijos išblėso, kuomet min-max paremti šachmatų algoritmai nesugebėjo įveikti kiniečių tradicinio stalo žaidimo – Go. To pagrindinė priežastis – neapskaičiuojamai didelė žaidimo būsenų erdvė. Kompiuteriai užtrukdavo per ilgai planuoti ėjimus ir jam neužtekdavo atminties išanalizuoti visus galimus ėjimus. Todėl iki šiol šis stalo žaidimas buvo neįveikiamas iki kol Google korporacija išleido skatinamojo mokymosi paremto algoritmo, kuris 2016 metais sugebėjo įveikti šių laikų geriausią Go žaidėją. Nuo to laiko skatinamųjų mokymosi metodų aktualumas vis labiau plito įtraukiant sritis kaip autonominiai automobiliai, robotika, finansai bei vis naujai populiarėjanti sritis – žaidimų industrija. 
+%
+\paragraph{Darbo tikslas} Pritaikyti TD3 skaitinamojo mokymosi modelį, kuris apmokytų simuliuojamą vorą vaikščioti 3D aplinkoje.
+%
+\paragraph{Uždaviniai.} Maecenas eget erat in sapien mattis porttitor:
+%
+\begin{enumerate}
+  \addtolength{\itemsep}{-0.5\baselineskip} 
+  \item Išanalizuoti gilių neuroninių tinklų struktūrą.
+  \item Įgyvendinti Python bei Unity duomenų sinchronizaciją.
+  \item Išanalizuoti skatinamojo mokymosi modelio principus.
+  \item Išanalizuoti Belmano, Q-mokymosi, TD funkcijas.
+  \item Sukurti unity voro aplinką bei agentą, kuris bus apmokomas vaikščioti.
+  \item Įgyvendinti TD3 mokymosi modelį bei apmokyti vorą vaikščioti sukurtoje aplinkoje.
+\end{enumerate}
+
+
+%
+%
+\newpage
+
+
+
+% ------------------------------------------------------------------- SKYRIUS --
+\section{Teorinė dalis}
+%
+
+Skatinamojo mokymo metodai remiasi neuroninių tinklų aproksimacijom. Todėl šioje darbo dalyje nagrinėsiu giliųjų neuroninių tinklų veikimo principus. Tai atlikęs toliau nagrinėsiu skatinamojo mokymosi metodus bei kaip neuroniniai tinklai padeda juos įgyvendinti. Pagrindinis nagrinėjamas skatinamojo mokymosi modelis bus TD3. Tai yra modelis kuris padeda agentui tolydžioje aplinkoje pasirinkti veiksmus, kurie suteike dydžiausią apdovanojimą. Galiausiai bus nagrinėjama aplinka, kurioje šis mokymo metodas bus įgyvendintas.
+
+%
+\subsection{Neuroninių tinklų klasifikatorių tipai}
+%
+
+%
+\subsubsection{Neuroninio tinklo struktūra}
+%
+
+Neuroninių tinklų sandarą galimą žiūrėti kaip į daugybės logistinių funkcijų veikimą. Kitaip tariant vieną neuroną galima traktuoti kaip logistinę funkciją, kuri išsiskaido į dvi dalis: tiesinę bei aktyvacinę. Tiesinėje dalyje suskaičiuojame tiesinę lygtį ir ją įvedame į aktyvacijos funkciją, kuri logistinėje regresijoje yra sigmoido funkcija. Tai yra identiška logistinei regresija, kurios išvedimus buvau pateikęs praeitoje ataskaitoje. Aktyvacinės funkcijos gali būti skirtingos, nebūtinai sigmoido. Pagrindinė skirtingų aktyvacinių funkcijų priežastis yra spartesnė svorių konvergacija į optimalią reikšmę. Dažnai naudojama Relu aktyvacinė funkcija, kuri neturi sigmoido nykstančio gradiento problemos. Ši problema pasireiškia kuomet sigmoido funkcijos reikšmė yra labai didelė arba maža, tuomet gradientas tampa beveik nulinis ir mokymosi procesas sustoja. 
+Pats neuroninis tinklas susideda iš logistinių funkcijų (jei naudojame ne sigmoid aktyvacinę funkciją tai jau nebėra logistinė funkcija) sluoksnių, kurie prasideda įvesties sluoksnių, viduryje paslėptuoju sluoksniu ir galiausiai išvesties sluoksniu. Visi klasifikatoriai turi vieną bendrą panašumą – įvesties bei paslėptuosius sluoksnius. Tačiau priklausomai nuo to ar atsakas yra klasifikacinis ar regresinis, kinta išvesties sluoksnis. Kuriant python aplinkoje neuroninius tinklus buvo pasitelkta vektorizacija. Visus įvestis, svorius, išvestis išsireiškus matriciniu pavidalu gaunamas ryškus neuroninių tinklų paspartėjimas. Neuroninio tinklo bendra naudota struktūra yra pateikta \ref{neuronu diagrama} pavekslėlyje.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=1\textwidth]{neuronu diagrama}
+\caption{Gilaus neuroninio tinklo bendra struktūra}
+\label{neuronu diagrama}
+\end{figure}
+
+Vieno sluoksnio įvesties transformacijos vektorizaciją yra taip skaičiuojama:
+
+$$
+Z^{l}=W^{{l}^T} * A^{l-1}+b^{l}
+$$
+
+Žymėjimas: $A^l$ yra $l$ sluoksnio įvestis (matrica, kuri susideda iš $a^l$ elementų) gauta po aktyvacinės funkcijos (jei $l$ yra lygus įvesties sluoksniui, tai $A^l$ tampa duomenų įvesties vektorius $X$), o $W^T$ yra to sluoksnio svoriai.
+Šios transformacijos matricos eilutės yra skirtingų neuronų tiesinės transformacijos reikšmės, o stulpeliai žymi skirtingus mokymosi duomenis. Šią transformaciją įkėlus į aktyvacijos funkciją gauname galutinę perceptrono reikšmę.
+Norint, kad neuroninis tinklas būtų tikslus, mes turime optimizuoti svorius. Tam pasitelkiame gradientinį nuolydį. Gradientinis nuolydis padeda surasti svorius su kuriais tikslo funkcija įgyja mažiausią paklaidą. Tikslo funkcija sudaro tolygų paviršių, kurio skiringos ašys yra svorių reikšmės bei viena iš jų yra tikslo funkcijos rezultatas. Pateiktame \ref{gradientinis nuolydis} pavekslėlyje apatines ašis $x$ bei $y$ galima traktuoti kaip svorius, o viršutinę ašį kaip tikslo funkcijos paklaidą. 
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.7\textwidth]{gradientinis nuolydis}
+\caption{Gradientinio nuolydžio pavyzdys}
+\label{gradientinis nuolydis}
+\end{figure}
+
+Judandami svorius priešingą gradiento puse, mes judame ties tokiais svoriais, kurie mažiną tikslo funkcijos paklaidą. Šią trajektoriją atspindi 
+\ref{gradientinis nuolydis} pavekslėlyje esanti raudona tiesė, kuri kiekvienos iteracijos metu (mėlyni taškai) po truputi slenka žemyn, optimizuoja svorius.
+
+Vėlgi gradientinio nuolydžio vektorizacija yra tokia pati tiek įvesties, tiek paslėptuose sluoksniuose, bet priklausomai nuo analizuojamos problemos - skirtinga išvesties sluoksnyje. Gradiento vektorizacija:
+
+\begin{equation}
+\label{eqn:backpropdz}
+d Z^{l}=W^{l+1^{T}} d Z^{l+1} * g^{l}\left(Z^{l}\right)
+\end{equation}
+
+Žymėjimas: $g^l(Z^l)$ yra dabartinio sluoksnio aktyvacinės funkcijos išvestinė. Ji yra sudauginama su visais matricos nariais. Gavus perceptronų išvestines $dZ^l$ toliau galime gauti svorių gradientus:
+
+
+\begin{equation}
+\label{eqn:backprop}
+\begin{gathered}
+d W^{l}=\frac{1}{m} d Z^{l} A^{(l-1)^{T}} \\
+d b^{l}=\frac{1}{m}\left(d Z^{l} \text { matricos stulpeliu susumavimas }\right)
+\end{gathered}
+\end{equation}
+
+
+
+Žymėjimas: stulpelių skaičius arba mokymosi duomenų kiekis yra žymimas $m$. Toliau bus aptariamos priekinio, atgalinė propogacija bei tikslo funkcijos, kurios sudaromos atitinkamai pagal turima klasifikacijos problemą.
+
+%
+\subsubsection{Neuroninio tinklo priekinė propogacija}
+%
+
+Įgyvendinti gilaus neuroninio tinklo struktūra pasirinktoje programavimo kalboje nėra sunku, kuomet pastebimas visiems sluoksniams bendras pasikartojantis skaičiavimo bruožas. Skaičiuojant priekinę propogaciją (judame neuriniu tinklu iš kairės į dešinė) į neuroninį tinklą galima žiurėti kaip į atskirus blokus susidedančius iš įvesties bei išvesties, kaip tai matosi \ref{forwardProp} paveikslėlyje.
+\clearpage
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.6\textwidth]{ForwardProp}
+\caption{Priekinės propogacijos vieno neuroninio sluoksnio apskaičiavimo grafas}
+\label{forwardProp}
+\end{figure}
+
+Tokia formą išskaidžius neuroninį tinklą, jį tampa labai paprasta apskaičiuoti, tereikia iteruoti kiekvienu sluoksniu iš kairės į dešinę. Kiekvienos iteracijos metu praeitą sluoksnį traktuojame kaip įvesties sluoksnį ir naudojantis \ref{eqn:backprop} formulėmis apskaičiuojame dabartinio sluoksnio aktyvacinius neuronus. Šios operacijos metu svarbu išsaugoti tarpinius skaičiavimus, kaip tiesinės funkcijos bei aktyvacinę funkcijos apskaičiavimo rezultatą. Jos bus reikalingos apskaičiuoti gradientinį nuolydį, kaip tai matosi \ref{eqn:backpropdz} bei \ref{eqn:backprop} formulėse. Paskutinės iteracijos metu, atlikus aktyvacinės funkcijos apskaičiavima, lieka tik apskaičiuoti tikslo funkcijos rezultatą. 
+Šį struktūra pasižymi formulių universalumu, jos tinka neuroniniams tinklams, kurie yra negilieji bei gilieji, kitaip tariant - nepriklauso nuo sluoksnių kieko. Atlikus priekinę propgaciją ir suskaičiavus tikslo funkcijos klaidą, galime pradėti ją mažintį, judėdami priešinga gradiento linkme. Tai atlieka sekanti potemė - atgalinė propogacija.
+	
+
+%
+\subsubsection{Neuroninio tinklo atgalinė propogacija}
+%
+
+Atgalinės propogacijos struktūra yra vos ne identiška priekiniai propogacijai. Pagrindiniai skirtumai yra sukeistos vietos apskaičiuojamo sluoksnio bei įvesties sluoksnio. Tačiau kaip ir priekinės propogacijos atveju, mes atliekame panašias įteracijas, tik šį kart pradedam nuo tiklso funkcijos ir judame link pirmo sluoksnio, iš kairės į dešinę. Atliekant šias svorių atnaujinimo operacijas, kaip tai matosi \ref{eqn:backpropdz} bei \ref{eqn:backprop} formulėse, pasitelkiame priekinės propogacijos metu išsaugotais duomenimis. 
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.6\textwidth]{BackProp neuronais}
+\caption{Atgalinės propogacijos vieno neuroninio sluoksnio apskaičiavimo grafas}
+\label{BackProp neuronais}
+\end{figure}
+
+%
+\subsubsection{Binarinis klasifikatorius}
+%
+
+Tai klasifikatorius, kuris vos ne identiškas logistinei regresijai. Klasifikuoja binarinius atsakus. Išvesties sluoksnis turi tik vieną neuroną bei jo reikšmės transformacija sutampa su logistinės regresijos tikslo funkcija:
+
+\begin{equation}
+\log (L)=\ell=\sum_{i=1}^{n}\left[y_{i} \log \left(p_{i}\right)+\left(1-y_{i}\right) \log \left(1-p_{i}\right)\right]
+\end{equation}
+
+Šios funkcijos neurono gradientas yra susiprastiną į šią formą:
+
+\begin{equation}
+d Z^{l}=A^{l}-Y,
+\end{equation}
+
+kur $l$ yra paskutinis sluoksnis, $Y$ yra tikroji atsako reikšmės, o $A^l$ yra neuroninio tinklo gauti atsakai. Turint $dZ^l$ galima gauti svorių gradientus bei neuronų gradientus, kaip tai buvo parodyta prieš tai. Turint svorių gradientus atnaujiname svorius:
+
+\begin{equation}
+W^{l}=W^{l}-\alpha dW^{l}
+\end{equation}
+
+kur $\alpha$ nurodo gradientinio žingsnio dydį.
+
+%
+\subsubsection{Daugiau nei viena klasė}
+%
+
+Klasifikuojant daugiau nei vieną klasę yra naudojamas entropijos tikslo funkcija. Tikslo funkcijos forma:
+
+\begin{equation}
+L(y, \hat{y})=-\sum_{i=1}^{N} y_i * \log (\hat{y_i}),
+\end{equation}
+kur $y$ yra tikroji reikšmė, o $\hat{y}$ yra aproksimuota.
+
+
+Kuomet paskutinio sluoksnio aktyvacinė funkcija yra „soft-max“, šios funkcijos gradientas labai gražiai susiprastina ir paskutinio sluoksnio gradientas atrodo ši taip:
+
+\begin{equation}
+d Z^{l} = (Y- \hat{Y})
+\end{equation}
+
+kur $l$ yra paskutinio sluoksnio indeksas, o dydžiosios $Y$ yra vektorizacija daugybės stebinių į vieną matricą.
+
+Iš šio gradiento galime seniau aptartais metodais gauti $W$ bei $b$ gradiento reikšmes. Galima naudoti ir didžiausių kvadratų metoda, tačiau gradientinis nuolydis konverguotų lėčiau.
+Taip pat pagrindinis skirtumas tarp binarinio klasifikatoriaus yra aktyvacinė funkcija. Šį kart tai nėra sigmoido funkcija, o „soft-max“ normalizacija. Jos metu kiekvieno neurono reikšmės apskaičiuojamos naudojantis eksponento funkcija $e^z$, visos reikšmės padalinamos iš šių reikšmių sumos ir gautas rezultatas perduodamos į tikslo funkciją. Taigi šis metodas yra dažnai naudojamas klasifikuoti reikšmes, kurios turi daugiau nei vieną klasę.
+
+%
+\subsubsection{Tiesinės regresijos atsakas}
+%
+
+Jei atsakas yra regresinis, tuomet tikslo funkcija tampa didžiausių kvadratų optimizacijos tikslo funkcija ir paskutinis neuronas neturi aktyvacijos funkcijos. Tikslo funkcijos dydžiausių kvadratų sumos vidurkio formulė:
+
+\begin{equation}
+MSE=\frac{1}{N} \sum_{i=1}^{N}\left(y_i-\hat{y_i}\right)^{2}
+\end{equation}
+kur $y$ yra tikroji reikšmė, o $\hat{y}$ yra aproksimuota.
+
+Neuroniniai tinklai su regresinę tikslo funkciją yra puikus agentų apmokymo pavyzdys, įrodantis kad priklausomai nuo užduoties, nebūtina imtis sudėtingų skatinamojo mokymosi metodų, norint sukurti protingą agentą. Su šiuo metodu buvo optimizuojamas stalo teniso žaidimas, kuriame atsakas buvo stalo teniso raketės pozicijos optimali padėtis atmušti atskriejanti kamuoliuką, kaip tai matosi \ref{pingpong} paveikslėlyje. Tai buvo paprastas gilus neuroninis tinklas su dveis paslėptais sluoksniais po 12 neuronų. Buvo pasitelktas stochastinis gradientinis nuolydis, kuomet kiekvieno žaidimo kadro metu buvo nusiunčiami neuroniniam tinklui dabartinės raketės padėtis bei kamuoliuko trajektorija. Šiam uždaviniui neuroninio tinklo nereikia, pakaktu paprasto algoritmo ar tiesinės regresijos, tačiau tai gerai iliustruoja jo veikimo principus. Pradžioje raketės juda padrikai, bet bėgant laikui, vykstant gradientiniui apsimokymui, rakečių judėjimas vis tikslėja.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=1\textwidth]{pingpong}
+\caption{Sukonstruota stalo teniso simuliacija}
+\label{pingpong}
+\end{figure}
+
+\ref{pingpong} Paveikslėlyje raudona trajektoriją yra neuroninio tinklo įvestis, apskaičiuojanti kamuoliuoko galutinę padėtį. Juoda trajektorija yra neuroninio tinklo išvestis, raketės greičio vektorius, simbolizuojantis pozicija, kurioje raketė turi atsirasti
+
+%
+\subsubsection{Tiesinė regresija su daugybe atsako kintamųjų}
+%
+
+Identiška tiesinės regresijos funkcijai, tačiau šiuo atveju paskutinis sluoksnis turi daugiau nei vieną neuroną. Tuomet tikslo funkcija atrodo šitaip:
+
+$$
+L=\frac{1}{m * 2} * \sum\left(Z^{l}-Y\right)^{2}
+$$
+
+Vektorizacija identiška tiesinės regresijos atveju, tik atsako kintamasis Y turi ne vieną eilutę, o daugiau. Eilutės žymi pasirinkto sluoksnio neuronų reikšmes.
+Su šiuo metodu buvo optimizuotas automobilio kontroleris, kurio tikslas buvo apvažiuoti trasą. Įvestis buvo normalizuota automobilio sensorių informacija, kurie pateikinėdavo trasos barjero atstumą. Išvestis buvo automobilio stabdymo ir greičio pedalo stiprumai bei vairo pozicija. Apmokius neuroninį tinklą rezultatai buvo tragiški, automobilis važiuodavo tik tiesiai. Tačiau pritaikius Adamo gradientinį nuolydį ir taip sumažinus modelio klaidą, buvo pasiekti tenkinami rezultatai. Automobilis sugebėdavo apvažiuoti trasą. 
+
+%
+\subsection{Neuroninių tinklų reguliarizacija}
+%
+
+Neuroninių tinklų reguliarizacija reikalinga norint išvengti modelio prisitaikymo prie mokymosi duomenų. Ji padeda pagerinti testavimo duomenų tikslumą. Toliau nagrinėsiu metodus, kurie tai padeda pasiekti.
+
+%
+\subsubsection{L1 bei L2 reguliarizacija}
+%
+
+Didžiuliai svoriai retai gerai generalizuoja modelį, jie numuša testavimo imties tikslumą. Todėl svarbu neleisti svoriams tapti milžiniškais. L1 bei L2 reguliarizacija tai padeda pasiekti. Prie tikslo funkcijos lygties mes pridedame Lagrandžo svorių apribojimus L2 atveju:
+
+$$
+J(W, b, X, y)=\frac{1}{m} \sum L(y, \hat{y})+\frac{\lambda}{2 * m} \sum\left\|w^{l}\right\|^{2},
+$$
+kur $\lambda$ yra lagrandžo daugiklis ir taip pat hiperparametras.
+
+Matome, kad prie pagrindinės tikslo funkcijos prisideda papildoma bauda, kuo didesni svoriai, tuo didesnė bauda. L1 atveju mes vietoj ilgio kvadrato, naudojame absoliutinę reikšmę. L2 skiriasi nuo L1 tuo, kad L2 padeda nunulinti tuos svorius, kurie turi mažai įtakos gradientiniam nuolydžiui, kaip tai matosi \ref{regularization} paveikslėlyje. Tačiau abiejais atvejais mes nepasieksime optimalios reikšmės ir išmainysime „variance“ į „bias”, taip pasiekdami tikslesnį testavimo duomenų klasifikavimą, jei modelis yra per daug prisitaikęs prie mokymo duomenų.
+Gradientą šiai funkcijai lengva surasti, kadangi matome, kad $J$ funkcija išsiskaido į dvi dalis. Telieka surasti išvestines L2 formai, kas yra labai paprasta.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=1\textwidth]{regularization}
+\caption{Reguliarizacija - po kaire L1, po dešine L2}
+\label{regularization}
+\end{figure}
+
+%
+\subsubsection{Atvirkštinis išmetimas}
+%
+Šio metodo esmė, išjunginėti kiekvieno sluoksnio neuronus su tam tikra tikimybe. Juos išjungus, kiti neuronai turės perimti jų darbą ir papildomai apsimokyti. Tai padeda išvengti atveju, kuomet vienas neuronas persimoko. Tačiau išmetimo atveju vidutiniškai neuronų išvestis sumažėja išmetimo tikimybės procentu. Todėl atvirkštiniu išmetimu, mes po išmetimo operacijos kiekvieną neurono $Z$ reikšmę padaliname iš išmetimo tikimybės taip padidindami neurono išvestį ir gražindami to sluoksnio tikėtiną reikšmę.
+
+
+
+%
+\subsubsection{Duomenų augmentacija}
+%
+
+Šis metodas taikomas, kuomet neturime pakankamai duomenų. Jei duomenys susideda iš nuotraukų, tuomet augmentacijos metu mes galime nuotraukas apsukti, priartinti, karpyti ir panašius metodus taikyti, norint padidinti mokymosi duomenų imti.
+
+%
+\subsubsection{Įvesties normalizacija}
+%
+
+Gradientinio nuolydžio konvergacijos greitis priklauso nuo paviršiaus išsidėstimo. Paviršius gali būti labai susipaudęs bei banguotas, kas neleidžia atlikti didžiulių gradientinių žingsnių. Tokiais atvejais dideli žingsniai, gali šokinėti aplink optimalią reikšmę bei tokiu budu niekados nekonverguoti. Taip pat svoriai nėra proporcingai panašus, vieni turi žymiai didesnę įtaka nuolydžiui, kiti mažesne. Tokiu atveju paimti dideli gradiento žingsniai gali vėlgi nekonverguoti. Tačiau normalizavus įvesties duomenis, paviršius išsilygina bei yra lengviau optimizuoti. Normalizavimas paremtas paprasčiausiu statistiniu $Z$ normalizavimu. Jis atliekamas, kuomet įvesties duomenis pasižymi skirtingais duomenų intervalais – vienos įvesties intervalas [0,1], kitos [0,1000].
+
+%
+\subsection{Neuroninių tinklų parametrų inicializacija}
+%
+
+
+%
+\subsubsection{Gradiento sprogimas bei nykimas, aktyvacinių funkcijų parametrų priskirimas}
+%
+
+„Forward propogation“ neuroninio tinklo žingsnyje, kuomet skaičiuojame išvestį galime pastebėti tokį neuroninio tinklo bruožą
+
+$$
+\hat{y}=W^{l} * W^{l-1} * W^{l-2} * \ldots * X
+$$
+
+Matome, kad jei $W^l$ parametrai priskiriami su didelėm reikšmėm, turint daugybe sluoksnių mūsų tiek neurono tiek svorių reikšmės ekponentiškai išauks. Tuo tarpu jei parametro reikšmės $W^l$ priskiriamos su mažesnėms nei vieneto reikšmėm, svoriai greitai tampa nuliais. Norint to išvengti visų neurono sluoksnio aktyvacijų reikšmių vidurkis turi būti lygus nuliui bei variacija visuose sluoksniuose išlikti vienoda. Šių tikslų padeda pasiekti svorių priskirimo metodai. Dažniausiai svoriai yra paimami iš $\mathcal{N}(0,1)\ast0.001$. Šie svoriai nėra blogi jei turime tik pora sluoksnių tačiau didėjant sluoksniams, kaip matėme prieš tai, neuronų reikšmės taps nuliais. Todėl priklausomai nuo sluoksnio aktyvacijos naudojame specifinius metodus priskiriant svorius. Kad šie metodai veiktų, įvestis privalo būti normalizuojama $Z$-norm principu. 
+
+\begin{enumerate}
+  \addtolength{\itemsep}{-0.5\baselineskip} 
+  \item 	Jei aktyvacijos funkcija yra tanh, svoriai imami iš $\mathcal{N}(0,\frac{1}{n^{l-1}})$, kur n yra neuronų skaičius sluoksnyje, šiuo atveju tai būtų praeito sluoksnio neuronų skaičius.
+  \item 	Jei aktyvacijos funkcija yra Relu, svoriai imami iš $\mathcal{N}(0,1)\ast\frac{2}{\sqrt n}$.
+  \item 	Jei aktyvacijos funkcija yra sigmoidas, svoriai imami iš $\frac{\mathcal{N}(n^{l-1},n^l)}{\sqrt n}$.
+\end{enumerate}
+
+%
+\subsection{Mokymosi greičio didinimas }
+%
+Jei turime labai daug duomenų, matricų operacijos užima daug laiko. Todėl naudojame tolimesnius metodus, kurie paspartina mokymosį procesą.
+
+%
+\subsubsection{Mažos mokymosi imties metodas}
+%
+
+Metodo principas labai paprastas – iš visos duomenų imties paimame dalį skirstinio ir su šia gauta maža mokymosi imtimi apmokome modelį. Kiekviena tokia dalis negražins optimalaus gradiento vektoriaus, tačiau kadangi duomenis yra iš to pačio pasiskirstimo mes vis tiek judėsime į optimalias svorių reikšmes ir galiausiai konverguosime į optimalius svorius.
+
+%
+\subsubsection{Stochastinis nuolydis}
+%
+
+Beveik toks pats kaip praeitas metodas, tik dar ekstremalesnis atvejis – gradientas gaunamas iš vieno imties elemento, stulpelio. Vektorizacija šiuo atveju praranda visą savo greitį, taip pat gradiento vaikščiojimas neatrodo tolygus, juda vos ne į visas puses. Tačiau bendra gradientų krypties tendencija juda link tikslo funkcijos klaidos mažinimo. To priežastis yra išlieka tokia pati, kaip praeito metodo: kadangi duomuo yra iš to pačio pasiskirstimo mes vis tiek judėsime į optimalias svorių reikšmes. Šis metodas yra nuolatos taikomas skaitinamuosiuose mokymosi metoduose.
+
+%
+\subsection{Gradientinio nuolydžio optimizavimas}
+%
+
+Norint pasiekti greitesni svorių konvergavimą yra sukurta skirtingų gradientinio nuolydžio metodų, kurie netik pagreitina konvergaciją bet ir padeda kovoti su didelėmis gradiento problemomis – keliavimas plokščiu paviršiu bei lokalus minimumai.
+
+%
+\subsubsection{Momentinis gradientinis nuolydis bei eksponentinškai pasvertų svorių vidurkis}
+%
+
+Pagrindinis šio optimizavimo principas remiasi momentiniu nuolydžiu, kuomet gradientas įgyja pagreiti ties dažniausiai pasikartojančiu vektoriumi. Primena įsibėgėjusi automobilį. Šis įsibegėjimas padeda išvengti lokalių minimumu, kaip tai matosi \ref{momentinisGreitis} paveikslėlyje. Jame pavaizduoti skirtingi gradientinio mokymosi algoritmai, kurie pradeda tame pačiame taške bei kurių dauguma sustoja mokytis ties lokaliu minimumu. Tačiau momentinio mokymusi paremti gradientinio nuolydžio metodai praskrieja lokalųjį minimumą, kuris tik trumpam sumažina gradiento greitį. Taigi momentinio greičio intuicija labai paprasta: jei gauname nauja gradiento reikšmę, kuri nurodo judėti priešinga linke, ji yra atsveriama gradieno įsibėgėjimo greičiu ir gradientas tik truputi suletėja. Šio gradiento formulė primena eksponentiškai pasvertų svorių vidurkio formulę ir išsireiškia tokiu pavidalu:
+
+\begin{equation}
+V d w=\beta_{1} * V d w+\left(1-\beta_{1}\right) * d w
+\end{equation}
+
+Kur $\beta_1$ yra parametras nuo 0 iki 1, dažniausiai būnantis 0.9. Kaip matome naujausi gradientai prie galutinės gradiento reikšmės prisidės tik $(1-\beta_1)$ dydžiu, kas suteikia momentinio greičio pavidalą. Šis pasvertų vidurkių principas yra plačiai naudojamas skatinamuosiuose mokymosi metoduose ir jį galima pastebėti visuose pagrindinėse formulėse. Skatinamuosiuose mokymosi metoduose šios formulės principą galima traktuoti kaip gradientinį nuolydį - po truputi konverguojame ties optimaliomis reikšmėmis.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=.7\textwidth]{momentinisGreitis}
+\caption{Gradientinė optimizacija su ir be momentinio greičio. SGD momentinis bei Adam konverguoja į globalų minimumą, like konvergavo į lokalų minimumą}
+\label{momentinisGreitis}
+\end{figure}
+
+
+%
+\subsubsection{Normalizuotas gradientinis nuolydis}
+%
+
+Niekur nenaudojamas gradientinio nuolydžio metodas, kurio metu gradiento dydis normalizuojamas. To pasekoje net ir plokštumoje greitis nėra nulinis. Tačiau mokymosi procesas yra labai lėtas, nes gradiento smarkus nuolydis yra normalizuojamas.
+
+%
+\subsubsection{RMSProp}
+%
+
+Tai gradientinio nuolydžio metodas, kurio tikslas pagreitinti gradientą, kuomet judame lygia plokštuma. Tačiau kaip matome iš \ref{momentinisGreitis} RMSProp kenčia nuo momentinio greičio neturėjimo ir sustoja ties lokaliu minimumu. RMSProp forma labai panaši į momentinio gradiento:
+
+\begin{equation}
+S d w=\beta_{2} * S d w+\left(1-\beta_{2}\right) *(d w)^{2}
+\end{equation}
+
+Ir svorių atnaujinimo formulė:
+
+\begin{equation}
+W=W-\alpha \frac{d w}{\sqrt{S d w}}
+\end{equation}
+
+Empiriškai galime pastebėti, kad didžiulios gradiento reikšmės sumažės, tačiau mažos padidės. Todėl šis metodas padeda išspręsti lėtą judėjimą lygumomis. Rekomenduojamas $\beta_2$ dydis yra 0.99.
+
+%
+\subsubsection{Adam}
+%
+
+Šis metodas yra vienas populiariausių gradientinio nuolydžio metodų. Jo tikslas sumažinti dvi problemas - lokalius minimumus bei judėjima plokštuma. Tai pasiekiame sukombinuojant momentininį greitį bei RMSProp:
+
+\begin{equation}
+W=W-\alpha \frac{V d w}{\sqrt{S d w}}
+\end{equation}
+
+$Vdw$ suteikia momentinį greitį kiekvienam svoriui. Bet jei momentinis greitis yra didelis $Sdw$ jį sumažiną. Tačiau jei gradientas užstringa lygumoje, $Sdw$ padeda atstrigti.
+Šį metodą pritaikiau minėtame automobilio kontrolerio pavyzdyje. Jis padėjo pasiekti trygubai mažesnį klaidos dydį ir taip pagerino automobilio kontrolerį.
+
+
+%
+\subsection{Skatinamasis mokymasis}
+%
+
+Skatinamojo mokymosi metodai yra mašinio mokymosi metodai, kurie apdovanoja pageidaujamus veiksmus bei baudžia nepageidautinus veiksmus. Naujuosiuose skatinamuosiuose modeliuose apdovanojimo bei baudos dydis tėra vienintelė informacija, kurią modelis težino. Jei tiesinėje regresijoje mes nuolatos turėdavome tikrąsias reikšmes, ties kuriomis bandėme pritaikyti modelį, šiuo atveju tokia informacija yra nepasiekiama. Todėl mūsų modelis turi nuolatos tyrinėti aplinką, kaupti naujas patirtis. Šiuos duomenis gauname iš aplinkoje esančio roboto ar agento, kuris duotoje aplinkoje stengesi atlikti optimalius veiksmus ir pagal juos susidaryti geriausių siūlomų veiksmų modelį. 
+
+Šią veiksmų eigą apibendrina bendrasis skatinamųjų modelių grafikas, pateiktas \ref{RLmodel} paveikslėlyje. Jis iliustruoja praktinės dalies pagrindinės užduoties įgyvendinimą, voro aštuonių galunių judinima, kuriomis bandoma kuo arčiau priartinti vorą ties žaliu kubeliu. 
+\clearpage
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=1.3\textwidth]{RLmodel}
+\caption{Bendras skatinamojo mokslo modelis}
+\label{RLmodel}
+\end{figure}
+
+
+
+Šio modelio veikimo principai išsiskaido į šias dalis:
+\begin{enumerate}
+  \addtolength{\itemsep}{-0.5\baselineskip} 
+  \item Aplinka. Aplinkoje egzistuoja mūsų agentas, kuris priiminėje modelio sugeneruotus veiksmus. Pateiktame pavyzdyje tai būtų voro galūnių judėjimo trajektorijos. Atlikes duotus veiksmus, voras įgauną naujas būsenas, pasistumį į naują poziciją. Nauja įgyta būsena bei prieš tai buvusi, nusiunčiama modeliui. Taip pat modeliui nusiunčiame apdovanojimo dydį. Jis apskaičiuojamas naudojantis naujai sugeneruotos būsenos naudingumu. Naudojantis voro pavyzdžiu tai atitiktų voro greičio vektorio laipsnio sutapimu su norimos krypties vektoriumi, kaip tai matosi \ref{voroGreicioVektoriai} pavekslėlyje. Šiuo atveju apdovanojimas būtų nulinis, nes vektorių trajektorijos visai nesutampa. Atlikus veiksmą bei apskaičiavus jo naudingumą, tokiu budu gaunamas ryšys tarp veiksmo, kuris sugeneruoja naują būseną, bei įgyto apdovanojimo, naujoje būsenoje. Šis ryšys tarp veiksmo bei gauto rezultato yra neseniai atgimusio skatinamojo moklso pamatas, kuriuo moderniausi algoritmai ne per seniausiai pradėjo vadovautis, atradus apdovanojimų taisyklių gradientą bei pradėjus taikyti neuroninius tinklus. 
+  \item Agentas. Agento sluoksnis susideda iš mokymosi modelio bei žinių bazės, kurioje kaupiami gauti aplinkos rezultatai, susidedantis iš vektorių su šiomis reikšmėmis - praeita būsena, atliktas veiksmas, nauja būsena ir apdovanojimas. Mokymosi modelis naudojasi sukauptų žinių baze gerinti savo modelio rezultatus. Modelio tikslas yra pateikti tokias veiksmų sekas, kurios suteiktų dydžiausią įmanoma apdovanojimą. Voro pavyzdžiu tai būtų sėkmingas žalio kubelio pasiekimas. Modelio apmokymui yra sukurta daugybe įvairių metodų ir šiame darbe bus nagrinėjamas vienas iš jų - TD3
+\end{enumerate}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=1\textwidth]{voroGreicioVektoriai}
+\caption{Apdovanojimo pavyzdys, pagal voro greičio (raudona rodyklė) bei norimo judėjimo (žalia rodyklė) vektorių atitikimu.}
+\label{voroGreicioVektoriai}
+\end{figure}
+
+Taigi visas skatinamasis mokslas paremtas tik vienu kintamuoju - apdovanojimo gausumu. Šis apdovanojimas apdovanoja pageidautina elgesį bei baudžia neigiamą elgesį. Tokiu budu agentas skatinamas siekti dydžiausio ilgalaikio nuopelno, kas veda ties optimaliu sprendimu. Tolimesniuose skyriuose bus aptarema kaip iš šio vieno kintamojo yra konstruojamas visas mokslas bei įvairiausi modeliai.
+
+%
+\subsubsection{Skatinamojo mokslo pagrindiniai kintamieji, stacionariojo pasiskirstymo problema}
+%
+
+Kad ir koki skatinamojo mokslo uždavinį spręstume, mes visados sutiksime šiuos kintamuosius:
+
+\begin{enumerate}
+  \addtolength{\itemsep}{-0.5\baselineskip} 
+  \item $t$ - $\mathbb{N}$ laiko žingsnis. Kiekviena kart atlikus veiksmą bei apskaičiavus jo naudingumą, laiko žingsnis pajuda vienetu į priekį
+  \item $A_t$ - atliktas veiksmas $t$ laiko žingsnyje.
+  \item $R_t$ - gautas apdovanojimas atlikus $A_t$ veiksmą.
+  \item $Q(a)$ - vidurkis, tikėtina apdovanojimų reikšmė pasirinkus veiksmą a. Kitaip tariant $Q(a) = \mathbb{E}[R_t | A_t = a] $. Ši formulė ypatingai svarbi, kadangi iš jos vos ne visi mokymosi metodai yra išvedami.
+\end{enumerate}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=1\textwidth]{losimoaparatai}
+\caption{N lošimo aparatų, su skirtingais vidutiniais laimėjimais}
+\label{losimoaparatai}
+\end{figure}
+
+
+Dažniausiai pateikiamas pavydzys, kuris iliustruoja šio mokslo principą bei padeda geriau suprasti šiuos kintamuosius, yra lošimo aparatu, pavaizduotų \ref{losimoaparatai} paveikslėlyje, laimėjimų optimizavimas. Šiame uždavinyje iš n aparatų agentas bando surasti lošimo aparatą, kuris suteikia dydžiausią įmanomą apdovanojimą. Kiekvienas aparatas duoda atsitiktinį laimėjimą iš  $\mathcal{N}(\mu=\mathcal{N}(0,2),\sigma=1)$ pasiskirstimo. Žaidimo sesija, dažniausiai vadiname episodas, nėra ribojima, agentas gali atlikti begalybe $t$ žingsnių, lošimo aparatų pasirinkimų. Pasirinkimą galima traktuoti kaip veiksmą $a$ ir gautą laimėjimą kaip $r$. Agentas bando vienos žaidimo sesijos metu įgyti dydžiausią sukauptą laimėjimą. Jis pritaiko viena iš populiariausiu skatinamojo mokslo metodu $\epsilon-greedy$. Šis metodas visados renkasi lošimo aparatą, kurio aproksimuotas tikėtinas laimėjimas, žymimas $Q(a)$, yra dydžiausias, kaip tai išreikšta \ref {eqn:argmaxA} formulėje.
+
+\begin{equation}
+\label{eqn:argmaxA}
+\begin{gathered}
+A_t = argmax_aQ_t(a)
+\end{gathered}
+\end{equation}
+
+Tačiau su maža $\epsilon$ tikimybe, agentas pasirenka atsitiktinį lošimo aparatą. Taigi kiekviename $t$ žingsnyje agentas renkasi lošimo aparatą, jį aktyvuoja ir gauną naują apdovanojimą, kuri talpina į to aparato apdovanojimų sarašą. Šis procesas ypatingai svarbus, jis dominuoja visuose mokymosi modeliuose. Agentas stengiasi netik gauti dydžiausia įmanoma tikėtina laimėjimą, tačiau kartu tirinėja aplinką, ieško optimalesniu lošimo aparatu, nei surastas dabartinis geriausias. Šis procesas vadinasi apdovanojimų-tirinėjimo kompromisu. Lošimo aparato tikėtinas laimėjimas tėra to aparato gautų laimėjimų vidurkis, kaip tai matosi \ref{eqn:Q(a)} formulėje.
+
+\begin{equation}
+\label{eqn:Q(a)}
+\begin{gathered}
+Q_t(a) = \frac{\sum_{i=1}^{t-1}R_i*\mathbb{1}_{A_i=a}} {\sum_{i=1}^{t-1}\mathbb{1}_{A_i=a}}
+\end{gathered}
+\end{equation}
+
+Kitaip tariant $Q_t(a)$ yra apdovanojimų suma, kuomet pasirinkome $a$ veiksmą (arba lošimo aparatą), atlikus $t$ žingsnių, padalinti iš kiek kartų buvo $a$ veiksmas (arba lošimo aparatas) pasirinktas. Kuomet $t$ artėja link begalybės, pagal didžiųjų skaičių dėsniu, $Q(a)$ priartėja prie tikrosios reikšmės. Visi naujausi modeliai yra paremti panašiu imties traukimo metodu - simuliuojame skirtingus veiksmus ir stebime gautus rezultatus. Nors pavyzdys atrodo primitivus, tačiau visi naujausi modeliai sprendžia tą pačią užduoti - kokį pasirinkti veiksmą $a$, kuris suteiktų dydžiausią apdovanojimą. 
+
+Pagrindiniai skirtumai atsiranda dėl kompiuterio resursų optimizavimo. Viena iš problemu, su kuria iškarto susiduriame, yra duomenų kaupimas. Kiekvienam lošimo aparatui reikia kaupti jo gautus apdovanojimus. Didėjant problemai bei jos duomenų dimensijai, kompiuteriui kaupti duomenis tampa fiziškai nebeįmanoma, todėl yra sukurta daugybe esminių metodų šią problemą mažinti bei išvengti. Vienas iš metodų, kurio formą galima pastebėti TD formulėje, yra rekursyvus vidurkio apskaičiavimas, pateiktas \ref{eqn:Vidurkio} formulėje. Ši formule padeda išvengti apdovanojimų kaupimo, kaip tai matėme lošimo pavyzdyje.
+
+\begin{equation}
+\label{eqn:Vidurkio}
+\begin{aligned}
+Q_{n+1} &=\frac{1}{n} \sum_{i=1}^{n} R_{i} \\
+&=\frac{1}{n}\left(R_{n}+\sum_{i=1}^{n-1} R_{i}\right) \\
+&=\frac{1}{n}\left(R_{n}+(n-1) \frac{1}{n-1} \sum_{i=1}^{n-1} R_{i}\right) \\
+&=\frac{1}{n}\left(R_{n}+(n-1) Q_{n}\right) \\
+&=\frac{1}{n}\left(R_{n}+n Q_{n}-Q_{n}\right) \\
+&=Q_{n}+\frac{1}{n}\left[R_{n}-Q_{n}\right]
+\end{aligned}
+\end{equation}
+
+Lošimų pseudokodas, kuris palaipsniui apskaičiuoja skirtingų veiksmų imties vidurkius, pateiktas toliau:
+
+\begin{algorithm}[H]
+\label{LosimuAlgo}
+\SetAlgoLined
+
+$Q(a) \leftarrow 0$\;
+$N(a) \leftarrow 0$\;
+
+ \For{$ \infty $}{
+	$$ A \leftarrow \begin{cases}\arg \max _{a} Q(a) \text { su tikimybe } 1-\varepsilon \text { (lygiąsias reikšmes pasirenkame atsitiktinai) } \\
+\text {atsitiktinis veiksmas } \text { su tikimybe} \varepsilon\end{cases}$$
+	$R \leftarrow \text { LošimoAparatas }(A) $ \tcp*{Pasirenkame veiksma A ir gauname apdovanojimą R}
+	$N(A) \leftarrow N(A)+1 $ \tcp*{Kiek kartų kiekvienas veiksmas buvo pasirinktas}
+	$Q(A) \leftarrow Q(A)+\frac{1}{N(A)}[R-Q(A)]$\;
+    }
+\KwResult{ Gautos optimalios, tikrosios Q(a) reikšmės. Jas turint žinosime, kuris aparatas duoda dydžiausią laimėjimą}
+ \caption{Lošimo aparato pseudo algoritmas}
+\end{algorithm}
+
+
+Paskutinė \ref{eqn:Vidurkio} formulės išraiška yra įpatingai svarbi, nes ji yra ištaka tiek TD, tiek Q-mokymosi, tiek bellmano formulėms, kurios yra skatinamojo mokslo pamatas. Apibendrinant formulę ją galima šitaip išreikšti:
+
+\begin{equation}
+\text{Naujas vidurkis = Senas vidurkis }+ \frac{1}{n} (\text{Nauja reikšmė - Senas vidurkis})
+\end{equation}
+
+Jei tęstume formules apibendrinimą išriškėtu bellmano funkcija, kuri yra viena svarbiausiu šiame moksle ir į kuria gilinsimes tolimesniuose skyriuose:
+
+\begin{equation}
+\text{Naujas įvertis = Senas įvertis}+ \frac{1}{n} * (\textbf{Tikslas - Senas įvertis})
+\end{equation}
+
+Paryškinta dalis yra vadinama TD paklaida, ties kuria gilinsimes tolimesniuose skyriuose.
+
+Kolkas nagrinėta problema pasižymi apdovanojimo skirstinio stacionarumu, jis nekinta. Tačiau nagrinėjant sudėtingas problemas netik mūsų apdovanojimų pasiskirstimas kinta, tačiau mum idomios tik paskutinės 10 -100 reikšmės bei aukštos dimensijos problemose mum neužtenka kompiuterio resursų išsaugoti $N(A)$ reikšmių, ką mes atliekame \ref{LosimuAlgo} pseudokode. Todėl įgyvendinamas dar vienas šios formulės optimizavimas
+
+%
+\subsubsection{Ne stacionarus pasiskirstymas}
+%
+
+Galima pastebėti daugybe problemų su ref{eqn:Vidurkio} formule:
+
+\begin{enumerate}
+  \addtolength{\itemsep}{-0.5\baselineskip} 
+  \item Toliau plėtojant duotą pavyzdį, galima įsivaizduoti situaciją, kurioje, kas tam tikrą laiko intervalą, kiekvieno aparato apdovanojimo funkcija pakinta ir įgyja nauja $\mathcal{N}(\mu=\mathcal{N}(0,2),\sigma=1)$ pasiskirstymą.
+  \item Kuomet vieno lošimo aparato apdovanojimų $R$ imtis yra labai didelė, naujai gautos reikšmės turi labai mažai įtakos vidurkio pokyčiui dėl $\frac{1}{n}$ formulėje esančios išraiškos.
+  \item Kiekviena $Q(a)$ reikšmė turi kaupti $N(A)$. Aukštosiose dimensijos neužtenka kompiuterio resursų išsaugoti šias reikšmes.
+\end{enumerate}
+
+Šios problemos sprendimas jau buvo pateiktas Adamo algoritmo įgyvendinime, mes toliau naudojame tuos judančio vidurkio principus.
+
+\begin{equation}
+\begin{aligned}
+Q_{n+1} &=Q_{n}+\alpha\left[R_{n}-Q_{n}\right] \\
+&=\alpha R_{n}+(1-\alpha) Q_{n} \\
+&=\alpha R_{n}+(1-\alpha)\left[\alpha R_{n-1}+(1-\alpha) Q_{n-1}\right] \\
+&=\alpha R_{n}+(1-\alpha) \alpha R_{n-1}+(1-\alpha)^{2} Q_{n-1} \\
+&=\alpha R_{n}+(1-\alpha) \alpha R_{n-1}+(1-\alpha)^{2} \alpha R_{n-2}+\\
+& \quad \ldots+(1-\alpha)^{n-1} \alpha R_{1}+(1-\alpha)^{n} Q_{1} \\
+&=(1-\alpha)^{n} Q_{1}+\sum_{i=1}^{n} \alpha(1-\alpha)^{n-i} R_{i}
+\end{aligned}
+\end{equation}
+
+%
+\subsubsection{Pirmo skyriaus skyrelio poskyris}
+%
+Nunc eleifend consequat lorem. Sed lacinia nulla vitae enim. Pellentesque 
+tincidunt purus vel magna. Integer non enim. Praesent euismod nunc eu purus. 
+Donec bibendum quam in tellus. Nullam cursus pulvinar lectus. Donec et mi. 
+Nam vulputate metus eu enim. Vestibulum pellentesque felis eu massa.
+%
+\paragraph{Pirmo skyriaus skyrelio poskyrio paragrafas.} 
+%
+
+Sed lacinia nulla vitae enim. Pellentesque tincidunt purus vel magna. Integer 
+non enim. Praesent euismod nunc eu purus. Donec bibendum quam in tellus. 
+Nullam cursus pulvinar lectus. Donec et mi. Nam vulputate metus eu enim. 
+Vestibulum pellentesque felis eu massa.
+%
+%
+\subsection{Skatinamasis mokslas}
+hehe
+%
+%
+
+
+
+
+
+
+\newpage
+% ------------------------------------------------------------------- IŠVADOS --
+\section*{Išvados}
+\phantomsection
+\addcontentsline{toc}{section}{Išvados}
+%
+Nulla malesuada porttitor diam. Donec felis erat, congue non, volutpat at, 
+tincidunt tristique, libero. Vivamus viverra fermentum felis. Donec nonummy 
+pellentesque ante. Phasellus adipiscing semper elit. Proin fermentum massa ac 
+quam. Sed diam turpis, molestie vitae, placerat a, molestie nec, leo. 
+Maecenas lacinia. Nam ipsum ligula, eleifend at, accumsan nec, suscipit a, 
+ipsum. Morbi blandit ligula feugiat magna. Nunc eleifend consequat lorem. Sed 
+lacinia nulla vitae enim. 
+
+
+
+Lentelė \ref{lentele} is an example of a referenced \LaTeX{} element.
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{||c c c c||} 
+ \hline
+ Col1 & Col2 & Col2 & Col3 \\ [0.5ex] 
+ \hline\hline
+ 1 & 6 & 87837 & 787 \\ 
+ 2 & 7 & 78 & 5415 \\
+ 3 & 545 & 778 & 7507 \\
+ 4 & 545 & 18744 & 7560 \\
+ 5 & 88 & 788 & 6344 \\ [1ex] 
+ \hline
+\end{tabular}
+\caption{Table to test captions and labels.}
+\label{lentele}
+\end{table}
+
+
+\newpage
+% ---------------------------------------------------------------- LITERATŪRA --
+\phantomsection
+\addcontentsline{toc}{section}{Literatūra}
+
+% Bibliografija nėra įprastas skyrius, todėl į LaTeX dokumento turinį neįtraukiama. 
+% Norint, kad bibliografija būtų įtraukiama į turinį, tenka sukurti fiktyvų skyrių 
+% ir nurodyti, kaip jis bus atvaizduojamas turinyje.
+
+\begin{thebibliography}{99}
+
+\bibitem{TDSutton} 
+Sutton, R. \& Barto, A. 1987, ‘A Temporal-Difference Model of Classical Conditioning’, in Proceedings of the Ninth Annual Conference of the Cognitive Science Society, Seattle, WA, pp. 355–78.\href{http://incompleteideas.net/papers/sutton-barto-TD-87.pdf}{PDF}.
+
+\bibitem{tob} 
+Tobias Oetiker. The Not So Short Introduction to \LaTeX2e{}. Or \LaTeX2e{} in 157 
+minutes. \href{http://tobi.oetiker.ch/lshort/lshort.pdf}{Version 5.06, June 20, 2016}.
+
+\end{thebibliography}
+%
+%
+\newpage
+% ------------------------------------------------------------------- PRIEDAI --
+\appendix
+\section{Priedai}
+
+
+\end{document}
+% ------------------------------------------------------------------------------
+%  DOKUMENTO PABAIGA
+% ------------------------------------------------------------------------------

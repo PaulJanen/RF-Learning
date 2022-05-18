@@ -31,7 +31,7 @@
 \usepackage{geometry}                  % paraščių ir kitų lapo parametrų nustatymai
 \usepackage{hyperref}                  % interaktyvioms nuorodoms dokumente sukurti
 \usepackage{array}
-\usepackage[ruled,vlined]{algorithm2e}
+\usepackage[ruled,vlined,onelanguage]{algorithm2e}
 \usepackage{algorithmic}
 
 \geometry{      left = 2.5cm,          % paketo geometry parametrų nustatymai
@@ -70,8 +70,15 @@
 
 \graphicspath{{figures/}}              % nustatome kelią iki paveiksliukų katalogo 
 \SetKw{KwBy}{by}
+\SetKwInput{KwResult}{Rezultatas}%
+\SetKwInput{KwData}{Duomenis}%
+\SetKwInput{KwIn}{Algoritmas}%
+\setcounter{algocf}{0}
+
 \newcommand\mycommfont[1]{\footnotesize\ttfamily\textcolor{blue}{#1}}
 \SetCommentSty{mycommfont}
+
+
 
 % ------------------------------------------------------------------------------
 %  DOKUMENTO PRADŽIA
@@ -664,6 +671,7 @@ Lošimų pseudokodas, kuris palaipsniui apskaičiuoja skirtingų veiksmų imties
 
 \begin{algorithm}[H]
 \label{LosimuAlgo}
+\SetAlgorithmName{Algoritmas}{}
 \SetAlgoLined
 
 $Q(a) \leftarrow 0$\;
@@ -690,6 +698,7 @@ Paskutinė \ref{eqn:Vidurkio} formulės išraiška yra įpatingai svarbi, nes ji
 Jei tęstume formules apibendrinimą išriškėtu bellmano funkcija, kuri yra viena svarbiausiu šiame moksle ir į kuria gilinsimes tolimesniuose skyriuose:
 
 \begin{equation}
+\label{TDLietuviskai}
 \text{Naujas įvertis = Senas įvertis}+ \frac{1}{n} * (\textbf{Tikslas - Senas įvertis})
 \end{equation}
 
@@ -701,7 +710,7 @@ Kolkas nagrinėta problema pasižymi apdovanojimo skirstinio stacionarumu, jis n
 \subsubsection{Ne stacionarus pasiskirstymas}
 %
 
-Galima pastebėti daugybe problemų su ref{eqn:Vidurkio} formule:
+Galima pastebėti daugybe problemų su \ref{eqn:Vidurkio} formule:
 
 \begin{enumerate}
   \addtolength{\itemsep}{-0.5\baselineskip} 
@@ -710,9 +719,10 @@ Galima pastebėti daugybe problemų su ref{eqn:Vidurkio} formule:
   \item Kiekviena $Q(a)$ reikšmė turi kaupti $N(A)$. Aukštosiose dimensijos neužtenka kompiuterio resursų išsaugoti šias reikšmes.
 \end{enumerate}
 
-Šios problemos sprendimas jau buvo pateiktas Adamo algoritmo įgyvendinime, mes toliau naudojame tuos judančio vidurkio principus.
+Šios problemos sprendimas jau buvo pateiktas Adamo algoritmo įgyvendinime, mes toliau naudojame judančio vidurkio principus:
 
 \begin{equation}
+\label{judantisVidurkis}
 \begin{aligned}
 Q_{n+1} &=Q_{n}+\alpha\left[R_{n}-Q_{n}\right] \\
 &=\alpha R_{n}+(1-\alpha) Q_{n} \\
@@ -724,6 +734,378 @@ Q_{n+1} &=Q_{n}+\alpha\left[R_{n}-Q_{n}\right] \\
 \end{aligned}
 \end{equation}
 
+Ši \ref{judantisVidurkis} formulė pakeičia $\frac{1}{n}$ į $\alpha \in [0,1]$. Dažniausia $\alpha$ reikšmė yra 0.9, su kuria apytiksliai apskaičiuojame paskutinių gautų 10-ties narių vidurkį.
+
+\subsubsection{Markovo grandinės}
+
+Dauguma mažos dimensijos skatinamojo mokslo problemų galima išreikšti markovo grandinių pavidalu. Toks išreiškimas padeda geriau suvokti keturias pagrindines skatinamojo mokslo savokas:
+
+\begin{enumerate}
+  \addtolength{\itemsep}{-0.5\baselineskip} 
+  \item $s$ - esama būsena.
+  \item $a$ - pasirinktas veiksmas.
+  \item $r$ - esamosios būsenos pasirinkto veiksmo apdovanojimas.
+  \item $s\sp{\prime}$ - nauja būsena, kuri gaunama atlikus $a$ veiksmą.
+\end{enumerate}
+
+Nors dažniausiai būsenos būna daugiau nei vienos dimensijos, pavyzdžiui būsenos vektorius susidedantis iš 2 reikšmių - pozicijos bei greičio, lengviausiai jas yra suprasti atvaizduojant vienos dimensijos markovo grandinių pavidalu, kaip tai matosi \ref{DulkiuSiurblys} paveikslėlyje.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=1\textwidth]{DulkiuSiurblys}
+\caption{Dulkio siurblio markovo grandinė}
+\label{DulkiuSiurblys}
+\end{figure}
+
+Jei dulkio siurblio robotas yra būsenoje $s = \text{"Pilnas energijos"}$, jis gali pasirinkti $a_1$ arba $a_2$ veiksmus. Pasirinkęs $a_1$ veiksmą, robotas su $\alpha$ tikimybe gali patekti į būsena $s\sp{\prime} = \text{"Nėra energijos"}$ ir su tikimybe $1-\alpha$ į būseną $s\sp{\prime} = \text{"Pilnas energijos"}$. Už abu šiuos veiksmus veiksmus robotas yra apdovanojamas $r=1$. Šis procesas galioja ir kitoms būsenoms. 
+
+Priklausomai nuo esančios būsenos, mes visa laika norime pasirinkti tokį veiksmą, kuris duoda dydžiausią tikėtiną apdovanojimą:
+
+\begin{equation}
+r(s, a) \doteq \mathbb{E}\left[R_{t} \mid S_{t-1}=s, A_{t-1}=a\right]=\sum_{r \in \mathcal{R}} r \sum_{s^{\prime} \in \mathcal{S}} p\left(s^{\prime}, r \mid s, a\right)
+\end{equation}
+
+Veiksmų pasirinkimas vadovaujantis dydžiausiu tikėtinu apdovanojimu bus nagrinėjamas sekančiame skyriuje.
+
+Markovo grandinių išraiška taip pat yra svarbi ne tik dėl vizualinio aiškumo. Visos skatinamojo mokymo problemų formuluotės privalomai turi galėti išsireikšti markovo grandinių pavidalu. Šis reikalavimas yra būtinas dėl vienos iš pagrindinių markovo grandinės savybių - ateities įvykio tikimybė nepriklauso nuo prieš tai įvykusių įvykių:
+
+\begin{equation}
+P\left(X_{n+1}=x \mid X_{0}, X_{1}, X_{2}, \ldots, X_{n}\right)=P\left(X_{n+1}=x \mid X_{n}\right),
+\end{equation}
+
+kur $X$ yra prieš tai buvę įvykiai. Ši savybė leidžia apskaičiuoti tikėtiną apdovanojimą pasitelkiant tik turima busena, prieš tai buvusios būsenos neturi įtakos tikėtinam apdovanojimui.
+
+Taigi \ref{DulkiuSiurblys} pavyzdys iliustruoja kaip skatinamajame moksle yra lengva apskaičiuoti naudingiausius veiksmus, kuomet turime sudaryta modelį. Tačiau retu atveju mes jį turime ir dažniausiai mum reikia imtis aplinkos tirinėjimo veiksmų, kurie sudaro modelio aproksimacijas. Taip pat mes ne tik norime apskaičiuoti geriausią sekančio veiksmo apdovanojimą, tačiau geriausią apdovanojimą ilgalaikėje perspektyvoje. Dažnai gyvenime mes pasirenkame mėgautis maloniais dalykais, kuriais vėliau mes gailimes. Būtent šią problemą kitas skyrius ir nagrinės - ilgalaikis apdovanojimas, o ne trumpalaikis.
+
+\subsubsection{Apdovanojimai bei tikslai}
+
+Adpovanojimų hipotezė: Kad visa tai, ką mes turime omenyje kalbėdami apie tikslus ir uždavinius, gali būti gerai suprantama kaip tikėtinos vertės maksimizavimas, kai gaunama ilgalaikė skalarinio signalo (vadinamo apdovanojimu) suma.
+
+Šią sumą mes vieno epizodo metu stengemes maksimizuoti. Epizodas - būsenų, veiksmų, apdovanojimų seka, kuri užsibaige agentui pasiekus tikslą arba sustojimo sąlygą, kaip tai matome \ref{Episodas} paveikslėlyje. Agentas renkasi skirtingus veiksmus, įgauna naujas būsenas, kaupia epizodo apdovanojimą, kol galiausiai pasieke tikslą, pavaizduotų pilku kvadratu.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\textwidth]{Episodas}
+\caption{Vienas agento epizodas}
+\label{Episodas}
+\end{figure}
+
+Epizodo galutinis sukauptas apdovanojimas užrašomas tokiu pavidalu:
+
+\begin{equation}
+G_{t} \doteq R_{t+1}+R_{t+2}+R_{t+3}+\cdots+R_{T},
+\end{equation}
+
+kur $T$ yra paskutinis epizodo žingsnis. Tačiau jei agentas optimizuoja savo veiksmus aplinkoje, kurios pabaigą neįmanoma identifikuoti arba epizodas trunka nepaprastai daug žingsnių, mes naudojame apdovanojimų proporcionalius mažinimus:
+
+\begin{equation}
+G_{t} \doteq R_{t+1}+\gamma R_{t+2}+\gamma^{2} R_{t+3}+\cdots=\sum_{k=0}^{\infty} \gamma^{k} R_{t+k+1}
+\end{equation}
+
+kur $\gamma$ yra "nuolaidos" kintamasis, kurio dažniausia vertė yra 0.9. Ši vertė indikuoja, kad 11 žingsnio apdovanojimas bus proporcianalus $0.9^{11}$ savo vertės, kitaip tariant nuliui. Tačiau ši formulė kaip ir praeitos pasižymi panašiais trūkumais, kaip nuolatinis duomenų kaupimas. Tai galima išspręsti perrašius formulę į rekursinę formą:
+
+\begin{equation}
+\begin{aligned}
+G_{t} & \doteq R_{t+1}+\gamma R_{t+2}+\gamma^{2} R_{t+3}+\gamma^{3} R_{t+4}+\cdots \\
+&=R_{t+1}+\gamma\left(R_{t+2}+\gamma R_{t+3}+\gamma^{2} R_{t+4}+\cdots\right) \\
+&=R_{t+1}+\gamma G_{t+1}
+\end{aligned}
+\end{equation}
+
+Taip pat ši formulė padeda pasiekti balansą ties ilgalaikio apdovanojimo bei trumpalaikio apdovanojimo optimizavimo.
+
+Vienas iš svarbiausių praktinių patarimų, padedančių pasiekti dydžiausią ilgalaikį apdovanojimą yra priskirti apdovanojimus už pasiektą tikslą, o ne skirti apdovanojimus už tai kaip mes norėtume, kad agentas pasiektų tikslą. Agentas mokymo procese turi pats atrasti optimaliausius veiksmus vedančius ties tiek tikslo pasiekimu, tiek dydžiausiu epizodo apdovanojimu. Kitame skyriuje bus apibrežiama, kaip būtent agentas optimizuoja savo elgesį, jo viena iš tikslo funkcijos konceptu, kurį gradientiniai metodai nuolatos optimizuoja.
+
+
+\subsubsection{Vertės bei veiksmų taisyklių funkcijos}
+
+Norint pasirinkti veiksmus, vedančius į būsenas, kurios suteikia dydžiausią įmanoma apdovanojimą, mes turime kiekvienai busenai priskirti tam tikrą matą. Todėl kiekviena būsena yra nusakoma pagal savo vertę. Ši vertė yra žymima $v_\pi(s)$ ir nusako pasirinktos $s$ būsenos tikėtiną apdovanojimą: 
+
+\begin{equation}
+v_{\pi}(s) \doteq \mathbb{E}_{\pi}\left[G_{t} \mid S_{t}=s\right]=\mathbb{E}_{\pi}\left[\sum_{k=0}^{\infty} \gamma^{k} R_{t+k+1} \mid S_{t}=s\right], \text { for all } s \in \mathcal{S}
+\end{equation}
+
+Žinant kiekvienos būsenos tikėtina apdovanojimą, mes visados galime rinktis tik tuos veiksmus, kurie veda į dydžiausią apdovanojimą, dydžiausią $v_\pi(s\sp{\prime})$. Šį pasirinkimą nusako veiksmų taisyklės. Tai yra tikimybių pasiskirstimas žymimas $\pi(a|s)$, nurodantis būsenos $s$ visų veiksmų pasirinkimu pasiskirstymą. Kitaip tariant su kokia tikimybe, mes pasirinktume veiksmą $a$ būnant būsenoje $s$, kaip tai matosi paveikslėlyje \ref{policy}.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.6\textwidth]{policy}
+\caption{Veiksmų taisyklių pasiskirstymas, kur $\epsilon=$5 }
+\label{policy}
+\end{figure}
+
+
+Užrašymas $v_{\pi}(s)$ nurodo, kad ši būsenos vertė yra apskaičiuota naudojantis ${\pi}$ veiksmų taisyklėmis. Veiksmų taisyklės gali būti įvairios. Dažniausiai naudojame $\epsilon-greedy$ metodą, kaip tai matėme ties \ref{eqn:argmaxA} formule bei kurio pritaikymas markovo grandinėms yra pateiktas \ref{eqn:greedyPolicy} formulėje. Šio metodu mes visalaika priskiriame $1-\epsilon$ tikimybę veiksmui, kuris gražina dydžiausią apdovanojimą apskaičiuojama naudojantis $v_{\pi}(s)$ formule. 
+
+\begin{equation}
+\label{eqn:greedyPolicy}
+\begin{aligned}
+\pi^{\prime}(s) & \doteq \underset{a}{\arg \max } q_{\pi}(s, a) \\
+&=\underset{a}{\operatorname{argmax}} \mathbb{E}\left[R_{t+1}+\gamma v_{\pi}\left(S_{t+1}\right) \mid S_{t}=s, A_{t}=a\right] \\
+&=\underset{a}{\operatorname{argmax}} \sum_{s^{\prime}, r} p\left(s^{\prime}, r \mid s, a\right)\left[r+\gamma v_{\pi}\left(s^{\prime}\right)\right]
+\end{aligned}
+\end{equation}
+
+
+Turint kiekvienos būsenos taisyklių pasiskirstymą, galima suskaičiuoti kiekvienos būsenos tikėtiną reikšmę, kaip tai matosi \ref {eqn:tiketinaReiksme} formulėje.
+
+\begin{equation}
+\label{eqn:tiketinaReiksme}
+\begin{aligned}
+v_{\pi}(s) & \doteq \mathbb{E}_{\pi}\left[G_{t} \mid S_{t}=s\right] \\
+&=\mathbb{E}_{\pi}\left[R_{t+1}+\gamma G_{t+1} \mid S_{t}=s\right] \\
+&=\sum_{a} \pi(a \mid s) \sum_{s^{\prime}} \sum_{r} p\left(s^{\prime}, r \mid s, a\right)\left[r+\gamma \mathbb{E}_{\pi}\left[G_{t+1} \mid S_{t+1}=s^{\prime}\right]\right] \\
+&=\sum_{a} \pi(a \mid s) \sum_{s^{\prime}, r} p\left(s^{\prime}, r \mid s, a\right)\left[r+\gamma v_{\pi}\left(s^{\prime}\right)\right], \quad \text { kiekvienam } s \in \mathcal{S},
+\end{aligned}
+\end{equation}
+
+Šios formulės paskutinė lygybė yra dar geriau žinoma kaip bellmano lygybė. Ji padeda rekursiškai apskaičiuoti $v_{\pi}(s)$ reikšmes bei išvengti apdovanojimų kaupimo kompiuterio atmintyje.
+
+Tačiau praktikoje mes naudojame ne $v_{\pi}(s)$ - būsenos vertės matą, o $q_{\pi}(s, a)$ - veiksmo vertės matą esant būsenoj $s$:
+
+\begin{equation}
+q_{\pi}(s, a) \doteq \mathbb{E}_{\pi}\left[G_{t} \mid S_{t}=s, A_{t}=a\right]=\mathbb{E}_{\pi}\left[\sum_{k=0}^{\infty} \gamma^{k} R_{t+k+1} \mid S_{t}=s, A_{t}=a\right]
+\end{equation}
+
+Galime pastebėti, kad $v_{\pi}(s)$ yra tos būsenos $s$ visų veiksmų $q_{\pi}(s, a)$ proporcinga $\pi(a|s)$ sudėtis bei taip pat išsireiškia bellmano lygybe:
+
+\begin{equation}
+\begin{aligned}
+& q_{\pi}(s, a)=E_{\pi}\left[G_{t} \mid S_{t}=s, A_{t}=a\right]=\\
+&=\sum_{s^{\prime}} \sum_{r} p\left(s^{\prime}, r \mid s, a\right)\left[r+\gamma E_{\pi}\left[G_{t+1} \mid S_{t+1}=s^{\prime}\right]=\right.\\
+=& \sum_{s^{\prime}} \sum_{r} p\left(s^{\prime}, r\mid s, a\right)\left[r \cdot \gamma \sum_{a^{\prime}} \pi\left(a^{\prime} \mid s^{\prime}\right) \cdot E_{\pi}\left[G_{t+1} \mid S_{t+1^{\prime}}=s^{\prime}, A_{t+1}=a^{\prime}\right]\right] \\
+=& \sum_{s^{\prime}} \sum_{r} p\left(s^{\prime} r \mid s, a\right)\left[r+\gamma \sum_{a^{\prime}} \pi\left(a^{\prime} \mid s^{\prime}\right) \cdot q_{\pi}\left(s^{\prime}, a^{\prime}\right)\right],
+\end{aligned}
+\end{equation}
+
+kur $v_{\pi}(s^{\prime}) = \gamma E_{\pi}\left[G_{t+1} \mid S_{t+1}=s^{\prime}\right]$.
+
+$q_{\pi}(s, a)$ Formos dėka mum nereikia apskaičiuoti $s$ būsenos visų veiksmų apdovanojimus norint gauti $v_{\pi}(s)$. Užtenka rinktis tik tuos veiksmus, kurie yra jau apskaičiuoti bei optimaliausi.
+
+Taigi turint būsenų verčių bei veiksmų taisyklių apskaičiavimo formules galime pradėti iteracini procesą, kurio tikslas yra optimizuoti šias reikšmes.
+
+\subsubsection{Verčių bei veiksmų taisyklių iteravimas}
+
+Optimizavimo metu, mes ieškome tokių būsenų verčių bei optimalių taisyklių, kurios gražintų dydžiausią epizodo apdovanojimą.
+Yra daugybe būdų tai atlikti, kuriuos galima sugrupuoti į trys kategorijas:
+
+\begin{enumerate}
+  \addtolength{\itemsep}{-0.5\baselineskip} 
+  \item Dinaminio programavimo metodas, kuomet modelis žinomas, mes kiekvienos iteracijos metu perskaičiuojame visas $v_{\pi}(s)$ reikšmes ir atnaujiname veiksmų taisykles. Šį procesą iteruojame, iki konvergacijos pasiekimo. Nenaudojamas metodas, nes labai retai tenkinama šio metodo privaloma salyga - modelio turėjimas. Modelį mes traktuojame kaip markovo grandinių modelį, su visų veiksmų perėjimo tikimybėmis.
+  \item Monte Carlo metodai - imties metodais apskaičiuojame $q_{\pi}(s, a)$ reikšmes. Šis metodas taikomas kuomet neturime modelio ir reikia jį aproksimuoti. 
+  \item Neuroninių tinklų aproksimacijos - metodai, kurie aproksimuoja $q_{\pi}(s, a)$ reikšmes. Jei monte carlo metodai apskaičiuodavo kiekvienos būsenos tikslias reikšmes, funkcijų aproksimacijos metodais mes jas apskaičiuojame tik apytiksliai.
+\end{enumerate}
+
+Visos šios kategorijos pasižymi bendru optimizavimo principu:
+
+\begin{enumerate}
+  \addtolength{\itemsep}{-0.5\baselineskip} 
+  \item Įvertinimas - Perskaičiuojame $v_{\pi}(s)$ reikšmes naudojantis atnaujintomis veiksmų taisyklėmis.
+  \item Tikslinimas - Turint naujas $v_{\pi}(s)$ reikšmes, perskaičiuojame optimalias veiksmų taisykles $\pi(a|s)$.
+\end{enumerate}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.5\textwidth]{policyIteration}
+\caption{Viena optimizacijos iteracija }
+\label{policyIteration}
+\end{figure}
+
+Šiuos žingsnius kartojame tol, kol pasiekiame $v_{\pi}(s)$ konvergaciją - naujos iteracijos nepakeičia $v_{\pi}(s)$ reikšmių. Tolimesniuose skyriuose trumpai apžvelgsiu šio proceso įgyvendinimą dinaminiuose bei monte karlo metoduose. Neuroninių tinklų aproksimacijos bus plėtojamos giliausiai, kadangi šiuo metu jie yra labiausiai paplite bei efektyviausi.
+
+\subsubsection{Dinaminis programavimas}
+
+Įvertinimo bei tikslinimo procesą, pateikta \label{policyIteration} paveikslėlyje, paprasčiausiai iliustruoja dinaminio programavimo metodas pateiktas \ref{DynamicProgrammingExample} pavyzdyje. Šiame pavyzdyje mūsų agentas atsiranda viename iš keturiolikos langeliu ir gali eiti į keturias puses, pateiktomis rodyklėmis. Agento tikslas patekti į žalius langelius. Kairėje paveikslėlio pusėje yra pateikti $v_{\pi}(s)$ įverčiai naudojantis \label{eqn:tiketinaReiksme} formule, o dešinėje perskaičiuojame optimalias veismų taisykles naudojantis \label{eqn:greedyPolicy} formule. Ypatingai svarbi optimizavimo seka:
+
+\begin{enumerate}
+  \addtolength{\itemsep}{-0.5\baselineskip} 
+  \item Įvertinimas - Perskaičiuojame $v_{\pi}(s)$ reikšmes atnaujinamos naudojantis $t-1$ žingsnio taisyklėmis.
+  \item Tikslinimas - Perskaičiavus $v_{\pi}(s)$ reikšmes, perskaičiuojame $t$ žingsnio optimalias veiksmų taisykles $\pi(a|s)$. Pavyzdyje naudojame godų veiksmo taisyklių įvertinima, kuris renkasi tik optimaliausius veiksmus.
+\end{enumerate}
+
+Vienas agento žingsnis, žymimas $t$, susideda iš šios įvertinimo bei tikslinimo sekos. Matome, kad užtenka vos tryjų žingsnių veiksmų taisyklėms tapti optimaliomis. Tačiau $v_{\pi}(s)$ reikšmėmių konvergacija užtrunka ilgesni laiką. Įvykus konvergacijai, agentui atsiradus ant bet kurio iš galimų baltų langelių, jis, vadovaudamasis veiksmų taisyklėmis, visados optimaliai suras kelią į žalius langelius. Taip pat labai svarbu pastebėti seniau aptarta $v_{\pi}(s)$ išsiskaidymą į $q_{\pi}(s, a)$ narių sumą. Šis išsiskaidymas intuityviai matosi pateiktame \ref{DynamicProgrammingExample} paveikslėlyje, kuomet kiekvieną rodyklę, galima traktuoti kaip $q_{\pi}(s, a)$ reikšmę. Šis išskaidymas yra svarbus neuroninių tinklų aproksimacijose, kaip tai bus aptarta tolimesniuose mokymosi modeliuose. Tačiau šis algoritmas yra tinkamas tik apskaičiuoti mažų dimensijų problemas bei iliustruoti intuityvius pavyzdžius. Augant tiek veiksmų, tiek būsenų erdvei šie skaičiavimai tampa neįmanomi. Ši problema plėtojama kitame skyriuje.
+
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.8\textwidth]{DynamicProgrammingExample}
+\caption{Dinaminio programavimo ve }
+\label{DynamicProgrammingExample}
+\end{figure}
+
+
+\clearpage
+\subsubsection{Monte Karlo metodai}
+
+Nors specifinius Monte Carlo metodus šiame darbe nenagrinėsiu, tačiau pabrėšiu jų labai svarbų principą, kuriuo visi naujausi metodai remiasi. Monte Carlo metodais mes simuliuojame agento epizodus, gauname veiksmų trajektorijas (kaip tai matosi \ref{Episodas} paveikslėlyje) iš kurių susiskaičiuojame $q_{\pi}(s, a)$ reikšmes. Kiekvienos iteracijos metu kiekvienai būsenai $s$ bei jos specifiniui veiksmui $a$ mes išsaugome gautą apdovanojimą $G_t$. Iš šių išsaugotų reikšmių mes susiskaičiuojame vidurkį ir jį priskiriame $q_{\pi}(s, a)$ nariui. Tai atlikus mes perskaičiuojame veiksmų taisyklių reikšmes, kurios pasirenka naujus optimalius veiksmus. Po daugybes iteracijų, $q_{\pi}(s, a)$ konverguoja ties specifine, optimalia reikšme. Šio metodo veikimo principai pateikti \ref{alg:MC} pseudokode.
+
+\begin{algorithm}[H]
+ \label{alg:MC}
+ \SetAlgorithmName{Algoritmas}{}
+\SetAlgoLined
+\DontPrintSemicolon
+\textbf{Algoritmo parametrai:}\; 
+$\varepsilon>0$\;
+\textbf{Duomenų priskirimas:}\;
+
+	$\pi \leftarrow$ atsitiktinė $\varepsilon$-greedy veiksmų taisyklių pasiskirstymas\;
+	$Q(s, a) \in \mathbb{R}$ (atsitiktinis priskirimas), visiems $s \in \mathcal{S}, a \in \mathcal{A}(s)$\;
+	Vertės $(s, a) \leftarrow$ tuščias sąrašas, visiems $s \in \mathcal{S}, a \in \mathcal{A}(s)$\;
+	
+
+
+ \For{$ \infty $}{
+	Agentas sugeneruoja episodą sekant $\pi: S_{0}, A_{0}, R_{1}, \ldots, S_{T-1}, A_{T-1}, R_{T}$\;
+	$G \leftarrow 0$\;
+	 \For{$t=T-1, T-2, \ldots, 0$}{
+		$G \leftarrow \gamma G+R_{t+1}$\;
+		\uIf{ Jei $S_{t}, A_{t}$ būsena yra pirmas apsilankymas  $S_{0}, A_{0}, S_{1}, A_{1} \ldots, S_{t-1}, A_{t-1}$ sekoje}{
+    		Išsaugoti $G$ į Vertės$\left(S_{t}, A_{t}\right)$ sąraša\;
+			$Q\left(S_{t}, A_{t}\right) \leftarrow$ vidurkis $\left(\right.$ Vertės$\left.\left(S_{t}, A_{t}\right)\right)$\;
+			$A^{*} \leftarrow \arg \max _{a} Q\left(S_{t}, a\right)$\;
+  			}
+			\For{visi $a \in \mathcal{A}\left(S_{t}\right)$}{
+			$
+			\pi\left(a \mid S_{t}\right) \leftarrow \begin{cases}1-\varepsilon+\varepsilon /\left|\mathcal{A}\left(S_{t}\right)\right| & \text { if 			} a=A^{*} \\ \varepsilon /\left|\mathcal{A}\left(S_{t}\right)\right| & \text { if } a \neq A^{*}\end{cases}\;
+			$
+			}
+		}
+    }
+\KwResult{ Gautos optimalios $Q(s, a)$ bei $\pi(a|s)$ reikšmės.}
+\caption{Taisyklių bei verčių aproksimavimas Monte Carlo pirmo apsilankymo metodu}
+\end{algorithm}
+
+\ref{alg:MC} Algoritmo problema, kaip ir prieš tai buvusių metododų, yra kiekvienos būsenos ir jo veiksmo saugojimas bei ilgas konvergavimas. Augant būsenų bei veiksmų dimensijoms, konvergavimas tampa neįgyvendinama užduotimi. Veiksmams bei dimensijoms užtenka būti trečioje dimensijoje ir jau nebeužtenka kompiuterio resursų apskaičiuoti optimalių reikšmių. Taip pat monte karlo metodai pasižymi duomenų kaupimo problema, kuomet neužtenka atminties juo saugoti. Duomenų kaupimą galima sumažinti pasitelkiant \ref{eqn:Vidurkio} bei \ref{judantisVidurkis} formulėmis, kaip tai atlieka pagrindinės šio mokslo formulės - TD ir Q-mokymasis.
+
+\subsubsection{TD bei Q-mokymasis}
+
+TD formulė sukombinuoja Monte Karlo bei dinaminio programavimo pagrindines idėjas į vieną paprastą \ref{TD} formulę. 
+
+\begin{equation}
+\label{TD}
+\begin{aligned}
+V\left(S_{t}\right) &\leftarrow V\left(S_{t}\right)+\alpha\left[G_{t}-V\left(S_{t}\right)\right] = \\
+& = V\left(S_{t}\right)+\alpha\left[R_{t+1}+\gamma V\left(S_{t+1}\right)-V\left(S_{t}\right)\right]
+\end{aligned}
+\end{equation}
+
+Šios formulės ištakas galima pastebėti tiek \ref{eqn:Vidurkio} bei \ref{judantisVidurkis} formulėse. Šias dvi formules sukombinavus, galime perrašyti \ref{eqn:tiketinaReiksme} formulę, kuri pasitelkia markovo grandinių modeliu, į \ref{TD} formulę, be markovo grandinių modelio. TD paklaida yra paklaida tarp $R_{t+1}+\gamma V\left(S_{t+1}\right)$ bei $V\left(S_{t}\right)$. Kuomet $V\left(S_{t}\right)$ konverguoja, TD paklaida tampa nulinė. Pasiekus nulinę TD paklaidą galima laikyti, kad modelis apsimokė. Vienas iš pagrindinių šio modelio skirtumu lyginant su \ref{alg:MC} algoritmu, yra greitesnė konvergacija. Šis metodas nelaukia epizodo galo, o atlieka $v_{\pi}(s)$ verčių atnaujinimą kiekvieno agento žingsnio metu. TD metodas yra pagrindas SARSA bei Q-mokymosi metodams, kurie atlieka atnaujinimus $q_{\pi}(s, a)$ vertėms. Šios dvi metodologijos skiriasi savo optimalumo atradimu, SARSA naudojasi šia TD atnaujinimo formule:
+
+\begin{equation}
+Q(S, A) \leftarrow Q(S, A)+\alpha\left[R+\gamma Q\left(S^{\prime}, A^{\prime}\right)-Q(S, A)\right].
+\end{equation}
+
+o Q-mokymasis šia:
+
+\begin{equation}
+\label{TD-Q}
+Q(S, A) \leftarrow Q(S, A)+\alpha\left[R+\gamma \max _{a} Q\left(S^{\prime}, a\right)-Q(S, A)\right]
+\end{equation}
+
+Nors šios formulės yra vos ne identiškos, tačiau jos skiriasi skirtingomis optimaliomis veiksmų trajektorijomis. SARSA modelio atveju agentas stengesi elgtis saugiai, dažniau vengia būsenų, kurių vertė yra neigiama. Šis modelis tinkamas tokiems eksperimentams, kuriuos yra brangu simuliuoti ir norime sumažinti agento kritines klaidas besimokant, vedančias ties agento fiziniu sugedimu, praradimu. Šio atvejo pavyzdys galėtų būti roboto navigacija ties šlaitu. Kiekvienos simuliacijos metu agentui besimokant jis gali nukristi nuo šlaito ir sugadinti savo įranga. Todėl norint šias brangias klaidas sumažinti mes apmokome robota pasitelkiant SARSA metodu. Bet kadangi dydžiaja laiko dalį mokymasis vyksta simuliuotose aplinkose, mūsų agento kritinių klaidų kaina nėra faktorius. Svarbiausias tikslas mums tampa optimalios verčių suradimas, kuo Q-mokymasis ir pasižymi. Q-mokymasis \cite{QLearning} yra vienas iš populiariausių bei seniausių egzistuojančių metodu. Tačiau jis išpopuliarėjo visai neseniai, kuomet 2014 metais Google Deepmind komanda sugebėjo \ref{TD-Q} funkcija aproksimuoti pasitelkiant konvoliucinius neuroninius tinklus. Šiomis aproksimacijomis Deepmind komanda apmokė agentus įveikti Atari žaidimus taip pademonstruojant skatinamojo mokymosi bei neuroninių tinklų aproksimacijų potencialą. Visi dabartiniai modeliai pasitelkia neuroninių tinklų aproksimacijomis. Aproksimacijos padėjo išspręsti viena dydžiausių skatinamojo mokslo problemų - aukštų būsenų dimensijų neįmanoma konvergavimą. Dėl šios priežasties toliau bus aptariamas gilusisQ - vienas iš pirmųjų ir nors jau nebeefektyviu modeliu, sukėlusių skatinamojo mokslo atgimimą.
+
+\subsubsection{Gilusis skatinamasis mokslas, gilusis-Q}
+
+Visi naujausi, dabartiniai skatinamojo mokslo modeliai yra aproksimuojami neuroniniais tinklais. Neuroniniai tinklai padeda generalizuoti nepaprastai didžiules būsenų erdves, kaip tai pademonstravo Google Deepmind giliojo-Q konvoliucinis neuroninis tinklas, kurio įvestis buvo kompiuterio ekrano individualus pikseliai. 
+
+Gilusis-Q metodas parametrizuoja $q_{\pi}(s, a, \theta)$ reikšmę. Jo $\theta$ parametrai tampa neuroninio tinklo $\theta$ parametrai, kurie yra gradientiniais metodais optimizuojami, su tikslu pasiekti tikrąsias optimalias $q_{\pi}(s, a)$ reikšmes. Gilusis-Q neuroninio tinklo išvestis yra aproksimuota $q_{\pi}(s, a)$ reikšmė, kuri yra pateikta Q-mokymosi \ref{TD-Q} formulėje šiuo $\left[R+\gamma \max _{a} Q\left(S^{\prime}, a\right)\right]$ pavidalu. Kaip matome, mus domina tik pateiktos funkcijos tikslo dalis, kaip tai išreikšta \ref{TDLietuviskai} formulėje. Šis tikslas yra traktuojamas, kaip naujausia $q_{\pi}(s, a)$ reikšmė. Dažnai norint tai pabrėžti Q-mokymosi formulė yra pertvarkoma į \ref{QTikslas} formulėje pateiktą bellmano pavidalą:
+
+\begin{equation}
+\label{QTikslas}
+Q^{\text {naujas }}\left(s_{t}, a_{t}\right) \leftarrow(1-\alpha) \cdot \underbrace{Q\left(s_{t}, a_{t}\right)}_{\text{Sena reikšmė}}+\alpha \cdot\underbrace{(r_{t}+\gamma \cdot \max _{a} Q\left(s_{t+1}, a\right))}_{\text{Tikslas = nauja $q_{\pi}(s, a)$ reikšmė}}
+\end{equation} 
+
+
+Šis pavidalas yra nekaskitas, o daugybe kartu nagrinėta judančio vidurkio formulė, kur $\left[R+\gamma \max _{a} Q\left(S^{\prime}, a\right)\right]$ yra naujausia gauta $q_{\pi}(s, a)$ reikšmė.
+
+Taigi neuroninis tinklas stengesi aproksimuoti tikslą, kuris geriau žinomas kaip $G_t$ arba naujausias aproksimuotas $q_{\pi}(s, a)$ narys. Tuo tarpu neuroninio tinklo įvestis yra būsenos vektorius $s$. Kadangi naudojamas neuroninis tinklas, vektoriaus $s$ dydis nėra svarbus, konvergacija išlieka sparti. 
+
+Optimizavimo procesas susideda iš šių tryju dalių:
+
+\begin{enumerate}
+  \addtolength{\itemsep}{-0.5\baselineskip} 
+  \item Sukuriama duomenų talpykla bei du neuroniniai tinklai - taikinys bei pagrindinis.
+  \item Pasirenkame veiksmą vadovaujantis godžiuoju $\epsilon$ veiksmų taisyklių metodu
+  \item Svorių atnaujinimas naudojantis bellmano taisykle, pateikta \ref{QTikslas}
+\end{enumerate}
+
+\paragraph{Patirčių talpyklos bei dviejų neuroninių tinklų sukurimas}
+
+Agentas tyrinėdamas aplinką, kaupia duomenis patirčių talpykloje, dar kitaip vadinama buferiu. Ši patirčių talpykla yra agento praeities patirtys, kurios padeda optimizuoti neuroninius tinklus. Joje kaupiamos $(s,a,r,s^\prime)$ duomenų eilutės, kurios vos ne identiškos SARSA modelio duomenims. Panašumas ties tuo nesibaige, modelis taip pat kaupia duomenis tokiu pačiu principu kaip SARSA modelis, monte karlo budu simuliuojant žingsnius. Esant būsenoje $s$ pagrindinis neuroninis tinklas aproksimuoja $s$ būsenos visų $a$ veiksmų $q_{\pi}(s, a)$ vertes, kaip tai matyti \ref{QNeuroniniaiTinklai} paveikslėlyje ir pasirenka judėti ta trajektorija, kurios $q_{\pi}(s, a)$ vertė yra dydžiausia. 
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=1\textwidth]{Q Neuronu diagrama}
+\caption{Giliojo Q neuroninio tinklo struktūra}
+\label{QNeuroniniaiTinklai}
+\end{figure}
+
+
+Atlikus veiksmą mes apskaičiuojame gautą apdovanojimą $r$ bei naują buseną $s^\prime$, kurioje atsiradome atlikus veiksmą $a$. Tokiu budu turim vieną duomenų eilutę, kurią išsaugome į patirčių talpyklą. Sukaupus pakankamai daug duomenų galime juos pradėti naudoti neuroninio tinklo apmokymui. Apmokant mes pasitelkiame tik mažą dalį duomenų atsitiktinai ištrauktų iš talpyklos. Svarbu neuroninį tinklą apmokyti tik su duomenimis iš patirčių talpyklos, norint išvengti koreliacijos. Šią korelecijos tendencija lengva pastebėti intuityviai išanalizavus patyrčių talpyklos veikimo principus:
+
+\begin{enumerate}
+  \addtolength{\itemsep}{-0.5\baselineskip} 
+  \item Atsitiktinės duomenų eilutės $(s,a,r,s^\prime)$ paimamos iš patirčių talpyklos. Dėl atsitiktinio ėmimo, dydžioji dalis patirčių - duomenų eilučių, yra iš skirtingų trajektorijų, epizodų.
+  \item Su paimtais duomenimis apmokome modelį. Šio proceso metu, dėl atsitiktinio ėmimo, skirtingos būsenos įgyją naujas $q_{\pi}(s, a)$ aproksimacijas. 
+\end{enumerate}
+
+Tuo tarpu be patirčių talpyklos, mes apmokytume neuroninį tinklą kiekvieno žingsnio metu. Tačiau kadangi nauji agento žingsniai priklauso nuo senesnių, mūsų duomenis taptų priklausomi. Tai pažeidžia stochastinio gradientinio nuolydžio viena iš pagrindinių reikalavimų - imties duomenis turi būti nepriklausomi. Tai nutikus modelis pradėtų dažniau rinktis pasikartojančias trajektorijas, diverguotų į ne optimalias trajektorijas. Patirties talpykla taip pat turi dar viena papildoma svarbų bruožą - pakartotinas apmokymas su tais pačiais duomenimis. Kadangi duomenis yra išsaugojami talpykloje, mes turime ne mažą tikimybę apmokyti neuroninį tinklą su tuo pačiu dėmeniu ne vieną kartą. Šis bruožas naudingas apmokyti neuroninį tinklą su retai pasitaikančiomis reikšmėmis. Patirčių talpykla dažniausiai turi fiksuotą dydį. Talpykla yra naudojama visuose algoritmuose, kurie naudoja neuroninių tinklų aproksimacijas. 
+
+Patirčių talpykla padeda apsimokyti pagrindiniam neuroniniui tinklui, kurio tikslo funkcija yra pateikta žemiau:
+
+\begin{equation}
+L(\theta)=\left[\left(\left(r+\gamma \max _{a t+1} Q\left(s_{t+1}, a_{t+1} ; \theta^{\text {taikinys }}\right)\right)-Q\left(s, a ; \theta^{\text {pagrindinis }}\right)\right)^{2}\right]
+\end{equation}
+
+Kaip matome $\theta$ parametrai atkeliauja iš taikinio bei pagrindinio neuroninio tinklo. Abu neuroniniai tinklai aproksimuoja $q_{\pi}(s, a)$. Tačiau taikinio neuroninio tinklo parametrai nėra apmokami, jie kas tam tikra agento žingsnių kieki yra periodiškai paimami iš pagrindinio neuroninio tinklo. Tuo tarpu pagrindinio neuroninio tinklo parametrai yra atnaujinami kas kiekviena žingsnį. Ši metodologija buvo pirma karta pritaikyta Google Deepmind komandos, kuriant Atari agentus \cite{GoogleDeepQLearning}. Jos tikslas yra sumažinti mokymosi divergacijas bei nestabilias $q_{\pi}(s, a)$ verčių svyravimus. Šios nepalankios savybės atsiranda iš neuroninių tinklų generalizacijos. Atnaujinus $q_{\pi}(s, a)$ reikšmes ir pakeitus $\theta$ parametrus, kartu pasikeičia kaimyninės $q_{\pi}(s^\prime, a)$ reikšmės, kitaip tariant mūsų taikinio reikšmės, jei naudotume viena neuroninį tinklą. Nuolat kintančios taikinio reikšmės veda prie nestabilaus konvergavimo, mūsų $q_{\pi}(s, a)$ reikšmės artėja link norimų $q_{\pi}(s, a)$ reikšmių, kurios dėl kiekvieno atnaujinimo kinta. Todėl yra sukuriamas antras neuroninis tinklas su fiksuotais parametrais, kurie stabilizuoja mokymosi procesą.
+
+
+
+
+\paragraph{Veiksmų pasirinkimas}
+
+\paragraph{Svorių atnaujinimas}
+
+
+
+
+
+
+
+Q-mokymosi yra nebenaudojamas  nes įvyko vienas dydžiausių proveržių nes buvo įrodytas veiksmų taisyklių gradientas 
+
+
+\subsubsection{Veiksmo taisyklių gradientas}
+
+\begin{equation}
+P(\tau \mid \theta)=\rho_{0}\left(s_{0}\right) \prod_{t=0}^{T} P\left(s_{t+1} \mid s_{t}, a_{t}\right) \pi_{\theta}\left(a_{t} \mid s_{t}\right)
+\end{equation}
+
+
+\begin{equation}
+\nabla_{\theta} P(\tau \mid \theta)=P(\tau \mid \theta) \nabla_{\theta} \log P(\tau \mid \theta)
+\end{equation}
+
+\begin{equation}
+\log P(\tau \mid \theta)=\log \rho_{0}\left(s_{0}\right)+\sum_{t=0}^{T}\left(\log P\left(s_{t+1} \mid s_{t}, a_{t}\right)+\log \pi_{\theta}\left(a_{t} \mid s_{t}\right)\right)
+\end{equation}
+
+\begin{equation}
+\begin{aligned}
+\nabla_{\theta} \log P(\tau \mid \theta) &=\nabla_{\theta} \log _{0}\left(s_{0}\right)+\sum_{t=0}^{T}\left(\underline{\nabla_{\theta} \log P\left(s_{t+1} \mid s_{t}, a_{t}\right)}+\nabla_{\theta} \log \pi_{\theta}\left(a_{t} \mid s_{t}\right)\right) \\
+&=\sum_{t=0}^{T} \nabla_{\theta} \log \pi_{\theta}\left(a_{t} \mid s_{t}\right)
+\end{aligned}
+\end{equation}
+
+\subsubsection{TODO}
+
+-qmokymasis, bufferis
+-policy gradient
+-aktorius kritikas
+-DDPG
+-TD3
+
+%-pakeist * i \cdot
 %
 \subsubsection{Pirmo skyriaus skyrelio poskyris}
 %
@@ -801,9 +1183,15 @@ Lentelė \ref{lentele} is an example of a referenced \LaTeX{} element.
 \bibitem{TDSutton} 
 Sutton, R. \& Barto, A. 1987, ‘A Temporal-Difference Model of Classical Conditioning’, in Proceedings of the Ninth Annual Conference of the Cognitive Science Society, Seattle, WA, pp. 355–78.\href{http://incompleteideas.net/papers/sutton-barto-TD-87.pdf}{PDF}.
 
-\bibitem{tob} 
-Tobias Oetiker. The Not So Short Introduction to \LaTeX2e{}. Or \LaTeX2e{} in 157 
-minutes. \href{http://tobi.oetiker.ch/lshort/lshort.pdf}{Version 5.06, June 20, 2016}.
+\bibitem{QLearning}
+Watkins, C.J.C.H. (1989). Learning from Delayed Rewards (PDF) (Ph.D. thesis). University of Cambridge. EThOS uk.bl.ethos.330022/ \href{https://www.cs.rhul.ac.uk/~chrisw/new_thesis.pdf}{PDF}
+
+\bibitem{DeepQLearning}
+ "Methods and Apparatus for Reinforcement Learning, US Patent \#20150100530A1" (PDF). US Patent Office. 9 April 2015. Retrieved 28 July 2018. \href{https://patentimages.storage.googleapis.com/71/91/4a/c5cf4ffa56f705/US20150100530A1.pdf}{PDF}
+
+\bibitem{GoogleDeepQLearning}
+Human-level control through deep reinforcement learning \href{https://storage.googleapis.com/deepmind-media/dqn/DQNNaturePaper.pdf}{PDF}
+
 
 \end{thebibliography}
 %

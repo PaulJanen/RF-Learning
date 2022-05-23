@@ -63,7 +63,7 @@ class Walker(threading.Thread):
           self.episode_num += 1
         
         # Before 10000 timesteps, we play random actions
-        if self.manager.total_timesteps < self.start_timesteps:
+        if self.manager.total_timesteps < self.start_timesteps and self.manager.loadModel == False:
           action = self.env.actionSample()
         else: # After 10000 timesteps, we switch to the model
           while(self.manager.policy.isTraining):

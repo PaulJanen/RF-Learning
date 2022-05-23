@@ -19,7 +19,7 @@
 \usepackage[utf8]{inputenc}            % naudojama, kai .tex failas UTF-8 koduotės
 \usepackage[L7x]{fontenc}              % nurodoma lietuviško teksto koduotė Latin-7
 \usepackage[lithuanian]{babel}         % nurodoma, kad dokumentas yra lietuviškas
-
+\usepackage[autostyle]{csquotes}\MakeOuterQuote{"} \selectlanguage{lithuanian}
 \usepackage{lmodern}                   % dokumente naudojamas šriftas Latin Modern
 \usepackage{microtype}                 % optimizuojami atstumai tarp raidžių žodyje
 \usepackage{indentfirst}               % atitraukiama pirmoji naujo skyriaus eilutė
@@ -814,7 +814,8 @@ G_{t} & \doteq R_{t+1}+\gamma R_{t+2}+\gamma^{2} R_{t+3}+\gamma^{3} R_{t+4}+\cdo
 
 Taip pat ši formulė padeda pasiekti balansą ties ilgalaikio apdovanojimo bei trumpalaikio apdovanojimo optimizavimo.
 
-Vienas iš svarbiausių praktinių patarimų, padedančių pasiekti dydžiausią ilgalaikį apdovanojimą yra priskirti apdovanojimus už pasiektą tikslą, o ne skirti apdovanojimus už tai kaip mes norėtume, kad agentas pasiektų tikslą. Agentas mokymo procese turi pats atrasti optimaliausius veiksmus vedančius ties tiek tikslo pasiekimu, tiek dydžiausiu epizodo apdovanojimu. Kitame skyriuje bus apibrežiama, kaip būtent agentas optimizuoja savo elgesį, jo viena iš tikslo funkcijos konceptu, kurį gradientiniai metodai nuolatos optimizuoja.
+\label{apdovanojimoPatarimas}
+Vienas iš svarbiausių praktinių patarimų, padedančių pasiekti dydžiausią ilgalaikį apdovanojimą yra priskirti apdovanojimus už pasiektą tikslą, o ne skirti apdovanojimus už tai kaip mes norėtume, kad agentas pasiektų tikslą. Agentas mokymo procese turi pats atrasti optimaliausius veiksmus vedančius ties tiek tikslo pasiekimu, tiek dydžiausiu epizodo apdovanojimu. Kitame skyriuje bus apibrežiama, kaip būtent agentas optimizuoja savo elgesį, jo viena iš tikslo funkcijos konceptų, kurį gradientiniai metodai nuolatos optimizuoja.
 
 
 \subsubsection{Vertės bei veiksmų taisyklių funkcijos}
@@ -847,7 +848,7 @@ Užrašymas $v_{\pi}(s)$ nurodo, kad ši būsenos vertė yra apskaičiuota naudo
 \end{equation}
 
 
-Turint kiekvienos būsenos taisyklių pasiskirstymą, galima suskaičiuoti kiekvienos būsenos tikėtiną reikšmę, kaip tai matosi \ref {eqn:tiketinaReiksme} formulėje.
+Turint kiekvienos būsenos taisyklių pasiskirstymą, galima suskaičiuoti kiekvienos būsenos tikėtiną reikšmę, kaip tai matosi \ref{eqn:tiketinaReiksme} formulėje.
 
 \begin{equation}
 \label{eqn:tiketinaReiksme}
@@ -915,7 +916,7 @@ Visos šios kategorijos pasižymi bendru optimizavimo principu:
 
 \subsubsection{Dinaminis programavimas}
 
-Įvertinimo bei tikslinimo procesą, pateikta \label{policyIteration} paveikslėlyje, paprasčiausiai iliustruoja dinaminio programavimo metodas pateiktas \ref{DynamicProgrammingExample} pavyzdyje. Šiame pavyzdyje mūsų agentas atsiranda viename iš keturiolikos langeliu ir gali eiti į keturias puses, pateiktomis rodyklėmis. Agento tikslas patekti į žalius langelius. Kairėje paveikslėlio pusėje yra pateikti $v_{\pi}(s)$ įverčiai naudojantis \label{eqn:tiketinaReiksme} formule, o dešinėje perskaičiuojame optimalias veismų taisykles naudojantis \label{eqn:greedyPolicy} formule. Ypatingai svarbi optimizavimo seka:
+Įvertinimo bei tikslinimo procesą, pateikta \ref{policyIteration} paveikslėlyje, paprasčiausiai iliustruoja dinaminio programavimo metodas pateiktas \ref{DynamicProgrammingExample} pavyzdyje. Šiame pavyzdyje mūsų agentas atsiranda viename iš keturiolikos langeliu ir gali eiti į keturias puses, pateiktomis rodyklėmis. Agento tikslas patekti į žalius langelius. Kairėje paveikslėlio pusėje yra pateikti $v_{\pi}(s)$ įverčiai naudojantis \ref{eqn:tiketinaReiksme} formule, o dešinėje perskaičiuojame optimalias veismų taisykles naudojantis \label{eqn:greedyPolicy} formule. Ypatingai svarbi optimizavimo seka:
 
 \begin{enumerate}
   \addtolength{\itemsep}{-0.5\baselineskip} 
@@ -929,7 +930,7 @@ Vienas agento žingsnis, žymimas $t$, susideda iš šios įvertinimo bei tiksli
 \begin{figure}[ht!]
 \centering
 \includegraphics[width=0.8\textwidth]{DynamicProgrammingExample}
-\caption{Dinaminio programavimo ve }
+\caption{Dinaminio programavimo pavyzdys }
 \label{DynamicProgrammingExample}
 \end{figure}
 
@@ -1005,7 +1006,7 @@ Q(S, A) \leftarrow Q(S, A)+\alpha\left[R+\gamma \max _{a} Q\left(S^{\prime}, a\r
 Nors šios formulės yra vos ne identiškos, tačiau jos skiriasi skirtingomis optimaliomis veiksmų trajektorijomis. SARSA modelio atveju agentas stengesi elgtis saugiai, dažniau vengia būsenų, kurių vertė yra neigiama. Šis modelis tinkamas tokiems eksperimentams, kuriuos yra brangu simuliuoti ir norime sumažinti agento kritines klaidas besimokant, vedančias ties agento fiziniu sugedimu, praradimu. Šio atvejo pavyzdys galėtų būti roboto navigacija ties šlaitu. Kiekvienos simuliacijos metu agentui besimokant jis gali nukristi nuo šlaito ir sugadinti savo įranga. Todėl norint šias brangias klaidas sumažinti mes apmokome robota pasitelkiant SARSA metodu. Bet kadangi dydžiaja laiko dalį mokymasis vyksta simuliuotose aplinkose, mūsų agento kritinių klaidų kaina nėra faktorius. Svarbiausias tikslas mums tampa optimalios verčių suradimas, kuo Q-mokymasis ir pasižymi. Q-mokymasis \cite{QLearning} yra vienas iš populiariausių bei seniausių egzistuojančių metodu. Tačiau jis išpopuliarėjo visai neseniai, kuomet 2014 metais Google Deepmind komanda sugebėjo \ref{TD-Q} funkcija aproksimuoti pasitelkiant konvoliucinius neuroninius tinklus. Šiomis aproksimacijomis Deepmind komanda apmokė agentus įveikti Atari žaidimus taip pademonstruojant skatinamojo mokymosi bei neuroninių tinklų aproksimacijų potencialą. Visi dabartiniai modeliai pasitelkia neuroninių tinklų aproksimacijomis. Aproksimacijos padėjo išspręsti viena dydžiausių skatinamojo mokslo problemų - aukštų būsenų dimensijų neįmanoma konvergavimą. Dėl šios priežasties toliau bus aptariamas gilusisQ - vienas iš pirmųjų ir nors jau nebeefektyviu modeliu, sukėlusių skatinamojo mokslo atgimimą.
 
 \subsubsection{Gilusis skatinamasis mokslas, gilusis-Q}
-
+\label{GilusisQSkyrius}
 Visi naujausi, dabartiniai skatinamojo mokslo modeliai yra aproksimuojami neuroniniais tinklais. Neuroniniai tinklai padeda generalizuoti nepaprastai didžiules būsenų erdves, kaip tai pademonstravo Google Deepmind giliojo-Q konvoliucinis neuroninis tinklas, kurio įvestis buvo kompiuterio ekrano individualus pikseliai. 
 
 Gilusis-Q metodas parametrizuoja $q_{\pi}(s, a, \theta)$ reikšmę. Jo $\theta$ parametrai tampa neuroninio tinklo $\theta$ parametrai, kurie yra gradientiniais metodais optimizuojami, su tikslu pasiekti tikrąsias optimalias $q_{\pi}(s, a)$ reikšmes. Gilusis-Q neuroninio tinklo išvestis yra aproksimuota $q_{\pi}(s, a)$ reikšmė, kuri yra pateikta Q-mokymosi \ref{TD-Q} formulėje šiuo $\left[R+\gamma \max _{a} Q\left(S^{\prime}, a\right)\right]$ pavidalu. Kaip matome, mus domina tik pateiktos funkcijos tikslo dalis, kaip tai išreikšta \ref{TDLietuviskai} formulėje. Šis tikslas yra traktuojamas, kaip naujausia $q_{\pi}(s, a)$ reikšmė. Dažnai norint tai pabrėžti Q-mokymosi formulė yra pertvarkoma į \ref{QTikslas} formulėje pateiktą bellmano pavidalą:
@@ -1030,7 +1031,7 @@ Optimizavimo procesas susideda iš šių tryju dalių:
 \end{enumerate}
 
 \paragraph{Patirčių talpyklos bei dviejų neuroninių tinklų sukurimas}
-
+\label{TalpyklosSkyrius}
 Agentas tyrinėdamas aplinką, kaupia duomenis patirčių talpykloje, dar kitaip vadinama buferiu. Ši patirčių talpykla yra agento praeities patirtys, kurios padeda optimizuoti neuroninius tinklus. Joje kaupiamos $(s,a,r,s^\prime)$ duomenų eilutės, kurios vos ne identiškos SARSA modelio duomenims. Panašumas ties tuo nesibaige, modelis taip pat kaupia duomenis tokiu pačiu principu kaip SARSA modelis, monte karlo budu simuliuojant žingsnius. Esant būsenoje $s$ pagrindinis neuroninis tinklas aproksimuoja $s$ būsenos visų $a$ veiksmų $q_{\pi}(s, a)$ vertes, kaip tai matyti \ref{QNeuroniniaiTinklai} paveikslėlyje ir pasirenka judėti ta trajektorija, kurios $q_{\pi}(s, a)$ vertė yra dydžiausia. 
 
 \begin{figure}[h]
@@ -1059,54 +1060,330 @@ L(\theta)=\left[\left(\left(r+\gamma \max _{a t+1} Q\left(s_{t+1}, a_{t+1} ; \th
 
 Kaip matome $\theta$ parametrai atkeliauja iš taikinio bei pagrindinio neuroninio tinklo. Abu neuroniniai tinklai aproksimuoja $q_{\pi}(s, a)$. Tačiau taikinio neuroninio tinklo parametrai nėra apmokami, jie kas tam tikra agento žingsnių kieki yra periodiškai paimami iš pagrindinio neuroninio tinklo. Tuo tarpu pagrindinio neuroninio tinklo parametrai yra atnaujinami kas kiekviena žingsnį. Ši metodologija buvo pirma karta pritaikyta Google Deepmind komandos, kuriant Atari agentus \cite{GoogleDeepQLearning}. Jos tikslas yra sumažinti mokymosi divergacijas bei nestabilias $q_{\pi}(s, a)$ verčių svyravimus. Šios nepalankios savybės atsiranda iš neuroninių tinklų generalizacijos. Atnaujinus $q_{\pi}(s, a)$ reikšmes ir pakeitus $\theta$ parametrus, kartu pasikeičia kaimyninės $q_{\pi}(s^\prime, a)$ reikšmės, kitaip tariant mūsų taikinio reikšmės, jei naudotume viena neuroninį tinklą. Nuolat kintančios taikinio reikšmės veda prie nestabilaus konvergavimo, mūsų $q_{\pi}(s, a)$ reikšmės artėja link norimų $q_{\pi}(s, a)$ reikšmių, kurios dėl kiekvieno atnaujinimo kinta. Todėl yra sukuriamas antras neuroninis tinklas su fiksuotais parametrais, kurie stabilizuoja mokymosi procesą.
 
-
-
-
 \paragraph{Veiksmų pasirinkimas}
+
+Gilusis Q naudoja goduji $\epsilon$ veiksmų pasirinkimui, kur su $1-\epsilon$ tikimybe pasirinksime veiksmą vedanti į dydžiausią $q_{\pi}(s, a)$. Šiuos $q_{\pi}(s, a)$ vertes apskaičiuoja neuroninis tinklas, kaip tai pateikta \ref{QNeuroniniaiTinklai} paveikslėlis. Tačiau su $\epsilon$ tikimybe mes pasirinksime neoptimalę vertę. Tai padeda aplankyti naujas trajektorijas, tikintis surasti optimalesnius veiksmus.
 
 \paragraph{Svorių atnaujinimas}
 
+Atlikus veiksmo pasirinkimą bei išsaugojus duomenis susyjusius su šiuo veiksmu mes įgyvendiname viena agento žingsnį. Po kiekvieno žingsnio mes apmokome agenta tiksliau generalizuoti $q_{\pi}(s, a)$ reikšmes. Mokymo procese pasitelkiame patirčių talpyklą, kaip tai jau buvo aptarta \ref{TalpyklosSkyrius} skyriuje. Mokymosi procesas gali trukti pora dienų, priklausomai nuo nagrinėjamos aplinkos sunkumo.
+
+Nors Q-mokymasi procesas pademonstravo skatinamojo mokslo potencialą, šis metodas yra nebetaikomas. Tačiau svarbios pademonstruotos idėjos kaip  $q_{\pi}(s, a)$ verčių aproksimavimas neuroniniais tinklais, patirčių talpykla, dviejų neuroninių tinklų stabilizavimas yra pamatas aktoriaus-kritiko šablonui, kuriuo vadovaujasi visi moderniausi modeliai. Norint suprasti aktoriaus-kritiko šabloną, pradžioje reik įsigilinti į vieną svarbiausių skatinamojo mokslo teoremų - veiksmo taisyklių gradientas.
 
 
+\subsubsection{Veiksmo taisyklių gradientas bei aktorius-kritikas}
 
+Veiksmo taisyklių gradientas yra viena svarbiausių teoremų skatinamajame moksle. Ilga laika buvo manoma, kad veiksmo taisyklių gradientas neegzistuoja, todėl buvo taikomi Giliojo-Q mokymosi algoritmai, kurie optimizuoja $q_{\pi}(s, a)$ vertes ir neliečia veiksmo taisyklių optimizavimo. Tačiau kaip matome \ref{policyIteration} paveikslėlyje, optimizavimo procesas įtraukia nuolatinį verčių bei veiksmo taisyklių iteravimą. Atradus veiksmo taisyklių gradientą, pagaliau tapo įmanoma įgyvendinti šį ciklą ir tai pasiekus gimė daugybė galingu modelių kaip PPO, DDPG, TD3, SAC. 
 
-
-
-Q-mokymosi yra nebenaudojamas  nes įvyko vienas dydžiausių proveržių nes buvo įrodytas veiksmų taisyklių gradientas 
-
-
-\subsubsection{Veiksmo taisyklių gradientas}
+Veiksmo taisyklių tikslas yra skatinti tuos veiksmus, kurie vedė ties veiksmų trajektorijomis suteikenčiomis aukštus apdovanojimus ir slopinti veiksmus, kurių apdovanojimų trajektorijos yra mažos. Formaliai tai mes užrašome šiuo pavidalu, nurodančiu tikėtiną veiksmų taisyklių apdovanojimą:
 
 \begin{equation}
+J\left(\pi_{\theta}\right)=\underset{\tau \sim \pi_{\theta}}{\mathrm{E}}[R(\tau)],
+\end{equation}
+
+kur $R(\tau)$ yra gautų epizodo, trukusio $T$ žingsnių, apdovanojimų suma:
+
+\begin{equation}
+R(\tau) = \sum_{t=0}^{T} R_{t}
+\end{equation}
+
+Tikėtina veiksmo taisyklių apdovanojimą mes išreiškiame per tikimybę įgyti šiuos apdovanojimus:
+
+\begin{equation}
+\label{Ptikimybes}
 P(\tau \mid \theta)=\rho_{0}\left(s_{0}\right) \prod_{t=0}^{T} P\left(s_{t+1} \mid s_{t}, a_{t}\right) \pi_{\theta}\left(a_{t} \mid s_{t}\right)
 \end{equation}
 
+$P(\tau \mid \theta)$ yra trajektorijos tikimybė, kur $\rho_{0}\left(s_{0}\right)$ yra tikimybė, kad pradėsime $s_0$ būsenoje. Šia tikimybe sudauginus su apdovanojimų kiekiu, gauname galutinę $J(\pi)$ išraišką:
 
+\begin{equation}
+J(\pi)=\int_{\tau} P(\tau \mid \pi) R(\tau)=\underset{\tau \sim \pi}{\mathrm{E}}[R(\tau)]
+\end{equation}
+
+Mūsų tikslas yra optimizuoti veiksmų taisyklių $J(\pi)$ parametrus taip, kad jie gražintu kuo didesnį epizodų apdovanojimus:
+
+\begin{equation}
+\theta_{k+1}=\theta_{k}+\left.\alpha \nabla_{\theta} J\left(\pi_{\theta}\right)\right|_{\theta_{k}}
+\end{equation}
+
+Deja mes negalime optimizuoti $J(\pi)$ tiesiogiai, kadangi neturint modelio, mes negalime gauti \ref{Ptikimybes} formulės reikšmes, reikalingas apskaičiuoti gradientą. Todėl imamės analitinių išraiškų, padedančių pakeisti gradiento formulę į naują formulę, kurios rezultatas nors ir nesutampa su $J(\pi)$ bet sutampa jo gradientas. Šios formulės išvedimui buvo pasitelkti šie faktai:
+
+\begin{enumerate}
+  \addtolength{\itemsep}{-0.5\baselineskip} 
+  \item Log išvestinė:
 \begin{equation}
 \nabla_{\theta} P(\tau \mid \theta)=P(\tau \mid \theta) \nabla_{\theta} \log P(\tau \mid \theta)
 \end{equation}
-
+  \item Log trajektorijos tikimybė:
 \begin{equation}
 \log P(\tau \mid \theta)=\log \rho_{0}\left(s_{0}\right)+\sum_{t=0}^{T}\left(\log P\left(s_{t+1} \mid s_{t}, a_{t}\right)+\log \pi_{\theta}\left(a_{t} \mid s_{t}\right)\right)
 \end{equation}
-
+  \item Apskaičiuojant gradientinį nuolydi, funkcijos, kurios nepriklauso nuo $\theta$, pranyksta. Kitaip tariant $\rho_{0}\left(s_{0}\right), P\left(s_{t+1} \mid s_{t}, a_{t}\right)$, ir $R(\tau)$ yra lygus nuliui.
+ \item Šios pranykusios funkcijos supaprastina log trajektorijos tikimybe:
 \begin{equation}
 \begin{aligned}
-\nabla_{\theta} \log P(\tau \mid \theta) &=\nabla_{\theta} \log _{0}\left(s_{0}\right)+\sum_{t=0}^{T}\left(\underline{\nabla_{\theta} \log P\left(s_{t+1} \mid s_{t}, a_{t}\right)}+\nabla_{\theta} \log \pi_{\theta}\left(a_{t} \mid s_{t}\right)\right) \\
+\nabla_{\theta} \log P(\tau \mid \theta) &=\nabla_{\theta} \log _{0}\left(s_{0}\right)+\sum_{t=0}^{T}\left(\nabla_{\theta} \log P\left(s_{t+1} \mid s_{t}, a_{t}\right)+\nabla_{\theta} \log \pi_{\theta}\left(a_{t} \mid s_{t}\right)\right) \\
 &=\sum_{t=0}^{T} \nabla_{\theta} \log \pi_{\theta}\left(a_{t} \mid s_{t}\right)
 \end{aligned}
 \end{equation}
+\end{enumerate}
 
-\subsubsection{TODO}
+Pasitelkus šiuos išvedimus galime išsivesti veiksmo taisyklių gradientą:
 
--qmokymasis, bufferis
--policy gradient
--aktorius kritikas
--DDPG
--TD3
+\begin{equation}
+\begin{array}{rlr}
+\label{megaVeiksmuGradientas}
+\nabla_{\theta} J\left(\pi_{\theta}\right) & =\nabla_{\theta_{\tau \sim \pi_{\theta}}} \underset{\tau \sim \pi_{\theta}}{\mathrm{E}}[R(\tau)]  \\
+& =\nabla_{\theta} \int_{\tau} P(\tau \mid \theta) R(\tau)  \\
+& =\int_{\tau} \nabla_{\theta} P(\tau \mid \theta) R(\tau)  \quad \quad \quad \quad \quad \quad \text { Log išvestinės faktas } \\
+& =\int_{\tau} P(\tau \mid \theta) \nabla_{\theta} \log P(\tau \mid \theta) R(\tau)  \\
+& =\underset{\tau \sim \pi_{\theta}}{\mathrm{E}}\left[\nabla_{\theta} \log P(\tau \mid \theta) R(\tau)\right]  \\
+\therefore \nabla_{\theta} J\left(\pi_{\theta}\right) & =\underset{\tau \sim \pi_{\theta}}{\mathrm{E}}\left[\sum_{t=0}^{T} \nabla_{\theta} \log \pi_{\theta}\left(a_{t} \mid s_{t}\right) R(\tau)\right] \quad \text { 4 fakto pritaikymas }
+\end{array}
+\end{equation}
+
+Turint šią formą mes stochastiniu budu galime pradėti aproksimuoti gradientinį pakilimą. Šio proceso metu mes generuojame naujas imtis bei apskaičiuojame imties vidurkį:
+
+\begin{equation}
+\label{gGradientas}
+\hat{g}=\frac{1}{|\mathcal{D}|} \sum_{\tau \in \mathcal{D}} \sum_{t=0}^{T} \nabla_{\theta} \log \pi_{\theta}\left(a_{t} \mid s_{t}\right) R(\tau),
+\end{equation}
+
+kur $\hat{g}$ yra mūsų gradiento vektorius, o $\mathcal{D}$ yra trajektorijų (imčių) kiekis. Tokiu budu mes galime labai tiksliai aproksimuoti mūsų veiksmo taisyklių parametrus, vedančius ties dydžiausiais apdovanojimais. 
+
+Pats metodas savaime nėra efektyvus tačiau sukombinavus su Giliuoju-Q mokymusi mes grįžtame į pagrindinį \ref{policyIteration} metodą, kuris buvo taikomas be aproksimacijų. Šį procesą įgyvendina aktoriaus kritiko metodas. Jo pavadinimas kilo iš intuityvios įdėjos, kuria galime pastebėti \ref{gGradientas} formulėje. Jei $R(\tau)$ yra teigiamas, pateiktas veiksmas paskatinamas, jei $R(\tau)$ neigiamas, pateiktas veiksmas slopinamas. $R(\tau)$ atlieka kritiko rolę, skatina arba slopina veiksmų taisyklių neuroninio tinklo, vadinamo aktoriumi, pateiktas reikšmes. Tačiau aktoriaus-kritiko metoduose mes vietoj tiesioginės $R(\tau)$ reikšmės, pasitelkiame giliojo-Q neuroninį tinklą kurio $q_{\pi}(s, a)$ reikšmės aproksimuoja $R(\tau)$. Taigi gilusis-Q pateikia $q_{\pi}(s, a)$ bei jas optimizuoja, kaip tai jau matėme \ref{GilusisQSkyrius} skyriuje, ir naudojantis $q_{\pi}(s, a)$ reikšmėmis mes kartu atnaujiname veiksmo taisyklių neuroninį tinklą naudojantis \ref{gGradientas} formule. Šis metodas bei jo pseudokodas bus toliau plėtojamas tolimesniuose skyriuose, kurie remiasi jo struktūra.
+
+\subsubsection{DPG bei DDPG}
+
+DPG\cite{DPG} metodas yra paremtas aktoriaus-kritiko metodu. Jis sukombinuoja Gilusis-Q metodą su veiksmo taisyklių gradientu. Tačiau šiuo atveju veiksmo taisyklių tikslo formulė įgauna skirtingą pavidalą:
+
+\begin{equation}
+J(\theta)=\int_{\mathcal{S}} \rho^{\mu}(s) Q\left(s, \mu_{\theta}(s)\right) d s,
+\end{equation}
+
+kur $\mu_{\theta}(s)$ yra deterministinė versija $\pi_\theta(a|s)$ versija. Kitaip tariant veiksmai parenkami ne iš veiksmų tikimybių pasiskirstymo, o optimaliausias veiksmas yra iškarto funkcijos aproksimuojamas - $a = \mu(s)$. Veiksmų aproksimacijos padeda praplėsti veiksmų dimensiją iš keleto pasirinkimų, kaip tai matemė \ref{DynamicProgrammingExample} pavyzdyje, turint tik keturis galimus veiksmus, į begale. Vienas iš praktinių šio metodo bruožų yra jo lengvas gradiento apskaičiavimas:
+
+\begin{equation}
+\begin{aligned}
+\nabla_{\theta} J(\theta) &=\left.\int_{\mathcal{S}} \rho^{\mu}(s) \nabla_{a} Q^{\mu}(s, a) \nabla_{\theta} \mu_{\theta}(s)\right|_{a=\mu_{\theta}(s)} d s \\
+&=\mathbb{E}_{s \sim \rho^{\mu}}\left[\left.\nabla_{a} Q^{\mu}(s, a) \nabla_{\theta} \mu_{\theta}(s)\right|_{a=\mu_{\theta}(s)}\right]
+\end{aligned}
+\end{equation}
+
+Telieka simuliuoti agento žingsnius ir apskaičiuoti veiksmo taisyklių gradientą, kaip tai matėme \ref{gGradientas} formulėje. Praktikoje gradiento apskaičiavimas yra keblesnis, nei \ref{megaVeiksmuGradientas} metodo, kadangi reikia apskaičiuoti dviejų neuroninių tinklų gradientus bei juos sudauginti. Šis procesas bus giliau aptariamas praktikoje. 
+
+Šio modelio dydžiausias trūkumas yra neegzistuojantis agento aplinkos tirinėjimas. Modelis visados renkasi optimalias veiksmų taisykles, netirinėja aplinkos. DDPG\cite{DDPG} modelis pagerina DPG modelį pridėdamas triukšmą prie veiksmų taisyklių pateiktų reikšmių:
+
+\begin{equation}
+\mu^{\prime}(s)=\mu_{\theta}(s)+\mathcal{N},
+\end{equation}
+
+kur $\mathcal{N}$ yra normalusis pasiskirstymas. Jo parametrai yra pasirenkami priklausomai nuo nagrinėjamos problemos. 
+
+\subsubsection{TD3}
+
+TD3 modelis yra vos ne identiškas DDPG modeliui tačiau turi pora skirtumu:
+
+\begin{enumerate}
+  \addtolength{\itemsep}{-0.5\baselineskip} 
+  \item Du gilieji-Q neuroniniai tinklai. Kadangi gilusis-Q neuroninis tinklas dažnai pervertina reikšmes, mes apmokymui naudojame du giliuosius-Q neuroninius tinklus ir apsimokome su mažesne gauta reikšme.
+  \item Vėluojantis veiksmo taisyklių neuroninio parametrų atnaujinimas. Jei DPG atnaujindavo neuroninį tinklą kas kiekvieną agento žingsnį TD3 autorius rekomenduoja atnaujinimą atlikti kas du žingsnius. 
+  \item Reguliarizacija, pateikta \ref{TD3Reg} formulėje. Ji padeda išvengti persimokymo, kuomet veiksmų taisyklės per greit prisitaiko prie aukštų gilaus-Q reikšmių. Pagrindinė idėja yra pridėti maža triukšmą prie veiksmo taisyklių neuroninio tinklo pateiktos reikšmės. Tokiu budu neuroninis tinklas bus apmokytas geriau aproksimuoti kaimynines veiksmų reikšmes.
+\end{enumerate}
+
+\begin{equation}
+\label{TD3Reg}
+a^{\prime}\left(s^{\prime}\right)=\operatorname{clip}\left(\mu_{\theta_{\text {taikinio }}}\left(s^{\prime}\right)+\operatorname{clip}(\epsilon,-c, c), a_{\text {min }}, a_{max}\right), \quad \epsilon \sim \mathcal{N}(0, \sigma)
+\end{equation}
+
+TD3 struktūra susideda iš šešių neuroninių tinklų, kaip tai matosi \ref{TD3Struktura} paveikslėlyje. Jie reikalingi tiktais apmokymo metu. Apmokius neuroninį tinklą užtenka vieno veiksmų taisyklių neuroninio tinklo, kuris pateikinėtu optimalius veiksmus agentui.
+
+\newpage
+\begin{figure}[h!]
+\centering
+\includegraphics[width=.7\textwidth]{TD3}
+\caption{TD3 modelio struktūra}
+\label{TD3Struktura}
+\end{figure}
+
+\newpage
+
+\section{Praktinė dalis}
+
+Praktinėje dalyje bus įgyvendinmas TD3 metodas. Jo įgyvendinimui bus pasitelkta unity aplinka, kurioje egzistuos apmokamas agentas. Agentas yra aštuonių galūnių voras, kurio tikslas yra nuropoti į užsibrėžtą poziciją, judinant savo galunes. Šis agento tikslas bei aplinka bus plėtojamaa pirmuosiuose praktinės dalies skyriuose. Toliau bus gilinamasi ties komunikacijos sluoksniu, kuriame simuliacijos aplinka bei mokymosi metodas TD3 keičiasi duomenimis. Kadangi TD3 metodas bus įgyvendintas python aplinkoje, o aplinkos simuliacija unity aplinkoje, šios dvi aplinkos negali vienas kitai persiųsti bei gauti duomenis. Todėl yra būtinas komunikacijos sluoksnis tarp šių dviejų aplinkų, padedančiu išsiųsti bei gauti žinutes. Galiausiai bus detaliai aptartas bei įgyvendinamas TD3 metodas.
+
+\subsection{Agentas, jo tikslai bei aplinka}
+
+Per pastaraji dešimtmeti skatinamieji metodai buvo pradėti taikyti įvairiuose srityse, tačiau viena iš sričių pasižymejųsių dydžiausiu proveržiu - robotų judėjimo kontroleriai. Roboto judėjimo užduotis tradiciniais metodais buvo ne vieną kartą stengiamasi išspręsti, bet rezultatai buvo nepatenkinami. Tačiau skatinamojo mokslo metodai pademonstravo, kad jie yra puikiai pritaikyti kontroliuoti agento galunes, surasti optimalias judėjimo trajektorijas vedančias į užsibrėžto tikslo pasiekimą. Butent šią užduoti ir įgyvendinsiu praktinėje dalyje. Bus pasitelktas unity aplinkoje sukurtas voras, kurio tikslas nuropoti iki specifinės kordinatės, kaip tai matome \ref{RLmodel} paveikslėlyje. Pagrindinis užduoties sunkumas kyla iš fizikinio judėjimo. Labai dažnai judėjimo agentai unity aplinkoje nejuda pagal fizikinius dėsnius, o papraščiausiai animacijų pagalba jų judesiai yra įrašyti ir atkartojami. Tokios animacijos nėra paremtos fizika, kiekviena agento galūnė kiekvieno kadro metu įgyja įrašytas pozicijų kordinates. Toks judėjimas neprisitaiko prie kintančios, dinaminės aplinkos ir roboto galūnės dažnai kerta objektus kiaurai. Šias problemas išspręndžia fizika paremtas galūnių judidinimas, kurio programiškai iki šiol įgyvendinti buvo neįmanoma. Tik neseniai pasitelkus statistiniais mokymosi metodais kaip TD3 buvo pasiektas fizikinis agentų judėjimas.
+
+Taigi kiekvieno epizodo metu voras yra sukuriamas aukštai ore. Jis turi sugebėti nusileisti ant savo galūnių bei nuropoti ties žaliu kubeliu. Sėkmingai jį pasiekus epizodas nesibaige, yra sukuriamas naujas žalias kubelis, kurį voras vėl turi pasiekti. Šis budas skatina vorą aplankyti naujas verčių būsenas susijusias su voro apsisukinėjimu. Epizodas baigiasi kuomet pasiekeme epizodo maksimalų žingsnį, kurį galime traktuoti kaip laiko intervalą. Taip pat epizodas gali baigtis ankčiau, jei yra pasiekta terminuojanti būsena. Voro aplinkos atveju tai nutinka jei pagrindinė kūno dalis arba viršutiniai sanariai pasiekę žemę. Kuo ilgiau voras išgyveną bei kuo arčiau jis yra žalio kubelio, tuo agentas gauna didesnį epizodo kaupiamajį apdovanojimą. Tai ir yra agento pagrindinis tikslas, gauti kuo didesnį apdovanojimą. 
+
+\subsection{Mokymosi seka}
+
+Voro agento mokymosi procesas yra identiškas aptartiems mokymosi metodams ir sudarytas iš šių iteracinių žingsnių:
+
+\begin{enumerate}
+  \addtolength{\itemsep}{-0.5\baselineskip} 
+  \item TD3 modelis turi dabartines voro būsenas. Turint šias būsenas TD3 pateikia naujus veiksmus.
+  \item Voras gauną TD3 modelio pateiktą veiksmą bei jį atlieką.
+  \item Atlikus veiksmą gaunama nauja būsena bei apdovanojimas. Šios vertės nusiunčiamos TD3 modeliui. 
+  \item TD3 gavęs pateikto veiksmo rezultatą - naują būsena bei apdovanojimą, pradeda modelio apsimokymą. Tai atlikus naujos būsenos tampa dabartinėmis ir pradedama naują iteracija. Dažniausiai apsimokymas būna atidedamas ir jis įvyksta pasibaigus agento epizodui arba paralelizuotams agentams atlikus tam tikrą kiekį žingsnių.
+\end{enumerate}
+
+
+Svarbu pastebėti, kad apdovanojimų bei būsenų duomenys nusiunčiami TD3 modeliui ne kiekvieno simuliacijos kadro metu, o tik kas penkis unity fizikos simuliacijos žingsnius. Kitaip tariant agentui atlikus veiksmus jis laukia penkis unity fizikos atnaujinimus, per kuriuos jo galūnės pakeičią poziciją penkis kartus po labai maža atstumą. Tai atlikus agentas tik tada užfiksuoja naują įgytą būseną. Per šiuos penkis žingsnius jo apdovanojimas yra kaupiamas - kas žingsnį pridedame po apskaičiuota apdovanojimą. Šis penkių kadrų atnaujinimo atidėjimas padeda pasiekti ryškesni naujo veiksmo ir jo pasekmės ryšį. Taip pat tai sumažiną duomenų kiekį bei pagreitiną mokymą.
+
+\subsection{Aplinka}
+
+Voro aplinka susideda iš tryjų elementų:
+
+\begin{enumerate}
+  \addtolength{\itemsep}{-0.5\baselineskip} 
+  \item Voras.
+  \item Tuščia, lygi arena, su keturiom, areną apsupančiom, sienom.
+  \item Žalias kubelis, iki kurio vorui reikia nuropoti.
+\end{enumerate}
+
+Aplinkos atvaizdavima matome \ref{arena} paveikslėlyje. Joje agentas praleidžia visą savo mokymosi laiką. Aplinka bei pats fizikiniais dėsniais paremtas voras yra jau sukurtas unity programuotojų. Jie pasitelkė skaitinamojo mokslo PPO metodus apmokyti vorą ropoti bei pasiekė įspudingus rezultatus. Mano mokymo metu bus naudojamas TD3 metodas, kuris yra specifiškai pritaikytas deterministiniams veiksmams bei panašiuose užduotyse dažniau pasiekę optimalesnius rezultatus. 
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=.7\textwidth]{arena}
+\caption{Voro aplinka}
+\label{arena}
+\end{figure}
+
+Arena įgyjo šį specifini išsidėstymą, dėl šių tolimesnių priežaščių
+
+\begin{enumerate}
+  \addtolength{\itemsep}{-0.5\baselineskip} 
+  \item Arena lengva padvigubinti, sukurti daugybe jos kopijų. Tai naudinga paraleliam mokymuisi, kuris bus aptartas tolimesniuose skyriuose.
+  \item Lygioje arenoje, be įdubimu bei iškilimu, yra lengviau apmokyti agentą. Nereikia programuoti sudėtingu metodu įdubimams aptikti bei informuoti agenta apie jų egzistavimą. Tai sumažina būsenų erdvę.
+  \item Žalias kubelis, iki kurio vorui reikia nuropoti. Tai yra paprasčiausias atskaitos taškas, naudojamas įvertinti agento optimalumą.
+  \item Keturios sienos, neleidžiančio vorui nukristi už simuliacijos ribų.
+\end{enumerate}
+
+Taigi ši arena yra papračiausia įmanoma aplinka, kuri padeda įsitikinti mokymosi metodo efektyvumu. Jei pasirinktas mokymosi metodas sugeba susidoroti su šia aplinka, ją galima pradėti palaipsniui sunkinti bei pritaikyti savo reikmėms.
+
+\subsection{Duomenys}
+
+Kaip matome \ref{TD3Struktura} paveikslėlyje, TD3 mokymosi metodų neuroninių tinklų įvestis yra būsenų erdvė bei aproksimuoti veiksmai. Tuo tarpu pagrindinė išvestis yra veiksmų taisyklės - kokius tolimesnius veiksmus turėtų atlikti agentas. Šias veiksmų reikšmes padeda apskaičiuoti apdovanojimai, taip pat viena iš įvesčių reikšmių, apskaičiuojanti taikinio reikšmes, kurias neuroninis tinklas tūrėtų aproksimuoti. Taigi toliau visi šie duomenys bus aptariami detaliau.
+
+\subsubsection{Įvestis - būsenos}
+
+Tiek aktoriaus modelis, aproksimuojantis veiksmų taisykles, tiek kritiko modelis, aproksimuojantis būsenų vertes, priima būsenų reikšmes. Voro būsenų reikšmės susideda iš 127 reikšmių. Jas galima suskaldyti į šias kategorijas:
+
+\begin{enumerate}
+  \addtolength{\itemsep}{-0.5\baselineskip} 
+  \item Voro galūnės. Kiekviena voro koja susideda iš dviejų sąnarių: viršutinio bei apatinio sąnario.
+  \item Voro pagrindinis kūnas. Viršutiniai voro sąnariai susijungia su šia dalimi.
+\end{enumerate}
+
+Kaip matomo \ref{VoroGalunes} paveikslėlyje apatinis sąnarys kontroliuoja koją, užtušuota rausvai. Viršutinis sąnarys kontroliuoja koją užtušuota oranžine spalva. Ir galiausiai visi viršutiniai sąnariai susijungia į pagrindinę kūno dalį užtušuota žalsvu atspalviu.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=.7\textwidth]{VoroGalunes}
+\caption{Voro galūnės.}
+\label{VoroGalunes}
+\end{figure}
+
+Visos voro galūnės kaupia ne konkrečią informaciją, bet santykinę. Kitaip tariant nėra kaupiama tiksli voro pozicija, bet atstumo vektorius nuo voro iki taikinio, žalio kubelio. Tokiu budu voras neprisitaiko prie konkrečios aplinkos, agentas gali lengvai ropoti įvairiose arenose. Tai ypatingai svarbu paralelizuojant mokymosi procesą. Taigi visi sanariai kaupia šias būsenas:
+
+\begin{enumerate}
+  \addtolength{\itemsep}{-0.5\baselineskip} 
+  \item Ar galūnė liečia žemės paviršių. Priklausomai nuo to ar liečia, simuliacija gali būti nutraukiama ir įvardijama kaip nepasisekusi. Ši sąlyga galioja viršutiniam sąnariui, kadangi nenorime, kad jis liestų žemę, jis nuolatos turi būti virš jos.
+  \item Atstumo vektorius tarp sąnario greičio vektoriaus bei agento-kubelio atstumo vektoriaus. Mes norime, kad atstumas būtų lygus nuliui, kitaip tariant abu vektoriai žiūri į tą pačia trajektoriją.
+  \item Laipsnių atstumas tarp sanario pozicijos vektoriaus bei agento-kubelio atstumo vektoriaus. Turi panašumu su praeitu punktu, tačiau duomenys išreikšti laipsniais.
+\end{enumerate}
+
+Pagrindinė kūno dalis kaupia šią informaciją:
+
+\begin{enumerate}
+  \addtolength{\itemsep}{-0.5\baselineskip} 
+  \item Ar liečia žemės paviršių. Jei taip, simuliacija yra nutraukiama.
+  \item Pagrindinės kūno dalies atstumas iki žemės paviršiaus. Kadangi agentas turi sugebėti stovėti su savo kojomis ant žemės paviršiaus, voras turi žinoti kaip arti jis yra iki žemės.
+  \item Atstumo bei laipsnių vektoriai, gaunami tokiu pat principu kaip sąnariuose.
+\end{enumerate}
+
+Taip pat kaupiamas vidutinis agento galūnių greitis. Kuo didesnis greitis, tuo jis gauna didesnį apdovanojimą. Tokiu budu mes skatiname agentą jūdėti sparčiai.
+
+Šios visos būsenos supakuojamos į vieną realiųjų skaičių masyvą ir nusiančiamos TD3 mokymosi modeliui. Taip pat nusiunčiame apdovanojimą, kuris yra apskaičiuojamas unity aplinkoje.
+
+\subsubsection{Apdovanojimas}
+
+Duomenų talpykloje kaupiamos ne tik būsenos bet ir apdovanojimai. Jie atkeliauja iš unity aplinkos. Vorui atlikus TD3 modelio pateiktus veiksmus, jis apskaičiuoją atliktų veiksmų naudą. Vadovaujantis \ref{apdovanojimoPatarimas} skyriaus svarbiu patarimu, mes turime suformuoti apdovanojimo funkciją taip, kad jį neformuotų užduoties sprendimo būdo, o tik apdovanotų už pasiektą tikslą. Todėl apdovanojimo funkcija susideda iš šių tryju funkcijų:
+
+\begin{enumerate}
+  \addtolength{\itemsep}{-0.5\baselineskip} 
+  \item Skaliarinė sandauga tarp pagrindinės kūno dalies greičio vektoriaus bei normalizuoto krypties vektoriaus nuo pagrindinio kūno į žalią kubelį. Šie vektoriai pavaizduoti \ref{voroGreicioVektoriai} paveikslėlyje, tačiau pateiktas žalias vektorius nėra vizualiai normalizuotas. Jei šie vektoriai sutampa, mes gauname vieneto vertę, žyminčią dydžiausią įmanomą apdovanojimą. Tokiu budu mes nurodome agentui judėti link žalio kubelio, bet nepasakome kaip konkrečiai atlikti šią užduoti.
+  \item Skaliarinė sandauga tarp agento krypties vektoriaus bei normalizuoto krypties vektoriaus nuo pagrindinio kūno į žalią kubelį. Kitaip tariant jei agentas yra atsisukęs į žalią kubelį, jis gauną maksimalų apdovanojimą - vienetą.
+  \item Apskaičiuojame ar vidutinis visų galūnių greitis atitinka mūsų pateiktą maksimalų greitį. Jei atitinką, priskiriame papildoma vieneto apdovanojimą, jei visai nesutampa, apdovanojimas tampa nulis. Tarpinės reikšmes pateike sigmoido funkcija. Ši apdovanojimo funkcija buvo pridėta vėliausiai iš visų apdovanojimo funkcijų, kuomet buvo pastebėtas voro lėtas slinkimas į žaliąjį kubelį. Agentas išmokęs stabiliai stovėti ant kojų ir iš lėto ropoti link žaliojo kūbelio po truputi pastebi, kad kuo greičiau juda, tuo didesnį pasiekę apdovanojimą. 
+\end{enumerate}
+
+Šie apdovanojimai, kiekvienos fizikos atnaujinimo metu yra apskaičiuojami bei sudedami į vieną kaupiamąjį apdovanojimą. Jis, kartu su būsenomis, nusiunčiamas TD3 modeliui. Nusiuntus apdovanojimą jis tampa nuliu ir jo skaičiavimo procesas prasideda iš naujo.
+
+Kiekvieno epizodo metu mes kaupiame epizodo galutinį apdovanojimą. Jis judančio vidurkio metodu apskaičiuoja paskutinių penkiasdešimties epizodų apdovanojimo vidurkį. Šis kiekvieno epizodo metu kintantis matas yra pagrindinis kriterijus pagal kurį vizualiai vertiname modelio efektyvumą. Mokymuisi vykstant jis turi kilti. Tai parodo vis dydėjanti epizodų apdovanojimą.
+
+\subsubsection{Išvestis - veiksmai}
+
+TD3 aktoriaus neuroninis tinklas priėmes būsenas išveda veiksmus. Iš viso yra apskaičiuojami dvidešimt veikmų verčių, kuriuos voras gauną. Šios veiksmų vertės kontroliuoja voro viršutinęs bei apatinęs galūnes. Toliau bus vardyjama galūnių veiksmų vertės:
+
+\begin{enumerate}
+  \addtolength{\itemsep}{-0.5\baselineskip} 
+  \item Viršutinis voro sąnarys gali sukinėtis aplink x bei y kordinačių ašį, tačiau ne z, kaip tai matome \ref{SanarioJudejimoTrajektorijos} paveikslėlyje. Veiksmų vertės nurodo galutinę šio sąnario poziciją laipsniais bei kiek jėgos bus suteikta šiai pozicijai pasiekti.
+  \item Apatinio sąnario veiksmų vertės yra identiškos, tačiau šis sąnarys gali sukiotis tik aplink x ašį.
+\end{enumerate}
+
+Kadangi TD3 aktoriaus neuroninio tinklo išvestis yra tanh funkcija, mes nuolatos turime konvertuoti $[-1,1]$ intervalo reikšmes į konkrečias laipsnių bei jėgų reikšmes. Taigi agentas gauna naujas galūnių judėjimo reikšmes ir tokiu budu jis jas po truputi krutina.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.5\textwidth]{SanarioJudejimoTrajektorijos}
+\caption{Viršutinio sąnario judėjimo trajektorijos.}
+\label{SanarioJudejimoTrajektorijos}
+\end{figure}
+
+
+\subsection{Komunikacijos sluoksnis}
+
+TD3 modelis bei voro aplinka yra įgyvendinta skirtinguose programuose. Voro aplinka yra įgyvendinta unity programoje, o TD3 modelis pythono aplinkoje. Kadangi unity variklis negali kompiliuoti python kodo, teko įgyvendinti šias dvi aplinkas atskirose programose. Tai sukėlė pastovių kėblumu, kadangi duomenys tarp šių dviejų programų turi nuolatos bei užtikrintai keistis, kas dažnai neįvygdavo. Taigi buvo sukurtas komunikacinis sluoksnis, kuris užtikrindavo pastovų žinučių siuntima iš TD3 modelio į unity agento aplinką. TD3 atliko serverio rolę, nuolatos pirmutinis siusdavo duomenis agento aplinkai bei iš jo laukdavo atsakymo. Žinutėms siųsti buvo pasirinktas json formatas dėl dviejų priežasčių: abi skirtingos aplinkos turi json nuskaitymo bibliotekas bei į json lengva įrašyti norimą informaciją. 
+
+Buvo įgyvendintos dvi esminės žinutės: naujo epizodo bei duomenų rinkimo. Šios dvi žinutės pasižymi panašia duomenų forma - išsaugome tekstinę komandą bei pridedame norimus duomenis. Toliau pateiktos dvi skirtingos siunčiamos komandos:
+
+\begin{enumerate}
+  \addtolength{\itemsep}{-0.5\baselineskip} 
+  \item Naujo epizodo komanda. Serveris praneša agentui reikalavimą pradėti naują epizodą. Jį gavęs agentas inicializuoja vorą į pradinę epizodo poziciją ir išsiunčią būsenos duomenis į serverį. Serveris gavęs šiuos duomenis gali pradėti mokymosi procesą.
+  \item TD3 gavęs voro būsenas aproksimuoją naują veiksmą bei nurodo serveriui išsiųsti jį agentui. Voras gavęs veiksmus juos atlieka. Juos atlikęs atgal išsiunčią serveriui naujai įgytas būsenas, apdovanojimą bei ar ši nauja būsena terminuoja epizodą.
+\end{enumerate}
+
+Šis duomenų apsikeitinėjimas pateiktas \ref{Reset} paveikslėlyje.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.7\textwidth]{Reset}
+\caption{Serverio bei agento komunikavimo sluoksnis}
+\label{Reset}
+\end{figure}
+
+
+\subsection{TODO}
+
+
+
+-black box, kiek užtrunka laiko apmokyti, kodėl pasirinktas paralelus mokymasis.
+-rezultatai, galime pastebėti, kad agentas bebėgdamas pradeda stabdyti, tikėdamas, kad pasiekus žalia kubeli reikės apsisukti. Pagrindinis modelio gerumo matas
+
+-TD3 metode paaiškinti inference punkta? Ir tada apmokymosi dali?
 
 %-pakeist * i \cdot
 %
+
+
+
+
+
+
 \subsubsection{Pirmo skyriaus skyrelio poskyris}
 %
 Nunc eleifend consequat lorem. Sed lacinia nulla vitae enim. Pellentesque 
@@ -1192,6 +1469,26 @@ Watkins, C.J.C.H. (1989). Learning from Delayed Rewards (PDF) (Ph.D. thesis). Un
 \bibitem{GoogleDeepQLearning}
 Human-level control through deep reinforcement learning \href{https://storage.googleapis.com/deepmind-media/dqn/DQNNaturePaper.pdf}{PDF}
 
+\bibitem{DPG}
+David Silver, Guy Lever, Nicolas Heess, Thomas Degris, Daan Wierstra, et al.. Deterministic Policy
+Gradient Algorithms. ICML, Jun 2014, Beijing, China. ffhal-00938992f \href{https://hal.inria.fr/file/index/docid/938992/filename/dpg-icml2014.pdf}{PDF}
+
+\bibitem{DDPG}
+CONTINUOUS CONTROL WITH DEEP REINFORCEMENT LEARNING
+Timothy P. Lillicrap, Jonathan J. Hunt, Alexander Pritzel, Nicolas Heess,Tom Erez, Yuval Tassa, David Silver \& Daan Wierstra
+Google Deepmind
+London, UK
+{countzero, jjhunt, apritzel, heess, etom, tassa, davidsilver, wierstra} @ google.com
+\href{https://arxiv.org/pdf/1509.02971.pdf}{PDF}
+
+\bibitem{TD3}
+Addressing Function Approximation Error in Actor-Critic Methods
+Scott Fujimoto 1 Herke van Hoof 2 David Meger 1
+\href{https://arxiv.org/pdf/1802.09477.pdf}{PDF}
+
+
+
+
 
 \end{thebibliography}
 %
@@ -1206,3 +1503,4 @@ Human-level control through deep reinforcement learning \href{https://storage.go
 % ------------------------------------------------------------------------------
 %  DOKUMENTO PABAIGA
 % ------------------------------------------------------------------------------
+

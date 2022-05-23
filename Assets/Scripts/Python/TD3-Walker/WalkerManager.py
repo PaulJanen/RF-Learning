@@ -40,6 +40,7 @@ class WalkerManager():
         self.replayBuffer = ReplayBuffer()
         self.evaluations = [0]
 
+        self.loadModel = True
         self.save_models = True
         self.file_name = "%s_%s_%s" % ("TD3", self.walker.env_name, str(self.seed))
         print ("---------------------------------------")
@@ -95,6 +96,10 @@ class WalkerManager():
 
 
     def Train(self):
+
+        if(self.loadModel):
+            self.policy.load(self.file_name, directory="./pytorch_models")
+
         while(self.total_timesteps < self.max_timesteps):
             time.sleep(1)     
             self.trainingCrashedDetection += 1
@@ -108,7 +113,7 @@ class WalkerManager():
                 self.trainingCrashedDetection = 0
                 self.CreateAndStartWalkers()
             '''
-            if(self.timesteps_since_train >= self.trainAfterSteps):
+            if(self.timesteps_since_train >= self.trainAfterSteps and self.loadModel == False):
                 self.trainingCrashedDetection = 0
                 self.timesteps_since_train = 0
                 if self.total_timesteps != 0:

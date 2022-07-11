@@ -40,7 +40,7 @@ class WalkerManager():
         self.replayBuffer = ReplayBuffer()
         self.evaluations = [0]
 
-        self.loadModel = True
+        self.loadModel = False
         self.save_models = True
         self.file_name = "%s_%s_%s" % ("TD3", self.walker.env_name, str(self.seed))
         print ("---------------------------------------")

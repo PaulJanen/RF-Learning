@@ -36,15 +36,15 @@ public class PlantAgent : Agent2
 
     //This will be used as a stabilized model space reference point for observations
     //Because ragdolls can move erratically during training, using a stabilized reference transform improves learning
-    public OrientationCubeController m_OrientationCube;
+    public OrientationCubeController2 m_OrientationCube;
 
     //The indicator graphic gameobject that points towards the target
     DirectionIndicator m_DirectionIndicator;
-    JointDriveController2 m_JdController;
+    JointDriveController2 jdController;
 
 
-    Vector3 m_DirToTarget;
-    Matrix4x4 m_TargetDirMatrix;
+    Vector3 dirToTarget;
+    Matrix4x4 targetDirMatrix;
     Quaternion m_LookRotation;
     float m_MovingTowardsDot;
     float m_FacingDot;
@@ -60,20 +60,23 @@ public class PlantAgent : Agent2
     public void Initialize()
     {
         SpawnTarget(); //spawn target
+
+        m_OrientationCube.Initialize(stemTop);
+        m_OrientationCube.UpdateOrientation(stemTop, food);
         //m_DirToTarget = m_Target.position - pot.position;
 
         //m_DirectionIndicator = GetComponentInChildren<DirectionIndicator>();
-        m_JdController = GetComponent<JointDriveController2>();
+        jdController = GetComponent<JointDriveController2>();
         currentStateData = new List<double>();
         stopTraining = true;
 
         //Setup each body part
-        m_JdController.SetupBodyPart(pot);
-        m_JdController.SetupBodyPart(stemBottom);
-        m_JdController.SetupBodyPart(stemMiddle);
-        m_JdController.SetupBodyPart(stemTop);
-        m_JdController.SetupBodyPart(mouthUp);
-        m_JdController.SetupBodyPart(mouthDown);
+        jdController.SetupBodyPart(pot);
+        jdController.SetupBodyPart(stemBottom);
+        jdController.SetupBodyPart(stemMiddle);
+        jdController.SetupBodyPart(stemTop);
+        jdController.SetupBodyPart(mouthUp);
+        jdController.SetupBodyPart(mouthDown);
 
     }
 
@@ -85,7 +88,7 @@ public class PlantAgent : Agent2
     void SpawnTarget()
     {
         if(spawnFood)
-            foodSpawner.Spawn();
+            food = foodSpawner.Spawn();
     }
 
     /// <summary>
@@ -96,14 +99,12 @@ public class PlantAgent : Agent2
         done = false;
         stopTraining = false;
         decisionStep = 0;
-        foreach (var bodyPart in m_JdController.bodyPartsDict.Values)
+        foreach (var bodyPart in jdController.bodyPartsDict.Values)
         {
             bodyPart.Reset(bodyPart);
-        }
-
+        }        
         //Random start rotation to help generalize
-        pot.rotation = Quaternion.Euler(0, Random.Range(0.0f, 360.0f), 0);
-
+        //pot.rotation = Quaternion.Euler(0, Random.Range(0.0f, 360.0f), 0);
     }
 
     public override void EndEpisode()
@@ -123,19 +124,19 @@ public class PlantAgent : Agent2
         else
             currentStateData.Add(0);
 
-        var velocityRelativeToLookRotationToTarget = m_TargetDirMatrix.inverse.MultiplyVector(bp.rb.velocity);
+        var velocityRelativeToLookRotationToTarget = targetDirMatrix.inverse.MultiplyVector(bp.rb.velocity);
         currentStateData.Add(velocityRelativeToLookRotationToTarget.x);
         currentStateData.Add(velocityRelativeToLookRotationToTarget.y);
         currentStateData.Add(velocityRelativeToLookRotationToTarget.z);
 
-        var angularVelocityRelativeToLookRotationToTarget = m_TargetDirMatrix.inverse.MultiplyVector(bp.rb.angularVelocity);
+        var angularVelocityRelativeToLookRotationToTarget = targetDirMatrix.inverse.MultiplyVector(bp.rb.angularVelocity);
         currentStateData.Add(angularVelocityRelativeToLookRotationToTarget.x);
         currentStateData.Add(angularVelocityRelativeToLookRotationToTarget.y);
         currentStateData.Add(angularVelocityRelativeToLookRotationToTarget.z);
 
         if (bp.rb.transform != pot)
         {
-            var localPosRelToBody = pot.InverseTransformPoint(bp.rb.position);
+            var localPosRelToBody = mouthUp.InverseTransformPoint(bp.rb.position);
             currentStateData.Add(localPosRelToBody.x);
             currentStateData.Add(localPosRelToBody.y);
             currentStateData.Add(localPosRelToBody.z);
@@ -143,7 +144,7 @@ public class PlantAgent : Agent2
             currentStateData.Add(bp.currentYNormalizedRot); // Current y rot
             currentStateData.Add(bp.currentZNormalizedRot); // Current z rot
 
-            currentStateData.Add(bp.currentStrength / m_JdController.maxJointForceLimit);
+            currentStateData.Add(bp.currentStrength / jdController.maxJointForceLimit);
         }
     }
 
@@ -154,26 +155,26 @@ public class PlantAgent : Agent2
     {
         currentStateData = new List<double>();
 
-        m_JdController.GetCurrentJointForces();
-        //m_DirToTarget = m_Target.position - pot.position;
+        jdController.GetCurrentJointForces();
+        dirToTarget = food.position - stemTop.position;
         //m_LookRotation = Quaternion.LookRotation(m_DirToTarget);
-        m_TargetDirMatrix = Matrix4x4.TRS(Vector3.zero, m_LookRotation, Vector3.one);
+        targetDirMatrix = Matrix4x4.TRS(Vector3.zero, m_LookRotation, Vector3.one);
 
         RaycastHit hit;
         float maxRaycastDist = 10;
-        if (Physics.Raycast(pot.position, Vector3.down, out hit, maxRaycastDist))
+        if (Physics.Raycast(mouthUp.position, Vector3.down, out hit, maxRaycastDist))
         {
             currentStateData.Add(hit.distance / maxRaycastDist);
         }
         else
             currentStateData.Add(1);
 
-        var bodyForwardRelativeToLookRotationToTarget = m_TargetDirMatrix.inverse.MultiplyVector(pot.forward);
+        var bodyForwardRelativeToLookRotationToTarget = targetDirMatrix.inverse.MultiplyVector(stemTop.forward);
         currentStateData.Add(bodyForwardRelativeToLookRotationToTarget.x);
         currentStateData.Add(bodyForwardRelativeToLookRotationToTarget.y);
         currentStateData.Add(bodyForwardRelativeToLookRotationToTarget.z);
 
-        var bodyUpRelativeToLookRotationToTarget = m_TargetDirMatrix.inverse.MultiplyVector(pot.up);
+        var bodyUpRelativeToLookRotationToTarget = targetDirMatrix.inverse.MultiplyVector(stemTop.up);
         currentStateData.Add(bodyUpRelativeToLookRotationToTarget.x);
         currentStateData.Add(bodyUpRelativeToLookRotationToTarget.y);
         currentStateData.Add(bodyUpRelativeToLookRotationToTarget.z);
@@ -185,36 +186,36 @@ public class PlantAgent : Agent2
         //velocity we want to match
         //var velGoal = cubeForward * TargetWalkingSpeed;
         //ragdoll's avg vel
-        var avgVel = GetAvgVelocity();
+        //var avgVel = GetAvgVelocity();
 
         //current ragdoll velocity. normalized
         //currentStateData.Add(Vector3.Distance(velGoal, avgVel));
         //avg body vel relative to cube
-        Vector3 values = m_OrientationCube.transform.InverseTransformDirection(avgVel);
-        /*
-        currentStateData.Add(values.x);
-        currentStateData.Add(values.y);
-        currentStateData.Add(values.z);
+        //Vector3 values = m_OrientationCube.transform.InverseTransformDirection(avgVel);
+        
+        //currentStateData.Add(values.x);
+        //currentStateData.Add(values.y);
+        //currentStateData.Add(values.z);
         //vel goal relative to cube
-        values = m_OrientationCube.transform.InverseTransformDirection(velGoal);
-        currentStateData.Add(values.x);
-        currentStateData.Add(values.y);
-        currentStateData.Add(values.z);
+        //values = m_OrientationCube.transform.InverseTransformDirection(velGoal);
+        //currentStateData.Add(values.x);
+        //currentStateData.Add(values.y);
+        //currentStateData.Add(values.z);
         //rotation delta
-        Quaternion QuaternionValues = Quaternion.FromToRotation(body.forward, cubeForward);
+        Quaternion QuaternionValues = Quaternion.FromToRotation(stemTop.forward, cubeForward);
         currentStateData.Add(QuaternionValues.x);
         currentStateData.Add(QuaternionValues.y);
         currentStateData.Add(QuaternionValues.z);
         currentStateData.Add(QuaternionValues.w);
 
         //Add pos of target relative to orientation cube
-        values = m_OrientationCube.transform.InverseTransformPoint(m_Target.transform.position);
+        Vector3 values = m_OrientationCube.transform.InverseTransformPoint(food.transform.position);
         currentStateData.Add(values.x);
         currentStateData.Add(values.y);
         currentStateData.Add(values.z);
-        */
+        
 
-        foreach (var bodyPart in m_JdController.bodyPartsList)
+        foreach (var bodyPart in jdController.bodyPartsList)
         {
             CollectObservationBodyPart(bodyPart);
         }
@@ -223,7 +224,7 @@ public class PlantAgent : Agent2
     public void ActionReceived(List<double> actionBuffers)
     {
         // The dictionary with all the body parts in it are in the jdController
-        var bpDict = m_JdController.bodyPartsDict;
+        var bpDict = jdController.bodyPartsDict;
         var i = -1;
         // Pick a new target joint rotation
         bpDict[pot].SetJointTargetRotation(actionBuffers[++i], actionBuffers[++i], 0);
@@ -283,33 +284,37 @@ public class PlantAgent : Agent2
         var lookAtTargetReward = (Vector3.Dot(cubeForward, body.forward) + 1) * .5F;
         AddReward(matchSpeedReward * lookAtTargetReward);
         */
-/*
-        foreach (var bodyPart in m_JdController.bodyPartsList)
-        {
-            if (bodyPart.targetContact && !done && bodyPart.targetContact.touchingTarget)
+    /*
+            foreach (var bodyPart in m_JdController.bodyPartsList)
             {
-                TouchedTarget();
+                if (bodyPart.targetContact && !done && bodyPart.targetContact.touchingTarget)
+                {
+                    TouchedTarget();
+                }
+            }
+
+            m_DirToTarget = m_Target.position - body.position;
+            m_MovingTowardsDot = Vector3.Dot(m_JdController.bodyPartsDict[body].rb.velocity, m_DirToTarget.normalized);
+            AddReward(0.03f * m_MovingTowardsDot);
+
+            AddReward(0.03f * matchSpeedReward);
+
+            m_FacingDot = Vector3.Dot(m_DirToTarget.normalized, body.forward);
+            AddReward(0.01f * m_FacingDot);
+
+
+            if (stepCallBack != null && decisionStep >= decisionPeriod)
+            {
+                decisionStep = 0;
+                stepCallBack();
             }
         }
+    */
 
-        m_DirToTarget = m_Target.position - body.position;
-        m_MovingTowardsDot = Vector3.Dot(m_JdController.bodyPartsDict[body].rb.velocity, m_DirToTarget.normalized);
-        AddReward(0.03f * m_MovingTowardsDot);
-
-        AddReward(0.03f * matchSpeedReward);
-
-        m_FacingDot = Vector3.Dot(m_DirToTarget.normalized, body.forward);
-        AddReward(0.01f * m_FacingDot);
-
-
-        if (stepCallBack != null && decisionStep >= decisionPeriod)
-        {
-            decisionStep = 0;
-            stepCallBack();
-        }
+    void UpdateOrientationObjects()
+    {
+        m_OrientationCube.UpdateOrientation(stemTop, food);
     }
-*/
-
 
     /// <summary>
     ///Returns the average velocity of all of the body parts
@@ -323,7 +328,7 @@ public class PlantAgent : Agent2
 
         //ALL RBS
         int numOfRb = 0;
-        foreach (var item in m_JdController.bodyPartsList)
+        foreach (var item in jdController.bodyPartsList)
         {
             numOfRb++;
             velSum += item.rb.velocity;
@@ -362,28 +367,28 @@ public class PlantAgent : Agent2
 
     public void FreezeRigidBody(bool freeze)
     {
-        for (int i = 0; i < m_JdController.bodyPartsList.Count; i++)
+        for (int i = 0; i < jdController.bodyPartsList.Count; i++)
         {
             if (freeze)
             {
                 stopTraining = true;
-                if (m_JdController.bodyPartsList[i].isAlreadyFroozen == false)
+                if (jdController.bodyPartsList[i].isAlreadyFroozen == false)
                 {
-                    m_JdController.bodyPartsList[i].isAlreadyFroozen = true;
-                    m_JdController.bodyPartsList[i].SaveVelocity();
-                    m_JdController.bodyPartsList[i].rb.constraints = RigidbodyConstraints.FreezePosition;
-                    m_JdController.bodyPartsList[i].rb.isKinematic = true;
+                    jdController.bodyPartsList[i].isAlreadyFroozen = true;
+                    jdController.bodyPartsList[i].SaveVelocity();
+                    jdController.bodyPartsList[i].rb.constraints = RigidbodyConstraints.FreezePosition;
+                    jdController.bodyPartsList[i].rb.isKinematic = true;
                 }
             }
             else
             {
                 stopTraining = false;
-                if (m_JdController.bodyPartsList[i].isAlreadyFroozen == true)
+                if (jdController.bodyPartsList[i].isAlreadyFroozen == true)
                 {
-                    m_JdController.bodyPartsList[i].isAlreadyFroozen = false;
-                    m_JdController.bodyPartsList[i].rb.isKinematic = false;
-                    m_JdController.bodyPartsList[i].rb.constraints = RigidbodyConstraints.None;
-                    m_JdController.bodyPartsList[i].LoadSavedVelocity();
+                    jdController.bodyPartsList[i].isAlreadyFroozen = false;
+                    jdController.bodyPartsList[i].rb.isKinematic = false;
+                    jdController.bodyPartsList[i].rb.constraints = RigidbodyConstraints.None;
+                    jdController.bodyPartsList[i].LoadSavedVelocity();
                 }
             }
         }

@@ -7,9 +7,9 @@ public class Spawner : MonoBehaviour
     //protected List<GameObject> instantiatedPrefabs;
     protected GameObject prefab;
 
-    public virtual void Spawn()
+    public virtual Transform Spawn()
     {
-
+        return null;
     }
    
 

@@ -7,6 +7,8 @@ TagManager:
   - agent
   - ground
   - target
+  - projectile
+  - food
   layers:
   - Default
   - TransparentFX
@@ -14,27 +16,27 @@ TagManager:
   - 
   - Water
   - UI
+  - 
+  - 
+  - Player
+  - DynamicPose
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - Grabbable
+  - Hand
+  - 
+  - 
+  - 
+  - 
   - Plant
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
   - 
   - 
   - 

@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System;
 
 [RequireComponent(typeof(JointDriveController2))] // Required to set joint forces
-public class CrawlerAgent2 : MonoBehaviour
+public class CrawlerAgent2 : Agent2
 {
 
     [Header("Walk Speed")]
@@ -27,12 +27,9 @@ public class CrawlerAgent2 : MonoBehaviour
     //The walking speed to try and achieve
     private float m_TargetWalkingSpeed = m_maxWalkingSpeed;
     public List<double> currentStateData;
-    public double m_Reward = 0;
-    public bool done;
+
     private bool stopTraining = false;
     public const int decisionPeriod = 5;
-    public int decisionStep = 0;
-    public Action stepCallBack;
 
     const float m_maxWalkingSpeed = 15; //The max walking speed
     const float m_minWalkingSpeed = 10;
@@ -225,7 +222,7 @@ public class CrawlerAgent2 : MonoBehaviour
         currentStateData.Add(Vector3.Distance(velGoal, avgVel));
         //avg body vel relative to cube
         Vector3 values = m_OrientationCube.transform.InverseTransformDirection(avgVel);
-        /*
+        
         currentStateData.Add(values.x);
         currentStateData.Add(values.y);
         currentStateData.Add(values.z);
@@ -246,7 +243,7 @@ public class CrawlerAgent2 : MonoBehaviour
         currentStateData.Add(values.x);
         currentStateData.Add(values.y);
         currentStateData.Add(values.z);
-        */
+        
 
         foreach (var bodyPart in m_JdController.bodyPartsList)
         {
@@ -401,29 +398,12 @@ public class CrawlerAgent2 : MonoBehaviour
         EndEpisode();
     }
 
-    public void SetReward(float reward)
-    {
-        //Utilities.DebugCheckNanAndInfinity(reward, "reward", "SetReward");
-        //m_CumulativeReward += reward - m_Reward;
-        m_Reward = reward;
-        //m_Reward += reward;
-    }
 
     public void AddReward(float increment)
     {
         //Utilities.DebugCheckNanAndInfinity(increment, "increment", "AddReward");
         m_Reward += increment;
         //m_CumulativeReward += increment;
-    }
-
-    public void EndEpisode()
-    {
-        done = true;
-        decisionStep = 0;
-        if (stepCallBack != null)
-        {
-            stepCallBack();
-        }
     }
 
     public void StopTraining()

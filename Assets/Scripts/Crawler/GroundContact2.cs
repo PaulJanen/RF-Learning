@@ -9,7 +9,7 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public class GroundContact2 : MonoBehaviour
 {
-    [HideInInspector] public CrawlerAgent2 agent;
+    [HideInInspector] public Agent2 agent;
 
     [Header("Ground Check")] public bool agentDoneOnGroundContact; // Whether to reset agent on ground contact.
     public bool penalizeGroundContact; // Whether to penalize on contact.

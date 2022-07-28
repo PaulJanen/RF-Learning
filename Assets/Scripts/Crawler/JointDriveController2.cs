@@ -37,11 +37,11 @@ public class JointDriveController2 : MonoBehaviour
         if (!bp.groundContact)
         {
             bp.groundContact = t.gameObject.AddComponent<GroundContact2>();
-            bp.groundContact.agent = gameObject.GetComponent<CrawlerAgent2>();
+            bp.groundContact.agent = gameObject.GetComponent<Agent2>();
         }
         else
         {
-            bp.groundContact.agent = gameObject.GetComponent<CrawlerAgent2>();
+            bp.groundContact.agent = gameObject.GetComponent<Agent2>();
         }
 
         if (bp.joint)

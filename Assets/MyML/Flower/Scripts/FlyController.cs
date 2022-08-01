@@ -16,7 +16,7 @@ public class FlyController : MonoBehaviour, ISpawner
     private Vector3 currentDir = Vector3.zero;
     private float glidingDrag = 5f;
     private float evadingDrag = 10f;
-    public Spawner spawner;
+    private Spawner spawner;
 
     private void Awake()
     {
@@ -55,14 +55,13 @@ public class FlyController : MonoBehaviour, ISpawner
     {
         if(other.gameObject.tag == "ground" || other.gameObject.tag == "mouth")
         {
-            transform.DOScale(0f, 1f).OnComplete(DestroyObject);
+            //transform.DOScale(0f, 1f).OnComplete(DestroyObject);
         }
     }
 
 
     public void DestroyObject()
     {
-
         Destroy(transform.gameObject);
     }
 }

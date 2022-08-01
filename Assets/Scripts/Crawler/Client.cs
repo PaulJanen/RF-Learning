@@ -19,15 +19,14 @@ public class Data
     public bool done;
 }
 
-public class CrawlerClient : MonoBehaviour
+public class Client : MonoBehaviour
 {
     private bool receiveMessage = true;
-    public string tcp = "tcp://localhost";
 
     public int _port = 5555;
     Action callback;
 
-    public CrawlerAgent2 agent;
+    public Agent2 agent;
     public ResponseSocket _server;
 
     // Start is called before the first frame update
@@ -57,6 +56,7 @@ public class CrawlerClient : MonoBehaviour
         string recv = "";
         _server.TryReceiveFrameString(out recv);
         Data data = JsonUtility.FromJson<Data>(recv);
+        Debug.Log("message received");
         if (data != null)
         {
             agent.FreezeRigidBody(false);
@@ -95,8 +95,11 @@ public class CrawlerClient : MonoBehaviour
     
     private void StepCommand(Data data)
     {
-        agent.ActionReceived(data.actions.ToList());
+        Debug.Log("step command");
+        Debug.Log("is done: " + agent.done);
+        Debug.Log("is stop training: " + agent.stopTraining);
         agent.stepCallBack = SendStepInfo;
+        agent.ActionReceived(data.actions.ToList());
     }
 
     private void DoneTrainingCommand()
@@ -110,6 +113,7 @@ public class CrawlerClient : MonoBehaviour
 
     private void SendStepInfo()
     {
+        Debug.Log("stepCallBack");
         agent.stepCallBack = null;
         Data data = new Data();
         agent.CollectObservations();
@@ -121,36 +125,6 @@ public class CrawlerClient : MonoBehaviour
         string send = JsonUtility.ToJson(data);
         _server.SendFrame(send);
         receiveMessage = true;
-    }
-
-
-    void ReceiveMessageDeprecated()
-    {
-        double[] inputVecotr = new double[] { };
-        double[] outputVector;
-        
-        ForceDotNet.Force(); // this line is needed to prevent unity freeze after one use, not sure why yet
-        using (ResponseSocket client = new ResponseSocket(tcp))
-        {
-            Debug.Log("Start");
-            client.Options.Linger = TimeSpan.Zero;
-            client.Bind(tcp);
-            string message = client.ReceiveFrameString();
-            Debug.Log("Received: " + message);
-      
-            message = "Client is talking";
-            client.SendFrame(message);
-            //Debug.Log("Sending");
-            //var byteArray = new byte[inputVecotr.Length * sizeof(double)];
-            //Buffer.BlockCopy(inputVecotr, 0, byteArray, 0, byteArray.Length);
-            //client.SendFrame(byteArray);
-
-            //byte[] outputBytes = client.ReceiveFrameBytes();
-            //outputVector = new double[outputBytes.Length / sizeof(double)];
-            //Buffer.BlockCopy(outputBytes, 0, outputVector, 0, outputBytes.Length);
-        }
-        Debug.Log("Finished");
-        NetMQConfig.Cleanup();
     }
     
     void OnDisable()

@@ -26,9 +26,7 @@ public class CrawlerAgent2 : Agent2
 
     //The walking speed to try and achieve
     private float m_TargetWalkingSpeed = m_maxWalkingSpeed;
-    public List<double> currentStateData;
 
-    private bool stopTraining = false;
     public const int decisionPeriod = 5;
 
     const float m_maxWalkingSpeed = 15; //The max walking speed
@@ -124,7 +122,7 @@ public class CrawlerAgent2 : Agent2
     /// <summary>
     /// Loop over body parts and reset them to initial conditions.
     /// </summary>
-    public void OnEpisodeBegin()
+    public override void OnEpisodeBegin()
     {
         done = false;
         stopTraining = false;
@@ -181,7 +179,7 @@ public class CrawlerAgent2 : Agent2
     /// <summary>
     /// Loop over body parts to add them to observation.
     /// </summary>
-    public void CollectObservations()
+    public override void CollectObservations()
     {
         currentStateData = new List<double>();
 
@@ -251,7 +249,7 @@ public class CrawlerAgent2 : Agent2
         }
     }
 
-    public void ActionReceived(List<double> actionBuffers)
+    public override void ActionReceived(List<double> actionBuffers)
     {
         // The dictionary with all the body parts in it are in the jdController
         var bpDict = m_JdController.bodyPartsDict;
@@ -410,34 +408,5 @@ public class CrawlerAgent2 : Agent2
     {
         stepCallBack = null;
         stopTraining = true;
-    }
-
-    public void FreezeRigidBody(bool freeze)
-    {
-        for (int i = 0; i < m_JdController.bodyPartsList.Count; i++)
-        {
-            if (freeze)
-            {
-                stopTraining = true;
-                if (m_JdController.bodyPartsList[i].isAlreadyFroozen == false)
-                {
-                    m_JdController.bodyPartsList[i].isAlreadyFroozen = true;
-                    m_JdController.bodyPartsList[i].SaveVelocity();
-                    m_JdController.bodyPartsList[i].rb.constraints = RigidbodyConstraints.FreezePosition;
-                    m_JdController.bodyPartsList[i].rb.isKinematic = true;
-                }
-            }
-            else
-            {
-                stopTraining = false;
-                if (m_JdController.bodyPartsList[i].isAlreadyFroozen == true)
-                {
-                    m_JdController.bodyPartsList[i].isAlreadyFroozen = false;
-                    m_JdController.bodyPartsList[i].rb.isKinematic = false;
-                    m_JdController.bodyPartsList[i].rb.constraints = RigidbodyConstraints.None;
-                    m_JdController.bodyPartsList[i].LoadSavedVelocity();
-                }
-            }
-        }        
     }
 }

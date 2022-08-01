@@ -61,6 +61,7 @@ public class Client : MonoBehaviour
         {
             agent.FreezeRigidBody(false);
             receiveMessage = false;
+            Debug.Log(data.command);
             switch (data.command)
             {
                 case "Reset":
@@ -95,11 +96,17 @@ public class Client : MonoBehaviour
     
     private void StepCommand(Data data)
     {
-        Debug.Log("step command");
+        Debug.Log("step command, callback assigned");
         Debug.Log("is done: " + agent.done);
-        Debug.Log("is stop training: " + agent.stopTraining);
-        agent.stepCallBack = SendStepInfo;
-        agent.ActionReceived(data.actions.ToList());
+        Debug.Log("is stop training: " + agent.freezeBody);
+
+        if (agent.done == false)
+        {
+            agent.stepCallBack = SendStepInfo;
+            agent.ActionReceived(data.actions.ToList());
+        }
+        else
+            SendStepInfo();
     }
 
     private void DoneTrainingCommand()
@@ -113,13 +120,13 @@ public class Client : MonoBehaviour
 
     private void SendStepInfo()
     {
-        Debug.Log("stepCallBack");
         agent.stepCallBack = null;
         Data data = new Data();
         agent.CollectObservations();
         data.state = agent.currentStateData.ToArray();
         data.reward = agent.m_Reward;
         data.done = agent.done;
+        Debug.Log("stepCallBack is null, done status: " + data.done);
         data.command = "Step";
         agent.m_Reward = 0;
         string send = JsonUtility.ToJson(data);

@@ -95,7 +95,7 @@ public class CrawlerAgent2 : Agent2
         m_DirectionIndicator = GetComponentInChildren<DirectionIndicator>();
         m_JdController = GetComponent<JointDriveController2>();
         currentStateData = new List<double>();
-        stopTraining = true;
+        freezeBody = true;
 
         //Setup each body part
         m_JdController.SetupBodyPart(body);
@@ -125,7 +125,7 @@ public class CrawlerAgent2 : Agent2
     public override void OnEpisodeBegin()
     {
         done = false;
-        stopTraining = false;
+        freezeBody = false;
         decisionStep = 0;
         foreach (var bodyPart in m_JdController.bodyPartsDict.Values)
         {
@@ -277,7 +277,7 @@ public class CrawlerAgent2 : Agent2
 
     void FixedUpdate()
     {
-        if (stopTraining)
+        if (freezeBody)
             return;
         decisionStep += 1;
 
@@ -407,6 +407,6 @@ public class CrawlerAgent2 : Agent2
     public void StopTraining()
     {
         stepCallBack = null;
-        stopTraining = true;
+        freezeBody = true;
     }
 }

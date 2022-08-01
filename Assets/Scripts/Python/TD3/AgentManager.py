@@ -82,10 +82,10 @@ class AgentManager():
         if(len(self.allWalkers) > 0):
             oldWalkers = self.allWalkers
             self.allWalkers.clear()
-            for index,i in enumerate(range(5556,5557)):
+            for index,i in enumerate(range(5556,5564)):
                 self.allWalkers.append(Plant(i, self, oldWalkers[index]))
         else:
-            for i in range(5556,5557):
+            for i in range(5556,5564):
                 self.allWalkers.append(Plant(i, self))
         
         for i in self.allWalkers:

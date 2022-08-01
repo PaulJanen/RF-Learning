@@ -61,7 +61,7 @@ public class PlantAgent : Agent2
         //m_DirectionIndicator = GetComponentInChildren<DirectionIndicator>();
         jdController = GetComponent<JointDriveController2>();
         currentStateData = new List<double>();
-        stopTraining = true;
+        freezeBody = true;
 
         //Setup each body part
         jdController.SetupBodyPart(pot);
@@ -80,7 +80,8 @@ public class PlantAgent : Agent2
     /// <param name="pos"></param>
     void SpawnTarget()
     {
-        if(spawnFood)
+        foodSpawner.Restart();
+        if (spawnFood)
             food = foodSpawner.Spawn();
     }
 
@@ -95,7 +96,7 @@ public class PlantAgent : Agent2
         m_OrientationCube.UpdateOrientation(stemTop, food);
         mouth.callback += TouchedTarget;
         done = false;
-        stopTraining = false;
+        freezeBody = false;
         decisionStep = 0;
         foreach (var bodyPart in jdController.bodyPartsDict.Values)
         {
@@ -107,7 +108,6 @@ public class PlantAgent : Agent2
 
     public override void EndEpisode()
     {
-        foodSpawner.Restart();
         base.EndEpisode();
     }
 
@@ -246,12 +246,11 @@ public class PlantAgent : Agent2
     
     void FixedUpdate()
     {
-        if (stopTraining || done)
+        if (freezeBody || done)
             return;
         decisionStep += 1;
 
-        Debug.Log("training");
-        Debug.Log("is training done? "+done);
+        Debug.Log("update: " + decisionStep);
         UpdateOrientationObjects();
         // If enabled the feet will light up green when the foot is grounded.
         // This is just a visualization and isn't necessary for function

@@ -11,7 +11,7 @@ public class Agent2 : MonoBehaviour
     public int decisionStep = 0;
     public Action stepCallBack;
     protected JointDriveController2 jdController;
-    public bool stopTraining = false;
+    public bool freezeBody = false;
 
 
     public virtual void OnEpisodeBegin()
@@ -32,7 +32,7 @@ public class Agent2 : MonoBehaviour
     public virtual void EndEpisode()
     {
         done = true;
-        stopTraining = true;
+        freezeBody = true;
         decisionStep = 0;
         Debug.Log("end episode");
         if (stepCallBack != null)
@@ -53,11 +53,12 @@ public class Agent2 : MonoBehaviour
 
     public void FreezeRigidBody(bool freeze)
     {
+        Debug.Log("is body freezed: " + freeze);
         for (int i = 0; i < jdController.bodyPartsList.Count; i++)  
         {
             if (freeze)
             {
-                stopTraining = true;
+                freezeBody = true;
                 if (jdController.bodyPartsList[i].isAlreadyFroozen == false)
                 {
                     jdController.bodyPartsList[i].isAlreadyFroozen = true;
@@ -68,8 +69,7 @@ public class Agent2 : MonoBehaviour
             }
             else
             {
-                Debug.Log("unfreeze body");
-                stopTraining = false;
+                freezeBody = false;
                 if (jdController.bodyPartsList[i].isAlreadyFroozen == true)
                 {
                     jdController.bodyPartsList[i].isAlreadyFroozen = false;

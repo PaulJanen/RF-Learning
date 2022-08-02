@@ -16,7 +16,8 @@ public class PlantAgent : Agent2
     [Header("Food and mouth managers")]
     public bool spawnFood;
     public FlySpawner foodSpawner;
-    public PlantMouth mouth;
+    public PlantMouth mouthBottom;
+    public PlantMouth mouthTop;
     private Transform food;
 
 
@@ -90,11 +91,12 @@ public class PlantAgent : Agent2
     /// </summary>
     public override void OnEpisodeBegin()
     {
-        Debug.Log("started episode");
         SpawnTarget();
-        mouth.Restart();
+        mouthBottom.Restart();
+        mouthTop.Restart();
         m_OrientationCube.UpdateOrientation(stemTop, food);
-        mouth.callback += TouchedTarget;
+        mouthBottom.callback += TouchedTarget;
+        mouthTop.callback += TouchedTarget;
         done = false;
         freezeBody = false;
         decisionStep = 0;
@@ -250,7 +252,7 @@ public class PlantAgent : Agent2
             return;
         decisionStep += 1;
 
-        Debug.Log("update: " + decisionStep);
+
         UpdateOrientationObjects();
         // If enabled the feet will light up green when the foot is grounded.
         // This is just a visualization and isn't necessary for function
@@ -266,7 +268,7 @@ public class PlantAgent : Agent2
         // b. Rotation alignment with target direction.
         //This reward will approach 1 if it faces the target direction perfectly and approach zero as it deviates
         var lookAtTargetReward = (Vector3.Dot(cubeForward, stemTop.forward) + 1) * .5F;
-        AddReward(lookAtTargetReward);   
+        AddReward(lookAtTargetReward*0.01f);   
         
         if (stepCallBack != null && decisionStep >= decisionPeriod)
         {
@@ -313,8 +315,13 @@ public class PlantAgent : Agent2
     /// </summary>
     public void TouchedTarget()
     {
-        AddReward(1f);
-        EndEpisode();
+
+        if(mouthBottom.caughtFood && mouthTop.caughtFood)
+        {
+            Debug.Log("food caught");
+            AddReward(1f);
+            EndEpisode();
+        }
     }
 
     public void AddReward(float increment)

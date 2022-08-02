@@ -56,12 +56,10 @@ public class Client : MonoBehaviour
         string recv = "";
         _server.TryReceiveFrameString(out recv);
         Data data = JsonUtility.FromJson<Data>(recv);
-        Debug.Log("message received");
         if (data != null)
         {
             agent.FreezeRigidBody(false);
             receiveMessage = false;
-            Debug.Log(data.command);
             switch (data.command)
             {
                 case "Reset":
@@ -96,10 +94,6 @@ public class Client : MonoBehaviour
     
     private void StepCommand(Data data)
     {
-        Debug.Log("step command, callback assigned");
-        Debug.Log("is done: " + agent.done);
-        Debug.Log("is stop training: " + agent.freezeBody);
-
         if (agent.done == false)
         {
             agent.stepCallBack = SendStepInfo;
@@ -126,7 +120,6 @@ public class Client : MonoBehaviour
         data.state = agent.currentStateData.ToArray();
         data.reward = agent.m_Reward;
         data.done = agent.done;
-        Debug.Log("stepCallBack is null, done status: " + data.done);
         data.command = "Step";
         agent.m_Reward = 0;
         string send = JsonUtility.ToJson(data);

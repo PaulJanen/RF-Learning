@@ -301,6 +301,41 @@ PrefabInstance:
       propertyPath: _port
       value: 5556
       objectReference: {fileID: 0}
+    - target: {fileID: 8479523471512700261, guid: d07f5b2d96c49b44c992c416e99d0ae7,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8479523471512700261, guid: d07f5b2d96c49b44c992c416e99d0ae7,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8479523471512700261, guid: d07f5b2d96c49b44c992c416e99d0ae7,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.92387956
+      objectReference: {fileID: 0}
+    - target: {fileID: 8479523471512700261, guid: d07f5b2d96c49b44c992c416e99d0ae7,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.38268343
+      objectReference: {fileID: 0}
+    - target: {fileID: 8479523471512700261, guid: d07f5b2d96c49b44c992c416e99d0ae7,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8479523471512700261, guid: d07f5b2d96c49b44c992c416e99d0ae7,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8479523471512700261, guid: d07f5b2d96c49b44c992c416e99d0ae7,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 45
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d07f5b2d96c49b44c992c416e99d0ae7, type: 3}
 --- !u!1001 &1036142084
@@ -369,6 +404,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: PlatformPlant (7)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7140884642960764604, guid: d07f5b2d96c49b44c992c416e99d0ae7,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7388259637572213200, guid: d07f5b2d96c49b44c992c416e99d0ae7,
         type: 3}
@@ -444,6 +484,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: PlatformPlant (5)
       objectReference: {fileID: 0}
+    - target: {fileID: 7140884642960764604, guid: d07f5b2d96c49b44c992c416e99d0ae7,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7388259637572213200, guid: d07f5b2d96c49b44c992c416e99d0ae7,
         type: 3}
       propertyPath: _port
@@ -517,6 +562,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: PlatformPlant (6)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7140884642960764604, guid: d07f5b2d96c49b44c992c416e99d0ae7,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7388259637572213200, guid: d07f5b2d96c49b44c992c416e99d0ae7,
         type: 3}
@@ -592,6 +642,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: PlatformPlant (4)
       objectReference: {fileID: 0}
+    - target: {fileID: 7140884642960764604, guid: d07f5b2d96c49b44c992c416e99d0ae7,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7388259637572213200, guid: d07f5b2d96c49b44c992c416e99d0ae7,
         type: 3}
       propertyPath: _port
@@ -666,6 +721,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: PlatformPlant (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 7140884642960764604, guid: d07f5b2d96c49b44c992c416e99d0ae7,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7388259637572213200, guid: d07f5b2d96c49b44c992c416e99d0ae7,
         type: 3}
       propertyPath: _port
@@ -739,6 +799,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: PlatformPlant (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7140884642960764604, guid: d07f5b2d96c49b44c992c416e99d0ae7,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7388259637572213200, guid: d07f5b2d96c49b44c992c416e99d0ae7,
         type: 3}
@@ -882,6 +947,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: PlatformPlant (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7140884642960764604, guid: d07f5b2d96c49b44c992c416e99d0ae7,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7388259637572213200, guid: d07f5b2d96c49b44c992c416e99d0ae7,
         type: 3}

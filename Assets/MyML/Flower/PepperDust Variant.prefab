@@ -14,6 +14,21 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 101b84c347d5694418f4f7850d298879,
         type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1.601
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 101b84c347d5694418f4f7850d298879,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.601
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 101b84c347d5694418f4f7850d298879,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1.601
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 101b84c347d5694418f4f7850d298879,
+        type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -65,12 +80,12 @@ PrefabInstance:
     - target: {fileID: -7511558181221131132, guid: 101b84c347d5694418f4f7850d298879,
         type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 101b84c347d5694418f4f7850d298879,
         type: 3}
       propertyPath: m_Name
-      value: PepperDust
+      value: PepperDust Variant
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 101b84c347d5694418f4f7850d298879,
         type: 3}
@@ -80,7 +95,7 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 101b84c347d5694418f4f7850d298879,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 101b84c347d5694418f4f7850d298879,
         type: 3}
@@ -111,7 +126,7 @@ Rigidbody:
   serializedVersion: 2
   m_Mass: 1
   m_Drag: 0
-  m_AngularDrag: 0.05
+  m_AngularDrag: 0.1
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
@@ -142,10 +157,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de174c28475982648b91e9d2cadaef9b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  plantsCatchBoundaries: {fileID: 0}
   rb: {fileID: 2050273813}
-  forceMagnitude: 25
-  maxVelocity: 10
+  prvVelocity: {x: 0, y: 0, z: 0}
+  prvAngularVelocity: {x: 0, y: 0, z: 0}
+  isAlreadyFroozen: 0
+  plantsCatchBoundaries: {fileID: 0}
+  forceMagnitude: 12
+  stayStill: 0
 --- !u!1001 &2505224571579196963
 PrefabInstance:
   m_ObjectHideFlags: 0

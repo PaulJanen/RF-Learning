@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class StaticFlyController : MonoBehaviour, ISpawner
+public class StaticFlyController : Fly, ISpawner
 {
     private Spawner spawner;
     public void InitializeSpawnedObj(Transform parent, Spawner spawner)

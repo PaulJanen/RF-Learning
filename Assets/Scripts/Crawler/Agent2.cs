@@ -12,7 +12,7 @@ public class Agent2 : MonoBehaviour
     public Action stepCallBack;
     protected JointDriveController2 jdController;
     public bool freezeBody = false;
-
+    protected Transform food;
 
     public virtual void OnEpisodeBegin()
     {
@@ -34,10 +34,8 @@ public class Agent2 : MonoBehaviour
         done = true;
         freezeBody = true;
         decisionStep = 0;
-        Debug.Log("end episode");
         if (stepCallBack != null)
         {
-            Debug.Log("callback called");
             stepCallBack();
         }
     }
@@ -53,7 +51,9 @@ public class Agent2 : MonoBehaviour
 
     public void FreezeRigidBody(bool freeze)
     {
-        Debug.Log("is body freezed: " + freeze);
+        if(food!=null)
+            food.GetComponent<Fly>().FreezeRigidBody(freeze);
+
         for (int i = 0; i < jdController.bodyPartsList.Count; i++)  
         {
             if (freeze)

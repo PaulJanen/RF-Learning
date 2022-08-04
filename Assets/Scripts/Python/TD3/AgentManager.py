@@ -36,7 +36,7 @@ class AgentManager():
 
         self.agent = Plant(1, self)
         self.policy = TD3(self.agent.state_dim, self.agent.action_dim, self.agent.env.maxAction, self.agent.env.minAction)
-        self.replayBuffer = ReplayBuffer()
+        self.replayBuffer = ReplayBuffer(max_size=100_000)
         self.evaluations = [0]
 
         self.loadModel = False

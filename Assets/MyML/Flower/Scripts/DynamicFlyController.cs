@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 
-public class FlyController : MonoBehaviour, ISpawner
+public class DynamicFlyController : Fly, ISpawner
 {
     public BoxCollider plantsCatchBoundaries;
-    public Rigidbody rb;
+    
     public float forceMagnitude = 20f;
-    public float maxVelocity = 10f;
     public bool stayStill = true;
 
     private float actionInterval = 0.5f;
@@ -51,14 +50,18 @@ public class FlyController : MonoBehaviour, ISpawner
         }
     }
 
-    void OnCollisionStay(Collision other)
+    void OnCollisionEnter(Collision other)
     {
-        if(other.gameObject.tag == "ground" || other.gameObject.tag == "mouth")
+        if(other.gameObject.tag == "ground")
         {
-            //transform.DOScale(0f, 1f).OnComplete(DestroyObject);
+            if(touchedGround!=null)
+                touchedGround();
+        }
+        else if(other.gameObject.tag == "mouth")
+        {
+
         }
     }
-
 
     public void DestroyObject()
     {

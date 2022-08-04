@@ -15,10 +15,10 @@ public class PlantAgent : Agent2
     //The direction an agent will walk during training.
     [Header("Food and mouth managers")]
     public bool spawnFood;
-    public FlySpawner foodSpawner;
+    public FlySpawner flySpawner;
     public PlantMouth mouthBottom;
     public PlantMouth mouthTop;
-    private Transform food;
+    
 
 
     [Header("Body Parts")][Space(10)] 
@@ -55,14 +55,12 @@ public class PlantAgent : Agent2
 
     public void Initialize()
     {
-
         m_OrientationCube.Initialize(stemTop);
         //m_DirToTarget = m_Target.position - pot.position;
 
         //m_DirectionIndicator = GetComponentInChildren<DirectionIndicator>();
         jdController = GetComponent<JointDriveController2>();
         currentStateData = new List<double>();
-        freezeBody = true;
 
         //Setup each body part
         jdController.SetupBodyPart(pot);
@@ -71,6 +69,7 @@ public class PlantAgent : Agent2
         jdController.SetupBodyPart(stemTop);
         jdController.SetupBodyPart(mouthUp);
         jdController.SetupBodyPart(mouthDown);
+        FreezeRigidBody(true);
 
     }
 
@@ -81,10 +80,22 @@ public class PlantAgent : Agent2
     /// <param name="pos"></param>
     void SpawnTarget()
     {
-        foodSpawner.Restart();
+        flySpawner.Restart();
         if (spawnFood)
-            food = foodSpawner.Spawn();
+        {
+            food = flySpawner.Spawn();
+            food.GetComponent<Fly>().touchedGround = FoodTouchedGround;
+        }
     }
+
+    void FoodTouchedGround()
+    {
+        if (done)
+            return;
+        SetReward(-1);
+        EndEpisode();
+    }
+
 
     /// <summary>
     /// Loop over body parts and reset them to initial conditions.
@@ -176,6 +187,16 @@ public class PlantAgent : Agent2
         currentStateData.Add(bodyUpRelativeToLookRotationToTarget.x);
         currentStateData.Add(bodyUpRelativeToLookRotationToTarget.y);
         currentStateData.Add(bodyUpRelativeToLookRotationToTarget.z);
+
+        if (mouthTop.caughtFood)
+            currentStateData.Add(1);
+        else
+            currentStateData.Add(0);
+
+        if (mouthBottom.caughtFood)
+            currentStateData.Add(1);
+        else
+            currentStateData.Add(0);
 
 
 
@@ -319,7 +340,7 @@ public class PlantAgent : Agent2
         if(mouthBottom.caughtFood && mouthTop.caughtFood)
         {
             Debug.Log("food caught");
-            AddReward(1f);
+            AddReward(20f);
             EndEpisode();
         }
     }

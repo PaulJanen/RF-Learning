@@ -13,7 +13,9 @@ public class DynamicFlyController : Fly, ISpawner
     private float actionInterval = 0.5f;
     private float nextActionTime;
     private Vector3 currentDir = Vector3.zero;
+    [SerializeField]
     private float glidingDrag = 5f;
+    [SerializeField]
     private float evadingDrag = 10f;
     private Spawner spawner;
 

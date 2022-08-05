@@ -92,8 +92,9 @@ public class PlantAgent : Agent2
     {
         if (done)
             return;
-        SetReward(-1);
-        EndEpisode();
+        //SetReward(-1);
+        //EndEpisode();
+        SpawnTarget();
     }
 
 
@@ -341,7 +342,9 @@ public class PlantAgent : Agent2
         {
             Debug.Log("food caught");
             AddReward(20f);
-            EndEpisode();
+            SpawnTarget();
+            mouthTop.caughtFood = false;
+            mouthBottom.caughtFood = false;
         }
     }
 

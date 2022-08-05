@@ -602,6 +602,18 @@ PrefabInstance:
       propertyPath: minPos.z
       value: 2.2
       objectReference: {fileID: 0}
+    - target: {fileID: 1545195391, guid: 292c9fd40395f454e922326250066250, type: 3}
+      propertyPath: jointDampen
+      value: 20000
+      objectReference: {fileID: 0}
+    - target: {fileID: 1545195391, guid: 292c9fd40395f454e922326250066250, type: 3}
+      propertyPath: maxJointSpring
+      value: 40000
+      objectReference: {fileID: 0}
+    - target: {fileID: 1545195391, guid: 292c9fd40395f454e922326250066250, type: 3}
+      propertyPath: maxJointForceLimit
+      value: 20000
+      objectReference: {fileID: 0}
     - target: {fileID: 1897679720, guid: 292c9fd40395f454e922326250066250, type: 3}
       propertyPath: m_LocalScale.y
       value: 0.1574992

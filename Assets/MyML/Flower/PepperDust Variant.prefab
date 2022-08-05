@@ -164,6 +164,8 @@ MonoBehaviour:
   plantsCatchBoundaries: {fileID: 0}
   forceMagnitude: 12
   stayStill: 0
+  glidingDrag: 5
+  evadingDrag: 10
 --- !u!1001 &2505224571579196963
 PrefabInstance:
   m_ObjectHideFlags: 0

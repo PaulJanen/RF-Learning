@@ -36,7 +36,7 @@ class AgentManager():
 
         self.agent = Plant(1, self)
         self.policy = TD3(self.agent.state_dim, self.agent.action_dim, self.agent.env.maxAction, self.agent.env.minAction)
-        self.replayBuffer = ReplayBuffer(max_size=100_000)
+        self.replayBuffer = ReplayBuffer()
         self.evaluations = [0]
 
         self.loadModel = False
@@ -69,8 +69,8 @@ class AgentManager():
         self.batch_size = 100
         self.discount = 0.99 # Discount factor gamma, used in the calculation of the total discounted reward
         self.tau = 0.005 # Target network update rate
-        self.policy_noise = 0.2 # STD of Gaussian noise added to the actions for the exploration purposes
-        self.noise_clip = 0.5 # Maximum value of the Gaussian noise added to the actions (policy)
+        self.policy_noise = 0.05#0.2 # STD of Gaussian noise added to the actions for the exploration purposes
+        self.noise_clip = 0.1#0.5 # Maximum value of the Gaussian noise added to the actions (policy)
         self.policy_freq = 2 # Number of iterations to wait before the policy network (Actor model) is updated
         self.allWalkers = []
         self.trainingCrashedDetection = 0
@@ -112,7 +112,7 @@ class AgentManager():
                 self.trainingCrashedDetection = 0
                 self.CreateAndStartWalkers()
             '''
-            if(self.timesteps_since_train >= self.trainAfterSteps and self.loadModel == False):
+            if(self.timesteps_since_train >= self.trainAfterSteps and self.loadModel == False and self.agent.env.explorationSteps < self.total_timesteps):
                 self.trainingCrashedDetection = 0
                 self.timesteps_since_train = 0
                 if self.total_timesteps != 0:

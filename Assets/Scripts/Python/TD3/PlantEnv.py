@@ -12,7 +12,7 @@ class PlantEnv():
         self.maxAction = np.array([1,1,1,1,1,1,1,1,1,1,1,1,1,1,1])
         self.minAction = np.array([-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1])
         self.max_episode_steps = 5000
-        self.explorationSteps = 100_000
+        self.explorationSteps = 20_000
 
     def step(self, action):
         observation, reward, done = self.client.SendAction(action)

@@ -4,7 +4,7 @@ from Actor import Actor
 from Critic import Critic
 from ReplayBuffer import ReplayBuffer
 import os
-from PlantEnv import PlantEnv as walkerEnv
+from PlantEnv import PlantEnv
 import numpy as np
 from TD3 import TD3
 import time
@@ -21,11 +21,8 @@ class Plant(threading.Thread):
   def __init__(self, port, manager, prvAgent = None):
     threading.Thread.__init__(self)
     self.env_name = "Plant"
-    self.start_timesteps = (int)(20000) # Number of iterations/timesteps before which the model randomly chooses an action, and after which it starts to use the policy network
-    #self.eval_freq = 5e3 # How often the evaluation step is performed (after how many timesteps)
-    self.expl_noise = 0.1 # Exploration noise - STD value of exploration Gaussian noise
     self.manager = manager
-    self.env = walkerEnv(port)
+    self.env = PlantEnv(port)
     self.port = port
 
     self.state_dim = self.env.observation_space.shape[0]
@@ -62,16 +59,16 @@ class Plant(threading.Thread):
           episode_timesteps = 0
           self.episode_num += 1
         
-        # Before 10000 timesteps, we play random actions
-        if self.manager.total_timesteps < self.start_timesteps and self.manager.loadModel == False:
+        # Before n timesteps, we play random actions
+        if self.manager.total_timesteps < self.env.explorationSteps and self.manager.loadModel == False:
           action = self.env.actionSample()
         else: # After 10000 timesteps, we switch to the model
           while(self.manager.policy.isTraining):
             time.sleep(1)
           action = self.manager.policy.select_action(np.array(obs))
           # If the explore_noise parameter is not 0, we add noise to the action and we clip it
-          if self.expl_noise != 0:
-            action = (action + np.random.normal(0, self.expl_noise, size=self.env.action_space.shape[0])).clip(self.env.minAction, self.env.maxAction)
+          if self.manager.expl_noise != 0:
+            action = (action + np.random.normal(0, self.manager.expl_noise, size=self.env.action_space.shape[0])).clip(self.env.minAction, self.env.maxAction)
 
         # The agent performs the action in the environment, then reaches the next state and receives the reward
         new_obs, reward, self.done = self.env.step(action)

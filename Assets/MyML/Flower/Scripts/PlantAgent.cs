@@ -290,8 +290,15 @@ public class PlantAgent : Agent2
         // b. Rotation alignment with target direction.
         //This reward will approach 1 if it faces the target direction perfectly and approach zero as it deviates
         var lookAtTargetReward = (Vector3.Dot(cubeForward, stemTop.forward) + 1) * .5F;
-        AddReward(lookAtTargetReward*0.01f);   
-        
+        AddReward(lookAtTargetReward*0.1f);
+
+        if (mouthTop.caughtFood)
+            AddReward(0.1f);
+
+        if (mouthBottom.caughtFood)
+            AddReward(0.1f);
+
+
         if (stepCallBack != null && decisionStep >= decisionPeriod)
         {
             decisionStep = 0;

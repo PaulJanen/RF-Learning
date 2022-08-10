@@ -9,13 +9,6 @@ from ReplayBuffer import ReplayBuffer
 from Plant import Plant
 import tensorflow as tf
 
-
-
-
-#for i in range(5555,5569):
-#    allWalkers.append(Walker(i))
-
-
 class AgentManager():
 
     def mkdir(self, base, name):
@@ -42,14 +35,15 @@ class AgentManager():
         self.loadModel = False
         self.save_models = True
         self.file_name = "%s_%s_%s" % ("TD3", self.agent.env_name, str(self.seed))
+        self.modelDirectory = "./pytorch_models"
         print ("---------------------------------------")
         print ("Settings: %s" % (self.file_name))
         print ("------------------")
 
         if not os.path.exists("./results"):
             os.makedirs("./results")
-        if self.save_models and not os.path.exists("./pytorch_models"):
-            os.makedirs("./pytorch_models")
+        if self.save_models and not os.path.exists(self.modelDirectory):
+            os.makedirs(self.modelDirectory)
 
         now = time.localtime()
         subdir = time.strftime("%d-%b-%Y_%H.%M.%S", now)
@@ -69,8 +63,9 @@ class AgentManager():
         self.batch_size = 100
         self.discount = 0.99 # Discount factor gamma, used in the calculation of the total discounted reward
         self.tau = 0.005 # Target network update rate
-        self.policy_noise = 0.05#0.2 # STD of Gaussian noise added to the actions for the exploration purposes
-        self.noise_clip = 0.1#0.5 # Maximum value of the Gaussian noise added to the actions (policy)
+        self.policy_noise = 0.1#0.05#0.2 # STD of Gaussian noise added to the actions for the exploration purposes
+        self.noise_clip = 0.25#0.1#0.5 # Maximum value of the Gaussian noise added to the actions (policy)
+        self.expl_noise = 0.1 # Exploration noise - STD value of exploration Gaussian noise
         self.policy_freq = 2 # Number of iterations to wait before the policy network (Actor model) is updated
         self.allWalkers = []
         self.trainingCrashedDetection = 0
@@ -97,7 +92,8 @@ class AgentManager():
     def Train(self):
 
         if(self.loadModel):
-            self.policy.load(self.file_name, directory="./pytorch_models")
+            self.policy.load(self.file_name, directory=self.modelDirectory)
+            self.replayBuffer.load(self.file_name, directory=self.modelDirectory)
 
         while(self.total_timesteps < self.max_timesteps):
             time.sleep(1)     
@@ -112,7 +108,7 @@ class AgentManager():
                 self.trainingCrashedDetection = 0
                 self.CreateAndStartWalkers()
             '''
-            if(self.timesteps_since_train >= self.trainAfterSteps and self.loadModel == False and self.agent.env.explorationSteps < self.total_timesteps):
+            if(self.timesteps_since_train >= self.trainAfterSteps and self.agent.env.explorationSteps < self.total_timesteps and self.loadModel == False):
                 self.trainingCrashedDetection = 0
                 self.timesteps_since_train = 0
                 if self.total_timesteps != 0:
@@ -125,18 +121,18 @@ class AgentManager():
 
                     while self.policy.agentsSelectingActionCount != 0:
                         time.sleep(0.1)
-                    
                     print("Total Timesteps: {} Avg Moving Reward: {}".format(self.total_timesteps, avgReward))
                     with self.summary_writer1.as_default():      
                         tf.summary.scalar(name="unify/sin_x", data=avgReward ,step=self.total_timesteps)
                     #self.summary_writer1.flush()
                     self.policy.train(self.replayBuffer, min(self.trainingCycles, self.total_timesteps), self.batch_size, self.discount, self.tau, self.policy_noise, self.noise_clip, self.policy_freq)
                     # We evaluate the episode and we save the policy
-                    if self.timesteps_since_eval >= self.eval_freq:
+                    if self.timesteps_since_eval >= self.eval_freq and self.save_models==True:
                         self.timesteps_since_eval %= self.eval_freq
                         #self.evaluations.append(self.policy.evaluate_policy(self.allWalkers[0]))
                         self.evaluations.append(avgReward)
-                        self.policy.save(self.file_name, directory="./pytorch_models")
+                        self.policy.save(self.file_name, directory=self.modelDirectory)
+                        self.replayBuffer.save(self.file_name, directory=self.modelDirectory)
                         np.save("./results/%s" % (self.file_name), self.evaluations)
         else:
             print("training done")

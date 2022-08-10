@@ -124,7 +124,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3316111301316665726}
   serializedVersion: 2
-  m_Mass: 1
+  m_Mass: 10
   m_Drag: 0
   m_AngularDrag: 0.1
   m_UseGravity: 1
@@ -164,8 +164,8 @@ MonoBehaviour:
   plantsCatchBoundaries: {fileID: 0}
   forceMagnitude: 12
   stayStill: 0
-  glidingDrag: 5
-  evadingDrag: 10
+  glidingDrag: 4
+  evadingDrag: 3
 --- !u!1001 &2505224571579196963
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -1,4 +1,5 @@
 import numpy as np
+import pickle
 
 class ReplayBuffer(object):
 
@@ -25,3 +26,22 @@ class ReplayBuffer(object):
       batch_rewards.append(np.array(reward, copy=False))
       batch_dones.append(np.array(done, copy=False))
     return np.array(batch_states), np.array(batch_next_states), np.array(batch_actions), np.array(batch_rewards).reshape(-1, 1), np.array(batch_dones).reshape(-1, 1)
+  
+  def save(self, filename, directory):
+    allData = []
+    allData.append(self.storage)
+    allData.append(self.ptr)
+    allData.append(self.max_size)
+
+    with open('%s/%s_storage' % (directory, filename), 'wb') as f:
+      pickle.dump(self.storage, f)
+  
+  # Making a load method to load a pre-trained model
+  def load(self, filename, directory):
+    with open('%s/%s_storage' % (directory, filename), 'rb') as f:
+      allData = pickle.load(f)
+    
+    self.storage = allData[0]
+    self.ptr = allData[1]
+    self.max_size = allData[2]
+

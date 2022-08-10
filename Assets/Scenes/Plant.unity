@@ -236,30 +236,40 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 6348697764600512516, guid: d07f5b2d96c49b44c992c416e99d0ae7,
+    - target: {fileID: 1904938918980182603, guid: d07f5b2d96c49b44c992c416e99d0ae7,
         type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.92387956
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 6348697764600512516, guid: d07f5b2d96c49b44c992c416e99d0ae7,
+    - target: {fileID: 2103584461898567141, guid: d07f5b2d96c49b44c992c416e99d0ae7,
         type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0.38268343
+      propertyPath: m_LocalScale.y
+      value: 0.12059389
       objectReference: {fileID: 0}
-    - target: {fileID: 6348697764600512516, guid: d07f5b2d96c49b44c992c416e99d0ae7,
+    - target: {fileID: 2103584461898567141, guid: d07f5b2d96c49b44c992c416e99d0ae7,
         type: 3}
-      propertyPath: m_LocalRotation.y
+      propertyPath: m_LocalPosition.y
+      value: 0.122
+      objectReference: {fileID: 0}
+    - target: {fileID: 3346413597168903734, guid: d07f5b2d96c49b44c992c416e99d0ae7,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3969476973721472777, guid: d07f5b2d96c49b44c992c416e99d0ae7,
+        type: 3}
+      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6348697764600512516, guid: d07f5b2d96c49b44c992c416e99d0ae7,
+    - target: {fileID: 4282751600377504374, guid: d07f5b2d96c49b44c992c416e99d0ae7,
         type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 6348697764600512516, guid: d07f5b2d96c49b44c992c416e99d0ae7,
+    - target: {fileID: 5475392381146569616, guid: d07f5b2d96c49b44c992c416e99d0ae7,
         type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 45
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7137514453961340612, guid: d07f5b2d96c49b44c992c416e99d0ae7,
         type: 3}
@@ -320,6 +330,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: PlatformPlant
+      objectReference: {fileID: 0}
+    - target: {fileID: 7388259636211962548, guid: d07f5b2d96c49b44c992c416e99d0ae7,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d07f5b2d96c49b44c992c416e99d0ae7, type: 3}

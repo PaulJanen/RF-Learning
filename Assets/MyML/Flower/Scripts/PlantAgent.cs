@@ -348,7 +348,7 @@ public class PlantAgent : Agent2
         if(mouthBottom.caughtFood && mouthTop.caughtFood)
         {
             Debug.Log("food caught");
-            AddReward(20f);
+            AddReward(10f);
             SpawnTarget();
             mouthTop.caughtFood = false;
             mouthBottom.caughtFood = false;

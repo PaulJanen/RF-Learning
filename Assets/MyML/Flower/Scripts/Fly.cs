@@ -67,4 +67,8 @@ public class Fly : MonoBehaviour
 
     }
 
+    public virtual void DestroyObject()
+    {
+
+    }
 }

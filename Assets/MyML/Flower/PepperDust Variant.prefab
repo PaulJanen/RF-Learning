@@ -1,5 +1,100 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &2303557189615097696
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 2688333435622341572}
+    m_Modifications:
+    - target: {fileID: 4656784024257222292, guid: d5c4d9e1d99b94f4ebbe458b5b2e501f,
+        type: 3}
+      propertyPath: m_Name
+      value: PepperDustCharging
+      objectReference: {fileID: 0}
+    - target: {fileID: 4656784024257222292, guid: d5c4d9e1d99b94f4ebbe458b5b2e501f,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4659058842070615400, guid: d5c4d9e1d99b94f4ebbe458b5b2e501f,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4659058842070615400, guid: d5c4d9e1d99b94f4ebbe458b5b2e501f,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.6818
+      objectReference: {fileID: 0}
+    - target: {fileID: 4659058842070615400, guid: d5c4d9e1d99b94f4ebbe458b5b2e501f,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.6818
+      objectReference: {fileID: 0}
+    - target: {fileID: 4659058842070615400, guid: d5c4d9e1d99b94f4ebbe458b5b2e501f,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.6818
+      objectReference: {fileID: 0}
+    - target: {fileID: 4659058842070615400, guid: d5c4d9e1d99b94f4ebbe458b5b2e501f,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4659058842070615400, guid: d5c4d9e1d99b94f4ebbe458b5b2e501f,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4659058842070615400, guid: d5c4d9e1d99b94f4ebbe458b5b2e501f,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4659058842070615400, guid: d5c4d9e1d99b94f4ebbe458b5b2e501f,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 4659058842070615400, guid: d5c4d9e1d99b94f4ebbe458b5b2e501f,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 4659058842070615400, guid: d5c4d9e1d99b94f4ebbe458b5b2e501f,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4659058842070615400, guid: d5c4d9e1d99b94f4ebbe458b5b2e501f,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4659058842070615400, guid: d5c4d9e1d99b94f4ebbe458b5b2e501f,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: -90.00001
+      objectReference: {fileID: 0}
+    - target: {fileID: 4659058842070615400, guid: d5c4d9e1d99b94f4ebbe458b5b2e501f,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4659058842070615400, guid: d5c4d9e1d99b94f4ebbe458b5b2e501f,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: d5c4d9e1d99b94f4ebbe458b5b2e501f, type: 3}
+--- !u!198 &6742630330613781766 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 4784304400125149798, guid: d5c4d9e1d99b94f4ebbe458b5b2e501f,
+    type: 3}
+  m_PrefabInstance: {fileID: 2303557189615097696}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &2505224570826284079
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -162,6 +257,10 @@ MonoBehaviour:
   prvAngularVelocity: {x: 0, y: 0, z: 0}
   isAlreadyFroozen: 0
   plantsCatchBoundaries: {fileID: 0}
+  deathParticles: {fileID: 1438902432858508, guid: 443c01a73f8dca8498453b6db768b6a9,
+    type: 3}
+  chargingParticle: {fileID: 6742630330613781766}
+  disableParticleAfter: 0
   forceMagnitude: 12
   stayStill: 0
   glidingDrag: 4

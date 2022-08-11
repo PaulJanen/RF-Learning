@@ -7,6 +7,13 @@ public class DynamicFlyController : Fly, ISpawner
 {
     public BoxCollider plantsCatchBoundaries;
     
+    public GameObject deathParticles;
+    public ParticleSystem chargingParticle;
+    private float playbackTime;
+    private IEnumerator disableParticle;
+    [SerializeField]
+    private float disableParticleAfter;
+
     public float forceMagnitude = 20f;
     public bool stayStill = true;
 
@@ -33,6 +40,8 @@ public class DynamicFlyController : Fly, ISpawner
         initialSize = transform.localScale;
         timeElapsed = 0;
         finallSize = Vector3.one * 0.6f;
+        playbackTime = 0;
+        disableParticleAfter = 0.2f;
     }
 
     public void InitializeSpawnedObj(Transform parent, Spawner spawner)
@@ -77,12 +86,20 @@ public class DynamicFlyController : Fly, ISpawner
     public override void StartBeingConsumed()
     {
         isBeingConsumed = true;
+
+        if(disableParticle!= null)
+            StopCoroutine(disableParticle);
+        chargingParticle.time = playbackTime;
+        chargingParticle.gameObject.SetActive(true);
+
         consumed = ShrinkObject();
         StartCoroutine(consumed);
     }
 
     public override void StopBeingConsumed()
     {
+        disableParticle = DisableParticle();
+        StartCoroutine(disableParticle);
         StopCoroutine(consumed);
         isBeingConsumed = false;
     }
@@ -99,10 +116,30 @@ public class DynamicFlyController : Fly, ISpawner
 
         if(flyWasConsumed!=null)
             flyWasConsumed();
+
+        DestroyObject();
     }
 
-    public void DestroyObject()
+    IEnumerator DisableParticle()
     {
+        float deltaTime = 0f;
+        while (deltaTime < disableParticleAfter)
+        {
+            playbackTime = chargingParticle.time;
+            deltaTime += Time.deltaTime;
+            yield return null;
+        }
+
+        playbackTime = chargingParticle.time;
+        chargingParticle.gameObject.SetActive(false);
+    }
+
+    public override void DestroyObject()
+    {
+        if(disableParticle!=null)
+            StopCoroutine(disableParticle);
+        chargingParticle.gameObject.SetActive(false);
+        Instantiate(deathParticles, transform.position,Quaternion.identity);
         Destroy(transform.gameObject);
     }
 }

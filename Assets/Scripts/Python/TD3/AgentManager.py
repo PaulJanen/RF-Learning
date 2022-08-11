@@ -32,8 +32,8 @@ class AgentManager():
         self.replayBuffer = ReplayBuffer()
         self.evaluations = [0]
 
-        self.loadModel = False
-        self.save_models = True
+        self.loadModel = True
+        self.save_models = False
         self.file_name = "%s_%s_%s" % ("TD3", self.agent.env_name, str(self.seed))
         self.modelDirectory = "./pytorch_models"
         print ("---------------------------------------")
@@ -93,7 +93,7 @@ class AgentManager():
 
         if(self.loadModel):
             self.policy.load(self.file_name, directory=self.modelDirectory)
-            self.replayBuffer.load(self.file_name, directory=self.modelDirectory)
+            #self.replayBuffer.load(self.file_name, directory=self.modelDirectory)
 
         while(self.total_timesteps < self.max_timesteps):
             time.sleep(1)     

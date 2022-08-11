@@ -166,6 +166,7 @@ MonoBehaviour:
   stayStill: 0
   glidingDrag: 4
   evadingDrag: 3
+  shrinkLength: 1
 --- !u!1001 &2505224571579196963
 PrefabInstance:
   m_ObjectHideFlags: 0

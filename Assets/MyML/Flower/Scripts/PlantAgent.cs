@@ -16,6 +16,7 @@ public class PlantAgent : Agent2
     [Header("Food and mouth managers")]
     public bool spawnFood;
     public FlySpawner flySpawner;
+    private Fly fly;
     public PlantMouth mouthBottom;
     public PlantMouth mouthTop;
     
@@ -83,8 +84,10 @@ public class PlantAgent : Agent2
         flySpawner.Restart();
         if (spawnFood)
         {
-            food = flySpawner.Spawn();
-            food.GetComponent<Fly>().touchedGround = FoodTouchedGround;
+            foodTransform = flySpawner.Spawn();
+            fly = foodTransform.GetComponent<Fly>();
+            fly.touchedGround = FoodTouchedGround;
+            fly.flyWasConsumed = FoodWasConsumed;
         }
     }
 
@@ -106,9 +109,11 @@ public class PlantAgent : Agent2
         SpawnTarget();
         mouthBottom.Restart();
         mouthTop.Restart();
-        m_OrientationCube.UpdateOrientation(stemTop, food);
-        mouthBottom.callback += TouchedTarget;
-        mouthTop.callback += TouchedTarget;
+        m_OrientationCube.UpdateOrientation(stemTop, foodTransform);
+        mouthTop.callback += FoodBeeingEaten;
+        mouthBottom.callback += FoodBeeingEaten;
+        mouthTop.foodWasReleased += FoodWasReleased;
+        mouthBottom.foodWasReleased += FoodWasReleased;
         done = false;
         freezeBody = false;
         decisionStep = 0;
@@ -166,7 +171,7 @@ public class PlantAgent : Agent2
         currentStateData = new List<double>();
 
         jdController.GetCurrentJointForces();
-        dirToTarget = food.position - stemTop.position;
+        dirToTarget = foodTransform.position - stemTop.position;
         m_LookRotation = Quaternion.LookRotation(dirToTarget);
         targetDirMatrix = Matrix4x4.TRS(Vector3.zero, m_LookRotation, Vector3.one);
 
@@ -229,7 +234,7 @@ public class PlantAgent : Agent2
         currentStateData.Add(QuaternionValues.w);
 
         //Add pos of target relative to orientation cube
-        Vector3 values = m_OrientationCube.transform.InverseTransformPoint(food.transform.position);
+        Vector3 values = m_OrientationCube.transform.InverseTransformPoint(foodTransform.transform.position);
         currentStateData.Add(values.x);
         currentStateData.Add(values.y);
         currentStateData.Add(values.z);
@@ -294,10 +299,10 @@ public class PlantAgent : Agent2
 
         if (mouthTop.caughtFood)
             AddReward(0.1f);
-
         if (mouthBottom.caughtFood)
             AddReward(0.1f);
-
+        if (mouthTop.caughtFood && mouthBottom.caughtFood)
+            AddReward(1f);
 
         if (stepCallBack != null && decisionStep >= decisionPeriod)
         {
@@ -309,7 +314,7 @@ public class PlantAgent : Agent2
 
     void UpdateOrientationObjects()
     {
-        m_OrientationCube.UpdateOrientation(stemTop, food);
+        m_OrientationCube.UpdateOrientation(stemTop, foodTransform);
     }
 
     /// <summary>
@@ -342,17 +347,32 @@ public class PlantAgent : Agent2
     /// <summary>
     /// Agent touched the target
     /// </summary>
-    public void TouchedTarget()
+    private void FoodBeeingEaten()
     {
-
-        if(mouthBottom.caughtFood && mouthTop.caughtFood)
+        if (mouthBottom.caughtFood && mouthTop.caughtFood)
         {
-            Debug.Log("food caught");
-            AddReward(10f);
-            SpawnTarget();
-            mouthTop.caughtFood = false;
-            mouthBottom.caughtFood = false;
+            if(fly.IsBeingConsumed == false)
+            {
+                fly.StartBeingConsumed();
+            }
         }
+    }
+
+    private void FoodWasReleased()
+    {
+        if (fly.IsBeingConsumed == true)
+        {
+            fly.StopBeingConsumed();
+        }
+    }
+
+    void FoodWasConsumed()
+    {
+        Debug.Log("food caught");
+        AddReward(20f);
+        mouthTop.caughtFood = false;
+        mouthBottom.caughtFood = false;
+        SpawnTarget();
     }
 
     public void AddReward(float increment)

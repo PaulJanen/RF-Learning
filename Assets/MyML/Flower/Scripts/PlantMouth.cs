@@ -6,13 +6,14 @@ using UnityEngine;
 public class PlantMouth : MonoBehaviour
 {
     public Action callback;
+    public Action foodWasReleased;
     public bool caughtFood;
     public void Restart()
     {
         callback = null;
+        foodWasReleased = null;
         caughtFood = false;
     }
-
 
     void OnTriggerEnter(Collider collider)
     {
@@ -31,6 +32,9 @@ public class PlantMouth : MonoBehaviour
         if (collider.gameObject.tag == "food")
         {
             caughtFood = false;
+            
+            if(foodWasReleased != null)
+                foodWasReleased();
         }
     }
 

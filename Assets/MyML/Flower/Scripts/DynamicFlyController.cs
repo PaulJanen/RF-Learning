@@ -18,12 +18,21 @@ public class DynamicFlyController : Fly, ISpawner
     [SerializeField]
     private float evadingDrag = 10f;
     private Spawner spawner;
+    
+    private IEnumerator consumed;
+    private Vector3 initialSize;
+    private Vector3 finallSize;
+    private float timeElapsed;    
+    public float shrinkLength = 1f;
 
     private void Awake()
     {
         nextActionTime = Time.time;
         currentDir = Vector3.zero;
         rb.AddTorque(Vector3.right*100f,ForceMode.Impulse);
+        initialSize = transform.localScale;
+        timeElapsed = 0;
+        finallSize = Vector3.one * 0.6f;
     }
 
     public void InitializeSpawnedObj(Transform parent, Spawner spawner)
@@ -63,6 +72,33 @@ public class DynamicFlyController : Fly, ISpawner
         {
 
         }
+    }
+
+    public override void StartBeingConsumed()
+    {
+        isBeingConsumed = true;
+        consumed = ShrinkObject();
+        StartCoroutine(consumed);
+    }
+
+    public override void StopBeingConsumed()
+    {
+        StopCoroutine(consumed);
+        isBeingConsumed = false;
+    }
+
+    IEnumerator ShrinkObject()
+    {
+        while (timeElapsed < shrinkLength)
+        {
+            Vector3 newSize = Vector3.Lerp(initialSize, finallSize, timeElapsed / shrinkLength);
+            transform.localScale = newSize;
+            timeElapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        if(flyWasConsumed!=null)
+            flyWasConsumed();
     }
 
     public void DestroyObject()

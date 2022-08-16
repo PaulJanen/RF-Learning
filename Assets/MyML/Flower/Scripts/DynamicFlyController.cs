@@ -5,9 +5,11 @@ using DG.Tweening;
 
 public class DynamicFlyController : Fly, ISpawner
 {
+    public bool particlesEnabled;
     public BoxCollider plantsCatchBoundaries;
     
     public GameObject deathParticles;
+    public ParticleSystem glowParticles;
     public ParticleSystem chargingParticle;
     private float playbackTime;
     private IEnumerator disableParticle;
@@ -15,7 +17,7 @@ public class DynamicFlyController : Fly, ISpawner
     private float disableParticleAfter;
 
     public float forceMagnitude = 20f;
-    public bool stayStill = true;
+    public bool moveTowardsPlant = true;
 
     private float actionInterval = 0.5f;
     private float nextActionTime;
@@ -24,7 +26,6 @@ public class DynamicFlyController : Fly, ISpawner
     private float glidingDrag = 5f;
     [SerializeField]
     private float evadingDrag = 10f;
-    private Spawner spawner;
     
     private IEnumerator consumed;
     private Vector3 initialSize;
@@ -46,14 +47,15 @@ public class DynamicFlyController : Fly, ISpawner
 
     public void InitializeSpawnedObj(Transform parent, Spawner spawner)
     {
-        plantsCatchBoundaries = parent.GetComponent<PlantAgent>().catchBoundaries;
-        this.spawner = spawner;
+        if(moveTowardsPlant==true)
+            plantsCatchBoundaries = parent.GetComponent<PlantAgent>().catchBoundaries;
+        glowParticles.gameObject.SetActive(particlesEnabled);
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
-        if (stayStill == false)
+        if (moveTowardsPlant == true)
         {
             nextActionTime = Random.Range(0.75f * actionInterval, 1.25f * actionInterval) + Time.time;
             Vector3 newDir = new Vector3(Random.Range(-1f, 1f), 0f, Random.Range(-1f, 1f)).normalized;
@@ -72,7 +74,7 @@ public class DynamicFlyController : Fly, ISpawner
 
     void OnCollisionEnter(Collision other)
     {
-        if(other.gameObject.tag == "ground")
+        if(other.gameObject.tag == "ground" || other.gameObject.tag == "pot")
         {
             if(touchedGround!=null)
                 touchedGround();
@@ -89,8 +91,10 @@ public class DynamicFlyController : Fly, ISpawner
 
         if(disableParticle!= null)
             StopCoroutine(disableParticle);
-        chargingParticle.time = playbackTime;
-        chargingParticle.gameObject.SetActive(true);
+
+        if (particlesEnabled)
+            chargingParticle.time = playbackTime;
+            chargingParticle.gameObject.SetActive(true);
 
         consumed = ShrinkObject();
         StartCoroutine(consumed);
@@ -131,15 +135,19 @@ public class DynamicFlyController : Fly, ISpawner
         }
 
         playbackTime = chargingParticle.time;
-        chargingParticle.gameObject.SetActive(false);
+        if(particlesEnabled)
+            chargingParticle.gameObject.SetActive(false);
     }
 
     public override void DestroyObject()
     {
         if(disableParticle!=null)
             StopCoroutine(disableParticle);
-        chargingParticle.gameObject.SetActive(false);
-        Instantiate(deathParticles, transform.position,Quaternion.identity);
+        if (particlesEnabled)
+        {
+            chargingParticle.gameObject.SetActive(false);
+            Instantiate(deathParticles, transform.position, Quaternion.identity);
+        }
         Destroy(transform.gameObject);
     }
 }

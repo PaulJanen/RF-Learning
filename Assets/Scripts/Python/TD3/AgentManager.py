@@ -55,7 +55,7 @@ class AgentManager():
         self.seed = 0 # Random seed number
         self.total_timesteps = 0
         self.max_timesteps = 1e7 # Total number of iterations/timesteps
-        self.trainAfterSteps = self.agent.env.max_episode_steps*2
+        self.trainAfterSteps = self.agent.env.trainAfterSteps
         self.trainingCycles = self.agent.env.max_episode_steps
         self.timesteps_since_eval = 0
         self.timesteps_since_train = 0
@@ -77,10 +77,10 @@ class AgentManager():
         if(len(self.allWalkers) > 0):
             oldWalkers = self.allWalkers
             self.allWalkers.clear()
-            for index,i in enumerate(range(5556,5564)):
+            for index,i in enumerate(range(5556,5557)):
                 self.allWalkers.append(Plant(i, self, oldWalkers[index]))
         else:
-            for i in range(5556,5564):
+            for i in range(5556,5557):
                 self.allWalkers.append(Plant(i, self))
         
         for i in self.allWalkers:

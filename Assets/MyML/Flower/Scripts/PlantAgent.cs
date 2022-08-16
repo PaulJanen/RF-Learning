@@ -16,10 +16,10 @@ public class PlantAgent : Agent2
     [Header("Food and mouth managers")]
     public bool spawnFood;
     public FlySpawner flySpawner;
-    private Fly fly;
+    public Fly fly;
     public PlantMouth mouthBottom;
     public PlantMouth mouthTop;
-    
+    public Fly restingPositionFly;
 
 
     [Header("Body Parts")][Space(10)] 
@@ -30,6 +30,7 @@ public class PlantAgent : Agent2
     public Transform mouthUp;
     public Transform mouthDown;
     public BoxCollider catchBoundaries;
+    public PlantCatchBoundaries plantCatchBoundaries;
 
     //This will be used as a stabilized model space reference point for observations
     //Because ragdolls can move erratically during training, using a stabilized reference transform improves learning
@@ -81,11 +82,18 @@ public class PlantAgent : Agent2
     /// <param name="pos"></param>
     void SpawnTarget()
     {
-        flySpawner.Restart();
         if (spawnFood)
         {
+            flySpawner.Restart();
             foodTransform = flySpawner.Spawn();
             fly = foodTransform.GetComponent<Fly>();
+            fly.touchedGround = FoodTouchedGround;
+            fly.flyWasConsumed = FoodWasConsumed;
+        }
+        else
+        {
+            fly = plantCatchBoundaries.GetFood();
+            foodTransform = fly.transform;
             fly.touchedGround = FoodTouchedGround;
             fly.flyWasConsumed = FoodWasConsumed;
         }
@@ -121,8 +129,12 @@ public class PlantAgent : Agent2
         {
             bodyPart.Reset(bodyPart);
         }
-        //Random start rotation to help generalize
-        //pot.rotation = Quaternion.Euler(0, Random.Range(0.0f, 360.0f), 0);
+
+        if (spawnFood == true)
+        {
+            //Random start rotation to help generalize
+            pot.rotation = Quaternion.Euler(-90f, Random.Range(0.0f, 360.0f), 0);
+        }
     }
 
     public override void EndEpisode()
@@ -254,22 +266,37 @@ public class PlantAgent : Agent2
         // The dictionary with all the body parts in it are in the jdController
         var bpDict = jdController.bodyPartsDict;
         var i = -1;
-        // Pick a new target joint rotation
-        //bpDict[pot].SetJointTargetRotation(actionBuffers[++i], actionBuffers[++i], actionBuffers[++i]);
-        bpDict[stemBottom].SetJointTargetRotation(actionBuffers[++i], actionBuffers[++i], actionBuffers[++i]);
-        bpDict[stemMiddle].SetJointTargetRotation(actionBuffers[++i], actionBuffers[++i], actionBuffers[++i]);
-        bpDict[stemTop].SetJointTargetRotation(actionBuffers[++i], 0, actionBuffers[++i]);
-        bpDict[mouthUp].SetJointTargetRotation(actionBuffers[++i], 0, 0);
-        bpDict[mouthDown].SetJointTargetRotation(actionBuffers[++i], 0, 0);
+
+        if (spawnFood == false && foodTransform == plantCatchBoundaries.restingPositionFly.transform)
+        {
+            foreach (var bodyPart in jdController.bodyPartsDict.Values)
+            {
+                if (bodyPart != bpDict[pot])
+                {
+                    bodyPart.ResetWithInterpolation(bodyPart);
+                    bodyPart.SetJointStrength(1);
+                }
+            }
+
+        }
+        else
+        { // Pick a new target joint rotation
+            //bpDict[pot].SetJointTargetRotation(actionBuffers[++i], actionBuffers[++i], actionBuffers[++i]);
+            bpDict[stemBottom].SetJointTargetRotation(actionBuffers[++i], actionBuffers[++i], actionBuffers[++i]);
+            bpDict[stemMiddle].SetJointTargetRotation(actionBuffers[++i], actionBuffers[++i], actionBuffers[++i]);
+            bpDict[stemTop].SetJointTargetRotation(actionBuffers[++i], 0, actionBuffers[++i]);
+            bpDict[mouthUp].SetJointTargetRotation(actionBuffers[++i], 0, 0);
+            bpDict[mouthDown].SetJointTargetRotation(actionBuffers[++i], 0, 0);
 
 
-        // Update joint strength
-        //bpDict[pot].SetJointStrength(actionBuffers[++i]);
-        bpDict[stemBottom].SetJointStrength(actionBuffers[++i]);
-        bpDict[stemMiddle].SetJointStrength(actionBuffers[++i]);
-        bpDict[stemTop].SetJointStrength(actionBuffers[++i]);
-        bpDict[mouthUp].SetJointStrength(actionBuffers[++i]);
-        bpDict[mouthDown].SetJointStrength(actionBuffers[++i]);
+            // Update joint strength
+            //bpDict[pot].SetJointStrength(actionBuffers[++i]);
+            bpDict[stemBottom].SetJointStrength(actionBuffers[++i]);
+            bpDict[stemMiddle].SetJointStrength(actionBuffers[++i]);
+            bpDict[stemTop].SetJointStrength(actionBuffers[++i]);
+            bpDict[mouthUp].SetJointStrength(actionBuffers[++i]);
+            bpDict[mouthDown].SetJointStrength(actionBuffers[++i]);
+        }
     }
 
     
@@ -279,7 +306,10 @@ public class PlantAgent : Agent2
             return;
         decisionStep += 1;
 
-
+        if (spawnFood == false && foodTransform == plantCatchBoundaries.restingPositionFly.transform)
+        {
+            SpawnTarget();
+        }
         UpdateOrientationObjects();
         // If enabled the feet will light up green when the foot is grounded.
         // This is just a visualization and isn't necessary for function
@@ -310,7 +340,14 @@ public class PlantAgent : Agent2
             stepCallBack();
         }
     }
-    
+
+    private void Update()
+    {
+        if (plantCatchBoundaries.InsideCatchingBox(foodTransform) == false)
+        {
+            SpawnTarget();
+        }
+    }
 
     void UpdateOrientationObjects()
     {
@@ -368,11 +405,19 @@ public class PlantAgent : Agent2
 
     void FoodWasConsumed()
     {
-        Debug.Log("food caught");
+        Debug.Log("food was eaten");
         AddReward(20f);
         mouthTop.caughtFood = false;
         mouthBottom.caughtFood = false;
-        SpawnTarget();
+        if(spawnFood)
+            SpawnTarget();
+        else
+        {
+            fly = restingPositionFly;
+            foodTransform = fly.transform;
+            fly.touchedGround = FoodTouchedGround;
+            fly.flyWasConsumed = FoodWasConsumed;
+        }
     }
 
     public void AddReward(float increment)

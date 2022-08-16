@@ -23,6 +23,10 @@
 [Aa]ssets/Scripts/Python/TD3/pytorch_models/**/*storage
 [Aa]ssets/Scripts/Python/TD3/pytorch_models/**/*storage.meta
 
+# TD3 tenserboard
+[Aa]ssets/Scripts/Python/TD3/stackoverflow/
+[Aa]ssets/Scripts/Python/TD3/stackoverflow/*.meta
+
 # Visual Studio cache directory
 .vs/
 

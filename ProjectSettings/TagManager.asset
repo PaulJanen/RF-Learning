@@ -9,6 +9,7 @@ TagManager:
   - target
   - projectile
   - food
+  - pot
   layers:
   - Default
   - TransparentFX

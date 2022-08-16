@@ -11,7 +11,8 @@ class PlantEnv():
         self.observation_space = np.empty((86,))
         self.maxAction = np.array([1,1,1,1,1,1,1,1,1,1,1,1,1,1,1])
         self.minAction = np.array([-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1])
-        self.max_episode_steps = 5000
+        self.max_episode_steps = 500
+        self.trainAfterSteps = 10_000
         self.explorationSteps = 20_000
 
     def step(self, action):

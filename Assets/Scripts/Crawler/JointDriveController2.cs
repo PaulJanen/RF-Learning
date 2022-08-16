@@ -11,6 +11,7 @@ public class JointDriveController2 : MonoBehaviour
 
     public float jointDampen;
     public float maxJointForceLimit;
+    public float massScale = 1;
     float m_FacingDot;
 
     [HideInInspector] public Dictionary<Transform, BodyPart2> bodyPartsDict = new Dictionary<Transform, BodyPart2>();
@@ -53,6 +54,7 @@ public class JointDriveController2 : MonoBehaviour
                 maximumForce = maxJointForceLimit
             };
             bp.joint.slerpDrive = jd;
+            bp.joint.massScale = massScale;
         }
 
         bp.thisJdController = this;
@@ -149,6 +151,11 @@ public class BodyPart2
         {
             bp.targetContact.touchingTarget = false;
         }
+    }
+
+    public void ResetWithInterpolation(BodyPart2 bp)
+    {
+        joint.targetRotation = Quaternion.Euler(0f, 0f, 0f);//Quaternion.identity;
     }
 
     /// <summary>

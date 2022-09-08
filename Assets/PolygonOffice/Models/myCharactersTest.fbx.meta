@@ -36,6 +36,21 @@ ModelImporter:
   - first:
       74: 6284815178690015718
     second: Armature|Armature|Armature|Armature|Sitting.001
+  - first:
+      74: -2600993198179621395
+    second: Armature|Armature|Armature|Armature|Armature|Armature|SittingSleeping
+  - first:
+      74: -3991235847504326038
+    second: Armature|Armature|Armature|Armature|Armature|Armature|Armature|Sitting
+  - first:
+      74: 3170383462194904789
+    second: InAwe
+  - first:
+      74: -35552707353396750
+    second: Armature|CrossedArmsBehindBack
+  - first:
+      74: -4773673646769967525
+    second: Armature|InAwe
   externalObjects: {}
   materials:
     materialImportMode: 2
@@ -66,7 +81,36 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Slouching
+      name: Armature|Sitting
+      takeName: Armature|Sitting
+      internalID: 0
+      firstFrame: 0
+      lastFrame: 1
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: Armature|CrossedArmsBehindBack
       takeName: Armature|CrossedArmsBehindBack
       internalID: 0
       firstFrame: 0
@@ -95,8 +139,8 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: Armature|Armature|Armature|Armature|Sitting.001
-      takeName: Armature|Armature|Armature|Armature|Sitting.001
+      name: InAwe
+      takeName: InAwe
       internalID: 0
       firstFrame: 0
       lastFrame: 1

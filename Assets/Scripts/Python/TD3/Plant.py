@@ -22,7 +22,7 @@ class Plant(threading.Thread):
     threading.Thread.__init__(self)
     self.env_name = "Plant"
     self.manager = manager
-    self.env = PlantEnv(port)
+    self.env = PlantEnv(port, manager.loadModel)
     self.port = port
 
     self.state_dim = self.env.observation_space.shape[0]

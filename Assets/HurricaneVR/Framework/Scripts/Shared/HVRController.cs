@@ -421,6 +421,8 @@ namespace HurricaneVR.Framework.Shared
                 {
                     buttonState.JustActivated = true;
                     buttonState.Active = true;
+                    if (buttonState.activated != null)
+                        buttonState.activated();
                 }
             }
             else

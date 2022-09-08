@@ -84,6 +84,7 @@ namespace HurricaneVR.Framework.Shared
         public bool JustActivated;
         public bool JustDeactivated;
         public float Value;
+        public Action activated;
     }
 
     public enum HVRLayers

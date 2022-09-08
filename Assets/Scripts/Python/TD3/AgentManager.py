@@ -26,14 +26,15 @@ class AgentManager():
         work_dir = self.mkdir('exp', 'brs')
         monitor_dir = self.mkdir(work_dir, 'monitor')
         t0 = time.time()
-
+        
+        self.loadModel = True
+        self.save_models = False
         self.agent = Plant(1, self)
         self.policy = TD3(self.agent.state_dim, self.agent.action_dim, self.agent.env.maxAction, self.agent.env.minAction)
         self.replayBuffer = ReplayBuffer()
         self.evaluations = [0]
 
-        self.loadModel = True
-        self.save_models = False
+        
         self.file_name = "%s_%s_%s" % ("TD3", self.agent.env_name, str(self.seed))
         self.modelDirectory = "./pytorch_models"
         print ("---------------------------------------")

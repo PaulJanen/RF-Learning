@@ -7,7 +7,7 @@ using Random = UnityEngine.Random;
 using System.Collections.Generic;
 using System;
 
-[RequireComponent(typeof(JointDriveController2))] // Required to set joint forces
+
 public class PlantAgent : Agent2
 {
     public const int decisionPeriod = 5;
@@ -47,22 +47,14 @@ public class PlantAgent : Agent2
     float m_MovingTowardsDot;
     float m_FacingDot;
 
-    private void Awake()
-    {
-        //Time.fixedDeltaTime = 0.01333f;
-        //Time.maximumDeltaTime = 0.15f;
 
-        Initialize();
-    }
-
-    public void Initialize()
+    public override void Initialize()
     {
         m_OrientationCube.Initialize(stemTop);
         //m_DirToTarget = m_Target.position - pot.position;
 
         //m_DirectionIndicator = GetComponentInChildren<DirectionIndicator>();
-        jdController = GetComponent<JointDriveController2>();
-        currentStateData = new List<double>();
+        base.Initialize();
 
         //Setup each body part
         jdController.SetupBodyPart(pot);
@@ -72,7 +64,6 @@ public class PlantAgent : Agent2
         jdController.SetupBodyPart(mouthUp);
         jdController.SetupBodyPart(mouthDown);
         FreezeRigidBody(true);
-
     }
 
     /// <summary>

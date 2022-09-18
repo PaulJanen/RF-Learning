@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(JointDriveController2))] // Required to set joint forces
 public class Agent2 : MonoBehaviour
 {
     public List<double> currentStateData;
@@ -13,6 +14,17 @@ public class Agent2 : MonoBehaviour
     protected JointDriveController2 jdController;
     public bool freezeBody = false;
     protected Transform foodTransform;
+
+    private void Awake()
+    {
+        Initialize();
+    }
+
+    public virtual void Initialize()
+    {
+        jdController = GetComponent<JointDriveController2>();
+        currentStateData = new List<double>();
+    }
 
     public virtual void OnEpisodeBegin()
     {

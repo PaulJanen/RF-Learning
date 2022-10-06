@@ -748,6 +748,22 @@ PrefabInstance:
       propertyPath: done
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1545195390, guid: 292c9fd40395f454e922326250066250, type: 3}
+      propertyPath: orientationCube
+      value: 
+      objectReference: {fileID: 7388259636087336998}
+    - target: {fileID: 1545195390, guid: 292c9fd40395f454e922326250066250, type: 3}
+      propertyPath: stabilizingPivot
+      value: 
+      objectReference: {fileID: 5724123955401722041}
+    - target: {fileID: 1545195390, guid: 292c9fd40395f454e922326250066250, type: 3}
+      propertyPath: plantCatchBoundaries
+      value: 
+      objectReference: {fileID: 74122617}
+    - target: {fileID: 1545195390, guid: 292c9fd40395f454e922326250066250, type: 3}
+      propertyPath: topHierarchyBodyPart
+      value: 
+      objectReference: {fileID: 926703452525259168}
     - target: {fileID: 1545195391, guid: 292c9fd40395f454e922326250066250, type: 3}
       propertyPath: massScale
       value: 5
@@ -1152,6 +1168,12 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -7419166953565536176, guid: ccc20c0cd9ea4314fb009bf93916ff9e, type: 3}
+--- !u!4 &5724123955401722041 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3024293138381345130, guid: 292c9fd40395f454e922326250066250,
+    type: 3}
+  m_PrefabInstance: {fileID: 7388259637572213203}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &6554449594702003069 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4359004859147707054, guid: 292c9fd40395f454e922326250066250,
@@ -1192,6 +1214,18 @@ CapsuleCollider:
   m_Height: 0.2
   m_Direction: 2
   m_Center: {x: 0, y: 0, z: 0.10276274}
+--- !u!114 &7388259636087336998 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1754180085, guid: 292c9fd40395f454e922326250066250,
+    type: 3}
+  m_PrefabInstance: {fileID: 7388259637572213203}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7aaac2264a6bd64a8a972fa049135f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &7388259636832425645 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1545195390, guid: 292c9fd40395f454e922326250066250,
@@ -1204,3 +1238,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ff59bdf47688cd40a92496c18f33138, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!65 &7388259637497352464 stripped
+BoxCollider:
+  m_CorrespondingSourceObject: {fileID: 79415491, guid: 292c9fd40395f454e922326250066250,
+    type: 3}
+  m_PrefabInstance: {fileID: 7388259637572213203}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &7388259637497352466 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 79415489, guid: 292c9fd40395f454e922326250066250,
+    type: 3}
+  m_PrefabInstance: {fileID: 7388259637572213203}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &74122617
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7388259637497352466}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c1cea4b7259a5e4f9dcee7309f963ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  catchBox: {fileID: 7388259637497352464}
+  foodInBoundarie: []
+  restingPositionFly: {fileID: 0}
+  currentActiveFood: {fileID: 0}

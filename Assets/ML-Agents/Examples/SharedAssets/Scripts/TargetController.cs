@@ -10,7 +10,7 @@ namespace Unity.MLAgentsExamples
     /// Add this script to the target you want the agent to touch.
     /// Callbacks will be triggered any time the target is touched with a collider tagged as 'tagToDetect'
     /// </summary>
-    public class TargetController : MonoBehaviour
+    public class TargetController : TargetBase
     {
 
         [Header("Collider Tag To Detect")]

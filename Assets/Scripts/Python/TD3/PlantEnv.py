@@ -1,12 +1,12 @@
 from random import sample
-
 from cv2 import repeat
 from AgentClient import AgentClient
 import numpy as np
+from Environment import Environment
 
-class PlantEnv():
+class PlantEnv(Environment):
     def __init__(self, port, loadModel):
-        self.client = AgentClient(port)
+        Environment.__init__(self, port)
         self.action_space = np.empty((15,))
         self.observation_space = np.empty((86,))
         self.maxAction = np.array([1,1,1,1,1,1,1,1,1,1,1,1,1,1,1])
@@ -16,19 +16,4 @@ class PlantEnv():
             self.max_episode_steps = 50000
         self.trainAfterSteps = 10_000
         self.explorationSteps = 20_000
-
-    def step(self, action):
-        observation, reward, done = self.client.SendAction(action)
-        observation = np.asarray(observation)
-        return observation, reward, done
-
-    def reset(self):
-        observation = self.client.SendReset()
-        observation = np.asarray(observation)
-        return observation  
-
-    def close (self):
-        self.client.SendClose()
-    
-    def actionSample(self):
-        return np.random.uniform(self.minAction, self.maxAction)
+        self.env_name = "Plant"

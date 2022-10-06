@@ -32,6 +32,12 @@ public class Client : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        if(agent.testingModel == true)
+        {
+            receiveMessage = false;
+            return;
+        }
+
         ForceDotNet.Force();
         NetMQConfig.Linger = new TimeSpan(0, 0, 1);
 

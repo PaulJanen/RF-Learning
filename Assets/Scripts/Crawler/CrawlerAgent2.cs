@@ -340,17 +340,6 @@ public class CrawlerAgent2 : Agent2
         }
     }
 
-    /// <summary>
-    /// Update OrientationCube and DirectionIndicator
-    /// </summary>
-    void UpdateOrientationObjects()
-    {
-        m_OrientationCube.UpdateOrientation(body, m_Target);
-        if (m_DirectionIndicator)
-        {
-            m_DirectionIndicator.MatchOrientation(m_OrientationCube.transform);
-        }
-    }
 
     /// <summary>
     ///Returns the average velocity of all of the body parts

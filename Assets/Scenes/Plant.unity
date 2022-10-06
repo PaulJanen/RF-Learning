@@ -456,7 +456,7 @@ PrefabInstance:
     - target: {fileID: 7140884642960764604, guid: d07f5b2d96c49b44c992c416e99d0ae7,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7388259637572213200, guid: d07f5b2d96c49b44c992c416e99d0ae7,
         type: 3}
@@ -539,7 +539,7 @@ PrefabInstance:
     - target: {fileID: 7140884642960764604, guid: d07f5b2d96c49b44c992c416e99d0ae7,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7388259637572213200, guid: d07f5b2d96c49b44c992c416e99d0ae7,
         type: 3}
@@ -622,7 +622,7 @@ PrefabInstance:
     - target: {fileID: 7140884642960764604, guid: d07f5b2d96c49b44c992c416e99d0ae7,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7388259637572213200, guid: d07f5b2d96c49b44c992c416e99d0ae7,
         type: 3}
@@ -705,7 +705,7 @@ PrefabInstance:
     - target: {fileID: 7140884642960764604, guid: d07f5b2d96c49b44c992c416e99d0ae7,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7388259637572213200, guid: d07f5b2d96c49b44c992c416e99d0ae7,
         type: 3}
@@ -785,6 +785,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: PlatformPlant (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 7140884642960764604, guid: d07f5b2d96c49b44c992c416e99d0ae7,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d07f5b2d96c49b44c992c416e99d0ae7, type: 3}
 --- !u!1001 &1420288889
@@ -861,7 +866,7 @@ PrefabInstance:
     - target: {fileID: 7140884642960764604, guid: d07f5b2d96c49b44c992c416e99d0ae7,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7388259637572213200, guid: d07f5b2d96c49b44c992c416e99d0ae7,
         type: 3}
@@ -1092,7 +1097,7 @@ PrefabInstance:
     - target: {fileID: 7140884642960764604, guid: d07f5b2d96c49b44c992c416e99d0ae7,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7388259637572213200, guid: d07f5b2d96c49b44c992c416e99d0ae7,
         type: 3}

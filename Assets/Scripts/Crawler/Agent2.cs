@@ -2,10 +2,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 [RequireComponent(typeof(JointDriveController2))] // Required to set joint forces
 public class Agent2 : MonoBehaviour
 {
+    protected const int decisionPeriod = 5;
     public List<double> currentStateData;
     public double m_Reward;
     public bool done;
@@ -13,22 +15,40 @@ public class Agent2 : MonoBehaviour
     public Action stepCallBack;
     protected JointDriveController2 jdController;
     public bool freezeBody = false;
-    protected Transform foodTransform;
+    public Transform stabilizingPivot;
+    protected Transform targetTransform;
+    public Transform topHierarchyBodyPart;
+    public bool spawnFood;
+    public bool testingModel = false;
+
+    //This will be used as a stabilized model space reference point for observations
+    //Because ragdolls can move erratically during training, using a stabilized reference transform improves learning
+    public OrientationCubeController2 orientationCube;
 
     private void Awake()
     {
         Initialize();
     }
 
-    public virtual void Initialize()
+    protected virtual void Initialize()
     {
         jdController = GetComponent<JointDriveController2>();
         currentStateData = new List<double>();
+        orientationCube.Initialize(stabilizingPivot);
     }
 
     public virtual void OnEpisodeBegin()
     {
+        done = false;
+        freezeBody = false;
+        decisionStep = 0;
 
+        foreach (var bodyPart in jdController.bodyPartsDict.Values)
+        {
+            bodyPart.Reset(bodyPart);
+        }
+        SpawnTarget();
+        orientationCube.UpdateOrientation(stabilizingPivot, targetTransform);
     }
 
     public virtual void CollectObservations()
@@ -37,6 +57,11 @@ public class Agent2 : MonoBehaviour
     }
 
     public virtual void ActionReceived(List<double> actionBuffers)
+    {
+
+    }
+
+    protected virtual void SpawnTarget()
     {
 
     }
@@ -60,11 +85,22 @@ public class Agent2 : MonoBehaviour
         //m_Reward += reward;
     }
 
+    public void AddReward(float increment)
+    {
+        //Utilities.DebugCheckNanAndInfinity(increment, "increment", "AddReward");
+        m_Reward += increment;
+        //m_CumulativeReward += increment;
+    }
+
+    protected void UpdateOrientationObjects()
+    {
+        orientationCube.UpdateOrientation(stabilizingPivot, targetTransform);
+    }
 
     public void FreezeRigidBody(bool freeze)
     {
-        if(foodTransform!=null)
-            foodTransform.GetComponent<Fly>().FreezeRigidBody(freeze);
+        if(targetTransform!=null)
+            targetTransform.GetComponent<TargetBase>().FreezeRigidBody(freeze);
 
         for (int i = 0; i < jdController.bodyPartsList.Count; i++)  
         {

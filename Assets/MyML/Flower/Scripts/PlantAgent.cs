@@ -10,11 +10,9 @@ using System;
 
 public class PlantAgent : Agent2
 {
-    public const int decisionPeriod = 5;
-
     //The direction an agent will walk during training.
     [Header("Food and mouth managers")]
-    public bool spawnFood;
+    
     public FlySpawner flySpawner;
     public Fly fly;
     public PlantMouth mouthBottom;
@@ -23,7 +21,6 @@ public class PlantAgent : Agent2
 
 
     [Header("Body Parts")][Space(10)] 
-    public Transform pot;
     public Transform stemBottom;
     public Transform stemMiddle;
     public Transform stemTop;
@@ -32,32 +29,24 @@ public class PlantAgent : Agent2
     public BoxCollider catchBoundaries;
     public PlantCatchBoundaries plantCatchBoundaries;
 
-    //This will be used as a stabilized model space reference point for observations
-    //Because ragdolls can move erratically during training, using a stabilized reference transform improves learning
-    public OrientationCubeController2 m_OrientationCube;
-
     //The indicator graphic gameobject that points towards the target
     DirectionIndicator m_DirectionIndicator;
-    
-
-
+   
     Vector3 dirToTarget;
     Matrix4x4 targetDirMatrix;
     Quaternion m_LookRotation;
     float m_MovingTowardsDot;
     float m_FacingDot;
 
-
-    public override void Initialize()
+    protected override void Initialize()
     {
-        m_OrientationCube.Initialize(stemTop);
         //m_DirToTarget = m_Target.position - pot.position;
 
         //m_DirectionIndicator = GetComponentInChildren<DirectionIndicator>();
         base.Initialize();
 
         //Setup each body part
-        jdController.SetupBodyPart(pot);
+        jdController.SetupBodyPart(topHierarchyBodyPart);
         jdController.SetupBodyPart(stemBottom);
         jdController.SetupBodyPart(stemMiddle);
         jdController.SetupBodyPart(stemTop);
@@ -71,20 +60,20 @@ public class PlantAgent : Agent2
     /// </summary>
     /// <param name="prefab"></param>
     /// <param name="pos"></param>
-    void SpawnTarget()
+    protected override void SpawnTarget()
     {
         if (spawnFood)
         {
             flySpawner.Restart();
-            foodTransform = flySpawner.Spawn();
-            fly = foodTransform.GetComponent<Fly>();
+            targetTransform = flySpawner.Spawn();
+            fly = targetTransform.GetComponent<Fly>();
             fly.touchedGround = FoodTouchedGround;
             fly.flyWasConsumed = FoodWasConsumed;
         }
         else
         {
             fly = plantCatchBoundaries.GetFood();
-            foodTransform = fly.transform;
+            targetTransform = fly.transform;
             fly.touchedGround = FoodTouchedGround;
             fly.flyWasConsumed = FoodWasConsumed;
         }
@@ -105,33 +94,23 @@ public class PlantAgent : Agent2
     /// </summary>
     public override void OnEpisodeBegin()
     {
-        SpawnTarget();
-        mouthBottom.Restart();
-        mouthTop.Restart();
-        m_OrientationCube.UpdateOrientation(stemTop, foodTransform);
-        mouthTop.callback += FoodBeeingEaten;
-        mouthBottom.callback += FoodBeeingEaten;
-        mouthTop.foodWasReleased += FoodWasReleased;
-        mouthBottom.foodWasReleased += FoodWasReleased;
-        done = false;
-        freezeBody = false;
-        decisionStep = 0;
-        foreach (var bodyPart in jdController.bodyPartsDict.Values)
-        {
-            bodyPart.Reset(bodyPart);
-        }
+        base.OnEpisodeBegin();
 
         if (spawnFood == true)
         {
             //Random start rotation to help generalize
-            pot.rotation = Quaternion.Euler(-90f, Random.Range(0.0f, 360.0f), 0);
+            topHierarchyBodyPart.rotation = Quaternion.Euler(-90f, Random.Range(0.0f, 360.0f), 0);
         }
+
+        mouthBottom.Restart();
+        mouthTop.Restart();
+        
+        mouthTop.callback += FoodBeeingEaten;
+        mouthBottom.callback += FoodBeeingEaten;
+        mouthTop.foodWasReleased += FoodWasReleased;
+        mouthBottom.foodWasReleased += FoodWasReleased;
     }
 
-    public override void EndEpisode()
-    {
-        base.EndEpisode();
-    }
 
     /// <summary>
     /// Add relevant information on each body part to observations.
@@ -174,7 +153,7 @@ public class PlantAgent : Agent2
         currentStateData = new List<double>();
 
         jdController.GetCurrentJointForces();
-        dirToTarget = foodTransform.position - stemTop.position;
+        dirToTarget = targetTransform.position - stemTop.position;
         m_LookRotation = Quaternion.LookRotation(dirToTarget);
         targetDirMatrix = Matrix4x4.TRS(Vector3.zero, m_LookRotation, Vector3.one);
 
@@ -209,7 +188,7 @@ public class PlantAgent : Agent2
 
 
 
-        var cubeForward = m_OrientationCube.transform.forward;
+        var cubeForward = orientationCube.transform.forward;
 
         //velocity we want to match
         //var velGoal = cubeForward * TargetWalkingSpeed;
@@ -237,7 +216,7 @@ public class PlantAgent : Agent2
         currentStateData.Add(QuaternionValues.w);
 
         //Add pos of target relative to orientation cube
-        Vector3 values = m_OrientationCube.transform.InverseTransformPoint(foodTransform.transform.position);
+        Vector3 values = orientationCube.transform.InverseTransformPoint(targetTransform.transform.position);
         currentStateData.Add(values.x);
         currentStateData.Add(values.y);
         currentStateData.Add(values.z);
@@ -245,7 +224,7 @@ public class PlantAgent : Agent2
 
         foreach (var bodyPart in jdController.bodyPartsList)
         {
-            if (bodyPart.rb.transform != pot)
+            if (bodyPart.rb.transform != topHierarchyBodyPart)
             {
                 CollectObservationBodyPart(bodyPart);
             }
@@ -258,11 +237,11 @@ public class PlantAgent : Agent2
         var bpDict = jdController.bodyPartsDict;
         var i = -1;
 
-        if (spawnFood == false && foodTransform == plantCatchBoundaries.restingPositionFly.transform)
+        if (spawnFood == false && targetTransform == plantCatchBoundaries.restingPositionFly.transform)
         {
             foreach (var bodyPart in jdController.bodyPartsDict.Values)
             {
-                if (bodyPart != bpDict[pot])
+                if (bodyPart != bpDict[topHierarchyBodyPart])
                 {
                     bodyPart.ResetWithInterpolation(bodyPart);
                     bodyPart.SetJointStrength(1);
@@ -297,7 +276,7 @@ public class PlantAgent : Agent2
             return;
         decisionStep += 1;
 
-        if (spawnFood == false && foodTransform == plantCatchBoundaries.restingPositionFly.transform)
+        if (spawnFood == false && targetTransform == plantCatchBoundaries.restingPositionFly.transform)
         {
             SpawnTarget();
         }
@@ -305,7 +284,7 @@ public class PlantAgent : Agent2
         // If enabled the feet will light up green when the foot is grounded.
         // This is just a visualization and isn't necessary for function
         
-        var cubeForward = m_OrientationCube.transform.forward;
+        Vector3 cubeForward = orientationCube.transform.forward;
 
         // Set reward for this step according to mixture of the following elements.
         // a. Match target speed
@@ -315,7 +294,7 @@ public class PlantAgent : Agent2
         
         // b. Rotation alignment with target direction.
         //This reward will approach 1 if it faces the target direction perfectly and approach zero as it deviates
-        var lookAtTargetReward = (Vector3.Dot(cubeForward, stemTop.forward) + 1) * .5F;
+        float lookAtTargetReward = (Vector3.Dot(cubeForward, stabilizingPivot.forward) + 1) * .5F;
         AddReward(lookAtTargetReward*0.1f);
 
         if (mouthTop.caughtFood)
@@ -334,47 +313,13 @@ public class PlantAgent : Agent2
 
     private void Update()
     {
-        if (plantCatchBoundaries.InsideCatchingBox(foodTransform) == false)
+        if (plantCatchBoundaries.InsideCatchingBox(targetTransform) == false)
         {
             SpawnTarget();
         }
     }
 
-    void UpdateOrientationObjects()
-    {
-        m_OrientationCube.UpdateOrientation(stemTop, foodTransform);
-    }
-
-    /// <summary>
-    ///Returns the average velocity of all of the body parts
-    ///Using the velocity of the body only has shown to result in more erratic movement from the limbs
-    ///Using the average helps prevent this erratic movement
-    /// </summary>
-    Vector3 GetAvgVelocity()
-    {
-        Vector3 velSum = Vector3.zero;
-        Vector3 avgVel = Vector3.zero;
-
-        //ALL RBS
-        int numOfRb = 0;
-        foreach (var item in jdController.bodyPartsList)
-        {
-            numOfRb++;
-            velSum += item.rb.velocity;
-        }
-
-        avgVel = velSum / numOfRb;
-        return avgVel;
-    }
-
-    /// <summary>
-    /// Normalized value of the difference in actual speed vs goal walking speed.
-    /// </summary>
-
-
-    /// <summary>
-    /// Agent touched the target
-    /// </summary>
+    
     private void FoodBeeingEaten()
     {
         if (mouthBottom.caughtFood && mouthTop.caughtFood)
@@ -405,17 +350,9 @@ public class PlantAgent : Agent2
         else
         {
             fly = restingPositionFly;
-            foodTransform = fly.transform;
+            targetTransform = fly.transform;
             fly.touchedGround = FoodTouchedGround;
             fly.flyWasConsumed = FoodWasConsumed;
         }
     }
-
-    public void AddReward(float increment)
-    {
-        //Utilities.DebugCheckNanAndInfinity(increment, "increment", "AddReward");
-        m_Reward += increment;
-        //m_CumulativeReward += increment;
-    }
-    
 }

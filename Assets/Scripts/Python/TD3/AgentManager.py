@@ -6,7 +6,8 @@ import torch
 import numpy as np
 from TD3 import TD3
 from ReplayBuffer import ReplayBuffer
-from Plant import Plant
+#from PlantAgent import PlantAgent
+from WitchHutAgent import WitchHutAgent
 import tensorflow as tf
 
 class AgentManager():
@@ -27,15 +28,15 @@ class AgentManager():
         monitor_dir = self.mkdir(work_dir, 'monitor')
         t0 = time.time()
         
-        self.loadModel = True
-        self.save_models = False
-        self.agent = Plant(1, self)
+        self.loadModel = False
+        self.save_models = True
+        self.agent = WitchHutAgent(1, self)
         self.policy = TD3(self.agent.state_dim, self.agent.action_dim, self.agent.env.maxAction, self.agent.env.minAction)
         self.replayBuffer = ReplayBuffer()
         self.evaluations = [0]
 
         
-        self.file_name = "%s_%s_%s" % ("TD3", self.agent.env_name, str(self.seed))
+        self.file_name = "%s_%s_%s" % ("TD3", self.agent.env.env_name, str(self.seed))
         self.modelDirectory = "./pytorch_models"
         print ("---------------------------------------")
         print ("Settings: %s" % (self.file_name))
@@ -64,8 +65,8 @@ class AgentManager():
         self.batch_size = 100
         self.discount = 0.99 # Discount factor gamma, used in the calculation of the total discounted reward
         self.tau = 0.005 # Target network update rate
-        self.policy_noise = 0.1#0.05#0.2 # STD of Gaussian noise added to the actions for the exploration purposes
-        self.noise_clip = 0.25#0.1#0.5 # Maximum value of the Gaussian noise added to the actions (policy)
+        self.policy_noise = 0.2#0.1#0.05#0.2 # STD of Gaussian noise added to the actions for the exploration purposes
+        self.noise_clip = 0.5#0.25#0.1#0.5 # Maximum value of the Gaussian noise added to the actions (policy)
         self.expl_noise = 0.1 # Exploration noise - STD value of exploration Gaussian noise
         self.policy_freq = 2 # Number of iterations to wait before the policy network (Actor model) is updated
         self.allWalkers = []
@@ -75,15 +76,10 @@ class AgentManager():
         
         
     def CreateAndStartWalkers(self):
-        if(len(self.allWalkers) > 0):
-            oldWalkers = self.allWalkers
-            self.allWalkers.clear()
-            for index,i in enumerate(range(5556,5557)):
-                self.allWalkers.append(Plant(i, self, oldWalkers[index]))
-        else:
-            for i in range(5556,5557):
-                self.allWalkers.append(Plant(i, self))
         
+        for i in range(5555,5563):
+            self.allWalkers.append(WitchHutAgent(i, self))
+
         for i in self.allWalkers:
             i.name = "Thread - " + str(i.port)
             i.setDaemon(True)  

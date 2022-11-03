@@ -28,8 +28,8 @@ class AgentManager():
         monitor_dir = self.mkdir(work_dir, 'monitor')
         t0 = time.time()
         
-        self.loadModel = False
-        self.save_models = True
+        self.loadModel = True
+        self.save_models = False
         self.agent = WitchHutAgent(1, self)
         self.policy = TD3(self.agent.state_dim, self.agent.action_dim, self.agent.env.maxAction, self.agent.env.minAction)
         self.replayBuffer = ReplayBuffer()
@@ -52,7 +52,6 @@ class AgentManager():
 
         self.summary_dir1 = os.path.join("stackoverflow", subdir, "t1")
         self.summary_writer1 = tf.summary.create_file_writer(self.summary_dir1, flush_millis=1)
-
 
         self.seed = 0 # Random seed number
         self.total_timesteps = 0
@@ -77,7 +76,7 @@ class AgentManager():
         
     def CreateAndStartWalkers(self):
         
-        for i in range(5555,5563):
+        for i in range(5555,5556):
             self.allWalkers.append(WitchHutAgent(i, self))
 
         for i in self.allWalkers:

@@ -4,53 +4,17 @@ ModelImporter:
   serializedVersion: 21202
   internalIDToNameTable:
   - first:
-      74: 3483230734219447670
-    second: SittingSleeping
+      74: -3773774389627319119
+    second: Armature|Armature|Claping
   - first:
-      74: -889869525921850710
-    second: Sitting
+      74: -4996048774053314129
+    second: Armature|Armature|CrossedArmsBehindBack
   - first:
-      74: 3165120608978739669
-    second: Sitting.001
+      74: -2062002300291020099
+    second: Armature|Armature|InAwe
   - first:
-      74: 1889602709898029310
-    second: Armature|Sitting
-  - first:
-      74: -8107541799706639495
-    second: Armature|Sitting.001
-  - first:
-      74: 3320709377891234938
-    second: Armature|SittingSleeping
-  - first:
-      74: -1662345779716458088
-    second: Sitting
-  - first:
-      74: -1522161441092394818
-    second: Sleeping
-  - first:
-      74: -1522161441092394818
-    second: Armature|Armature|Armature|Armature|SittingSleeping
-  - first:
-      74: 5597029426420906575
-    second: Slouching
-  - first:
-      74: 6284815178690015718
-    second: Armature|Armature|Armature|Armature|Sitting.001
-  - first:
-      74: -2600993198179621395
-    second: Armature|Armature|Armature|Armature|Armature|Armature|SittingSleeping
-  - first:
-      74: -3991235847504326038
-    second: Armature|Armature|Armature|Armature|Armature|Armature|Armature|Sitting
-  - first:
-      74: 3170383462194904789
-    second: InAwe
-  - first:
-      74: -35552707353396750
-    second: Armature|CrossedArmsBehindBack
-  - first:
-      74: -4773673646769967525
-    second: Armature|InAwe
+      74: 3832636599430908747
+    second: Armature|Armature|Sitting
   externalObjects: {}
   materials:
     materialImportMode: 2
@@ -60,7 +24,7 @@ ModelImporter:
   animations:
     legacyGenerateAnimations: 4
     bakeSimulation: 0
-    resampleCurves: 1
+    resampleCurves: 0
     optimizeGameObjects: 0
     removeConstantScaleCurves: 1
     motionNodeName: 
@@ -79,94 +43,7 @@ ModelImporter:
     animationWrapMode: 0
     extraExposedTransformPaths: []
     extraUserProperties: []
-    clipAnimations:
-    - serializedVersion: 16
-      name: Armature|Sitting
-      takeName: Armature|Sitting
-      internalID: 0
-      firstFrame: 0
-      lastFrame: 1
-      wrapMode: 0
-      orientationOffsetY: 0
-      level: 0
-      cycleOffset: 0
-      loop: 0
-      hasAdditiveReferencePose: 0
-      loopTime: 0
-      loopBlend: 0
-      loopBlendOrientation: 0
-      loopBlendPositionY: 0
-      loopBlendPositionXZ: 0
-      keepOriginalOrientation: 0
-      keepOriginalPositionY: 1
-      keepOriginalPositionXZ: 0
-      heightFromFeet: 0
-      mirror: 0
-      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
-      curves: []
-      events: []
-      transformMask: []
-      maskType: 3
-      maskSource: {instanceID: 0}
-      additiveReferencePoseFrame: 0
-    - serializedVersion: 16
-      name: Armature|CrossedArmsBehindBack
-      takeName: Armature|CrossedArmsBehindBack
-      internalID: 0
-      firstFrame: 0
-      lastFrame: 1
-      wrapMode: 0
-      orientationOffsetY: 0
-      level: 0
-      cycleOffset: 0
-      loop: 0
-      hasAdditiveReferencePose: 0
-      loopTime: 0
-      loopBlend: 0
-      loopBlendOrientation: 0
-      loopBlendPositionY: 0
-      loopBlendPositionXZ: 0
-      keepOriginalOrientation: 0
-      keepOriginalPositionY: 1
-      keepOriginalPositionXZ: 0
-      heightFromFeet: 0
-      mirror: 0
-      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
-      curves: []
-      events: []
-      transformMask: []
-      maskType: 3
-      maskSource: {instanceID: 0}
-      additiveReferencePoseFrame: 0
-    - serializedVersion: 16
-      name: InAwe
-      takeName: InAwe
-      internalID: 0
-      firstFrame: 0
-      lastFrame: 1
-      wrapMode: 0
-      orientationOffsetY: 0
-      level: 0
-      cycleOffset: 0
-      loop: 0
-      hasAdditiveReferencePose: 0
-      loopTime: 0
-      loopBlend: 0
-      loopBlendOrientation: 0
-      loopBlendPositionY: 0
-      loopBlendPositionXZ: 0
-      keepOriginalOrientation: 0
-      keepOriginalPositionY: 1
-      keepOriginalPositionXZ: 0
-      heightFromFeet: 0
-      mirror: 0
-      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
-      curves: []
-      events: []
-      transformMask: []
-      maskType: 3
-      maskSource: {instanceID: 0}
-      additiveReferencePoseFrame: 0
+    clipAnimations: []
     isReadable: 0
   meshes:
     lODScreenPercentages: []

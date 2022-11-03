@@ -15,8 +15,10 @@ public class ConferenceAnimator : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    
+    public void ChangeState(int state)
     {
-        
+        animator = GetComponent<Animator>();
+        animator.SetInteger("State", state);
     }
 }

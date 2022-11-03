@@ -62,7 +62,7 @@ public class PlantAgent : Agent2
     /// <param name="pos"></param>
     protected override void SpawnTarget()
     {
-        if (spawnFood)
+        if (trainingEnvironment)
         {
             flySpawner.Restart();
             targetTransform = flySpawner.Spawn();
@@ -96,7 +96,7 @@ public class PlantAgent : Agent2
     {
         base.OnEpisodeBegin();
 
-        if (spawnFood == true)
+        if (trainingEnvironment == true)
         {
             //Random start rotation to help generalize
             topHierarchyBodyPart.rotation = Quaternion.Euler(-90f, Random.Range(0.0f, 360.0f), 0);
@@ -237,7 +237,7 @@ public class PlantAgent : Agent2
         var bpDict = jdController.bodyPartsDict;
         var i = -1;
 
-        if (spawnFood == false && targetTransform == plantCatchBoundaries.restingPositionFly.transform)
+        if (trainingEnvironment == false && targetTransform == plantCatchBoundaries.restingPositionFly.transform)
         {
             foreach (var bodyPart in jdController.bodyPartsDict.Values)
             {
@@ -276,7 +276,7 @@ public class PlantAgent : Agent2
             return;
         decisionStep += 1;
 
-        if (spawnFood == false && targetTransform == plantCatchBoundaries.restingPositionFly.transform)
+        if (trainingEnvironment == false && targetTransform == plantCatchBoundaries.restingPositionFly.transform)
         {
             SpawnTarget();
         }
@@ -345,7 +345,7 @@ public class PlantAgent : Agent2
         AddReward(20f);
         mouthTop.caughtFood = false;
         mouthBottom.caughtFood = false;
-        if(spawnFood)
+        if(trainingEnvironment)
             SpawnTarget();
         else
         {

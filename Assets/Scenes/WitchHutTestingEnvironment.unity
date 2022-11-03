@@ -140,7 +140,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &47294248
 Transform:
   m_ObjectHideFlags: 0
@@ -327,6 +327,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: ChickenLegHutRig
       objectReference: {fileID: 0}
+    - target: {fileID: 2326459573874602864, guid: be2cf8e80e7dc174f81395932453940b,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3099301197210347978, guid: be2cf8e80e7dc174f81395932453940b,
         type: 3}
       propertyPath: m_RootOrder
@@ -350,7 +355,7 @@ PrefabInstance:
     - target: {fileID: 3099301197210347978, guid: be2cf8e80e7dc174f81395932453940b,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: -0.000000014901161
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3099301197210347978, guid: be2cf8e80e7dc174f81395932453940b,
         type: 3}
@@ -381,6 +386,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3208910915480522297, guid: be2cf8e80e7dc174f81395932453940b,
+        type: 3}
+      propertyPath: testingModel
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3208910915480522297, guid: be2cf8e80e7dc174f81395932453940b,
+        type: 3}
+      propertyPath: trainingEnvironment
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: be2cf8e80e7dc174f81395932453940b, type: 3}
@@ -1033,7 +1048,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &390621988
 Transform:
   m_ObjectHideFlags: 0
@@ -1199,7 +1214,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &440590649
 Transform:
   m_ObjectHideFlags: 0
@@ -2187,7 +2202,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &606605428
 Transform:
   m_ObjectHideFlags: 0
@@ -3385,7 +3400,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1271907069
 Transform:
   m_ObjectHideFlags: 0
@@ -3613,7 +3628,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1427024851
 Transform:
   m_ObjectHideFlags: 0
@@ -4098,7 +4113,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1744591017
 Transform:
   m_ObjectHideFlags: 0

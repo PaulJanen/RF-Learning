@@ -16,9 +16,9 @@ public class Agent2 : MonoBehaviour
     protected JointDriveController2 jdController;
     public bool freezeBody = false;
     public Transform stabilizingPivot;
-    protected Transform targetTransform;
+    public Transform targetTransform;
     public Transform topHierarchyBodyPart;
-    public bool spawnFood;
+    public bool trainingEnvironment = true;
     public bool testingModel = false;
 
     //This will be used as a stabilized model space reference point for observations
@@ -68,6 +68,9 @@ public class Agent2 : MonoBehaviour
 
     public virtual void EndEpisode()
     {
+        if (trainingEnvironment == false)
+            return;
+
         done = true;
         freezeBody = true;
         decisionStep = 0;
@@ -99,8 +102,9 @@ public class Agent2 : MonoBehaviour
 
     public void FreezeRigidBody(bool freeze)
     {
-        if(targetTransform!=null)
-            targetTransform.GetComponent<TargetBase>().FreezeRigidBody(freeze);
+        TargetBase targetBase = targetTransform.GetComponent<TargetBase>();
+        if (targetBase != null)
+            targetBase.FreezeRigidBody(freeze);
 
         for (int i = 0; i < jdController.bodyPartsList.Count; i++)  
         {

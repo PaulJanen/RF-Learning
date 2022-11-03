@@ -21,6 +21,8 @@ public class WitchHutAgent : Agent2
     public Transform TargetPrefab;
 
     const float maxWalkingSpeed = 15;
+    [Range(0.1f, maxWalkingSpeed)]
+    [SerializeField]
     private float targetWalkingSpeed = maxWalkingSpeed;
     public float TargetWalkingSpeed
     {
@@ -50,18 +52,20 @@ public class WitchHutAgent : Agent2
     public override void OnEpisodeBegin()
     {
         base.OnEpisodeBegin();
-
-        if (spawnFood == true)
+        
+        if (trainingEnvironment == true)
         {
             //Random start rotation to help generalize
             topHierarchyBodyPart.rotation = Quaternion.Euler(0, Random.Range(0.0f, 360.0f), 0);
+            TargetWalkingSpeed = Random.Range(0.1f, maxWalkingSpeed);
         }
-
-        TargetWalkingSpeed = Random.Range(0.1f, maxWalkingSpeed);
     }
 
     protected override void SpawnTarget()
     {
+        if (trainingEnvironment == false)
+            return;
+
         if (targetTransform != null)
             Destroy(targetTransform.gameObject);
 
@@ -97,8 +101,6 @@ public class WitchHutAgent : Agent2
         currentStateData.Add(bodyUpRelativeToLookRotationToTarget.x);
         currentStateData.Add(bodyUpRelativeToLookRotationToTarget.y);
         currentStateData.Add(bodyUpRelativeToLookRotationToTarget.z);
-
-
 
         var cubeForward = orientationCube.transform.forward;
 
@@ -182,7 +184,6 @@ public class WitchHutAgent : Agent2
         bpDict[RightBottomLeg].SetJointTargetRotation(actionBuffers[++i], 0, 0);
         bpDict[RightLegFoot].SetJointTargetRotation(actionBuffers[++i], actionBuffers[++i], actionBuffers[++i]);
 
-
         bpDict[LeftTopLeg].SetJointStrength(actionBuffers[++i]);
         bpDict[LeftBottomLeg].SetJointStrength(actionBuffers[++i]);
         bpDict[LeftLegFoot].SetJointStrength(actionBuffers[++i]);
@@ -205,7 +206,7 @@ public class WitchHutAgent : Agent2
             EndEpisode();
             return;
         }
-
+        Debug.Log("target walk speed: " + targetWalkingSpeed);
         Vector3 cubeForward = orientationCube.transform.forward;
         Vector3 rbVel = GetAvgVelocity();
 
@@ -235,7 +236,7 @@ public class WitchHutAgent : Agent2
 
         float distanceToTarget = Vector3.Distance(stabilizingPivot.position, targetTransform.position);
         
-        if (distanceToTarget < targetReachDistance)
+        if (distanceToTarget < targetReachDistance && trainingEnvironment == true)
             TouchedTarget();
 
         if (stepCallBack != null && decisionStep >= decisionPeriod)

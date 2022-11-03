@@ -20,3 +20,13 @@ https://user-images.githubusercontent.com/17176928/192538579-f72ae44e-5c3c-402c-
 
 https://user-images.githubusercontent.com/17176928/192539278-90693aab-fc1f-4350-83ff-ece00fc79b4c.mp4
 
+# 3 - Witch hut
+
+Task - Baba Yaga's Witch Hut must develop it's walking skills.
+
+https://user-images.githubusercontent.com/17176928/199803227-bac7a955-c7e3-47ae-9c94-d1513507f88d.mp4
+
+https://user-images.githubusercontent.com/17176928/199803418-cca96e8a-1a44-42d5-9779-3e0b53ad4628.mp4
+
+https://user-images.githubusercontent.com/17176928/199802616-169cfc59-37fa-4591-ae02-fe17754412d3.mp4
+

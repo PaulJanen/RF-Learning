@@ -7,7 +7,7 @@ using Random = UnityEngine.Random;
 [RequireComponent(typeof(JointDriveController2))] // Required to set joint forces
 public class Agent2 : MonoBehaviour
 {
-    protected const int decisionPeriod = 5;
+    public int decisionPeriod = 5;
     public List<double> currentStateData;
     public double m_Reward;
     public bool done;
@@ -24,6 +24,7 @@ public class Agent2 : MonoBehaviour
     //This will be used as a stabilized model space reference point for observations
     //Because ragdolls can move erratically during training, using a stabilized reference transform improves learning
     public OrientationCubeController2 orientationCube;
+
 
     private void Awake()
     {
@@ -42,7 +43,6 @@ public class Agent2 : MonoBehaviour
         done = false;
         freezeBody = false;
         decisionStep = 0;
-
         foreach (var bodyPart in jdController.bodyPartsDict.Values)
         {
             bodyPart.Reset(bodyPart);
@@ -100,11 +100,10 @@ public class Agent2 : MonoBehaviour
         orientationCube.UpdateOrientation(stabilizingPivot, targetTransform);
     }
 
-    public void FreezeRigidBody(bool freeze)
+    public virtual void FreezeRigidBody(bool freeze)
     {
-        TargetBase targetBase = targetTransform.GetComponent<TargetBase>();
-        if (targetBase != null)
-            targetBase.FreezeRigidBody(freeze);
+        if (targetTransform != null)
+            targetTransform.GetComponent<TargetBase>().FreezeRigidBody(freeze);
 
         for (int i = 0; i < jdController.bodyPartsList.Count; i++)  
         {
@@ -115,7 +114,7 @@ public class Agent2 : MonoBehaviour
                 {
                     jdController.bodyPartsList[i].isAlreadyFroozen = true;
                     jdController.bodyPartsList[i].SaveVelocity();
-                    jdController.bodyPartsList[i].rb.constraints = RigidbodyConstraints.FreezePosition;
+                    jdController.bodyPartsList[i].rb.constraints = RigidbodyConstraints.FreezeAll;
                     jdController.bodyPartsList[i].rb.isKinematic = true;
                 }
             }
@@ -126,7 +125,7 @@ public class Agent2 : MonoBehaviour
                 {
                     jdController.bodyPartsList[i].isAlreadyFroozen = false;
                     jdController.bodyPartsList[i].rb.isKinematic = false;
-                    jdController.bodyPartsList[i].rb.constraints = RigidbodyConstraints.None;
+                    jdController.bodyPartsList[i].rb.constraints = jdController.bodyPartsList[i].rbInitialConstraints;
                     jdController.bodyPartsList[i].LoadSavedVelocity();
                 }
             }

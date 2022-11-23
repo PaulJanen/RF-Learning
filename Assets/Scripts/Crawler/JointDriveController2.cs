@@ -29,7 +29,8 @@ public class JointDriveController2 : MonoBehaviour
             rb = t.GetComponent<Rigidbody>(),
             joint = t.GetComponent<ConfigurableJoint>(),
             startingPos = t.position,
-            startingRot = t.rotation
+            startingRot = t.rotation,
+            rbInitialConstraints = t.GetComponent<Rigidbody>().constraints
         };
         bp.rb.maxAngularVelocity = k_MaxAngularVelocity;
 
@@ -132,6 +133,7 @@ public class BodyPart2
     public Vector3 prvVelocity;
     public Vector3 prvAngularVelocity;
     public bool isAlreadyFroozen = false;
+    public RigidbodyConstraints rbInitialConstraints;
 
     /// <summary>
     /// Reset body part to initial configuration.

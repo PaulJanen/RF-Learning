@@ -10,6 +10,7 @@ TagManager:
   - projectile
   - food
   - pot
+  - wall
   layers:
   - Default
   - TransparentFX
@@ -21,8 +22,8 @@ TagManager:
   - 
   - Player
   - DynamicPose
-  - 
-  - 
+  - Agent
+  - AgenNonCollidibleLimbs
   - 
   - 
   - 

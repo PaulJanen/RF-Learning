@@ -76,9 +76,26 @@ namespace Unity.MLAgentsExamples
         /// </summary>
         public void MoveTargetToRandomPosition()
         {
+            transform.position = FindNewPosToMove(); ;
+        }
+
+        Vector3 FindNewPosToMove()
+        {
             var newTargetPos = m_startingPos + (Random.insideUnitSphere * spawnRadius);
-            newTargetPos.y = m_startingPos.y;
-            transform.position = newTargetPos;
+            newTargetPos.y = m_startingPos.y + 10f;
+            RaycastHit hit;
+            if (Physics.Raycast(newTargetPos, -Vector3.up * 15f, out hit))
+            {
+                if (hit.collider.tag == "ground")
+                {
+                    newTargetPos.y = m_startingPos.y;
+                    return newTargetPos;
+                }
+                else
+                    return FindNewPosToMove();
+            }
+            else 
+                return FindNewPosToMove();
         }
 
         private void OnCollisionEnter(Collision col)

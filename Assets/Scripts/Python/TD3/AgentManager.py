@@ -7,7 +7,7 @@ import numpy as np
 from TD3 import TD3
 from ReplayBuffer import ReplayBuffer
 #from PlantAgent import PlantAgent
-from WitchHutAgent import WitchHutAgent
+from CalAgent import CalAgent
 import tensorflow as tf
 
 class AgentManager():
@@ -28,9 +28,9 @@ class AgentManager():
         monitor_dir = self.mkdir(work_dir, 'monitor')
         t0 = time.time()
         
-        self.loadModel = True
-        self.save_models = False
-        self.agent = WitchHutAgent(1, self)
+        self.loadModel = False
+        self.save_models = True
+        self.agent = CalAgent(1, self)
         self.policy = TD3(self.agent.state_dim, self.agent.action_dim, self.agent.env.maxAction, self.agent.env.minAction)
         self.replayBuffer = ReplayBuffer()
         self.evaluations = [0]
@@ -76,14 +76,13 @@ class AgentManager():
         
     def CreateAndStartWalkers(self):
         
-        for i in range(5555,5556):
-            self.allWalkers.append(WitchHutAgent(i, self))
-
+        for i in range(5555,5563):#63
+            self.allWalkers.append(CalAgent(i, self))
+    
         for i in self.allWalkers:
             i.name = "Thread - " + str(i.port)
             i.setDaemon(True)  
             i.start()
-
 
     def Train(self):
 

@@ -10,5 +10,8 @@ class Child(Parent):
         self.foobar.append('world')
         print("-------")
         print(self.foobar)
+        
+        vava = [3,1,2]
+        print(vava[0])
 
 x = Child()

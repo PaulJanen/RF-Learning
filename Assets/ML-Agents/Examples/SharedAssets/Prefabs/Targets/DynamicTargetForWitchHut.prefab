@@ -30,7 +30,7 @@ Transform:
   m_GameObject: {fileID: 3840539935788495952}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 1, z: 1}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -129,7 +129,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rb: {fileID: 3858402326794362026}
   tagToDetect: agent
-  spawnRadius: 90
+  spawnRadius: 35
   respawnIfTouched: 0
   respawnIfFallsOffPlatform: 1
   fallDistance: 10

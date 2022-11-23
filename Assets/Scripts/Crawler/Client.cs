@@ -23,16 +23,18 @@ public class Client : MonoBehaviour
 {
     private bool receiveMessage = true;
 
-    public int _port = 5555;
     Action callback;
 
     public Agent2 agent;
     public ResponseSocket _server;
+    public GivePorts portGiver;
 
     // Start is called before the first frame update
     void Start()
     {
-        if(agent.testingModel == true)
+        int _port = portGiver.GetPort();
+
+        if (agent.testingModel == true)
         {
             receiveMessage = false;
             return;

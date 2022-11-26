@@ -1334,7 +1334,7 @@ MonoBehaviour:
   orientationCube: {fileID: 4145285668029407872}
   rbBalancedObj: {fileID: 0}
   targetReachDistance: 2
-  speed: 0.35
+  speed: 1.25
   rotSpeed: 1
   MouthTop: {fileID: 2370850080377111724}
   MouthDown: {fileID: 3507371482016266072}

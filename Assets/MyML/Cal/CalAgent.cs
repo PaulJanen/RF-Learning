@@ -71,6 +71,7 @@ public class CalAgent : Agent2
         base.Initialize();
 
         transformFinalPos = transform.position;
+
         balancedObjStartingPos = rbBalancedObj.transform.position;
         balancedObjStartingRot = rbBalancedObj.transform.rotation;
 
@@ -95,7 +96,7 @@ public class CalAgent : Agent2
     {
         base.OnEpisodeBegin();
 
-        rbBalancedObj.transform.position = balancedObjStartingPos;
+        rbBalancedObj.transform.position = stabilizingPivot.transform.position + Vector3.up*5f;
         rbBalancedObj.transform.rotation = balancedObjStartingRot;
         isPanAlreadyFrozen = false;
 
@@ -106,6 +107,23 @@ public class CalAgent : Agent2
             TargetWalkingSpeed = Random.Range(0.1f, maxWalkingSpeed);
         }
     }
+
+    void BeginNewTask()
+    {
+        int taskId = Random.Range(0, 1);
+
+        if(taskId == 0)
+        {
+            rbBalancedObj.gameObject.SetActive(false);
+            isCooking = false;
+        }
+        else
+        {
+            rbBalancedObj.gameObject.SetActive(true);
+            isCooking =true;
+        }
+    }
+
 
     protected override void SpawnTarget()
     {
@@ -367,21 +385,26 @@ public class CalAgent : Agent2
         float panDistance = rbBalancedObj.worldCenterOfMass.y - minPanHeight;
         float panRelativeDistance = Mathf.Lerp(0f, 1f, (panDistance / maxDistance));
         
-        AddReward(0.5f * panRelativeDistance);
+        AddReward(0.25f * panRelativeDistance);
 
         float balancingReward = (Vector3.Dot(Vector3.up, rbBalancedObj.transform.up) + 1) * 0.5f;
-        AddReward(0.5f * balancingReward);
+        AddReward(0.25f * balancingReward);
 
-        Vector3 cubeForwardProjection = transformFinalPos - stabilizingPivot.position;
-        cubeForwardProjection.y = 0;
-        Vector3 stabilizingPivotProjection = stabilizingPivot.forward;
-        stabilizingPivotProjection.y = 0;
-        float lookAtTargetReward = (Vector3.Dot(cubeForwardProjection, stabilizingPivotProjection) + 1) * .5F;
+
+        Vector3 dirToTarget = transformFinalPos - stabilizingPivot.position;
+        dirToTarget.y = 0f;
+        lookRotation = Quaternion.LookRotation(dirToTarget);
+        targetDirMatrix = Matrix4x4.TRS(Vector3.zero, lookRotation, Vector3.one);
+        Vector3 stabilizingPivotForward = stabilizingPivot.forward;
+        stabilizingPivotForward.y = 0f;
+        Vector3 bodyForwardRelativeToLookRotationToTarget = targetDirMatrix.inverse.MultiplyVector(stabilizingPivotForward);
+        float lookingAtTarget = Vector3.Dot(bodyForwardRelativeToLookRotationToTarget, stabilizingPivot.forward);
+        AddReward(lookingAtTarget * 0.2f);
 
         float distanceToTarget = Vector3.Distance(stabilizingPivot.position, transformFinalPos);
         float distanceToTargetReward = Mathf.Lerp(1, 0, distanceToTarget / 3f);
 
-        AddReward(distanceToTargetReward * lookAtTargetReward * 0.1f);
+        AddReward(distanceToTargetReward * 0.2f);        
     }
 
 

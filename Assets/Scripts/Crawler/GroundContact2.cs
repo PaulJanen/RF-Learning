@@ -16,6 +16,7 @@ public class GroundContact2 : MonoBehaviour
     public float groundContactPenalty; // Penalty amount (ex: -1).
     public bool touchingGround;
     const string k_Ground = "ground"; // Tag of ground object.
+    public 
 
     /// <summary>
     /// Check for collision with ground, and optionally penalize agent.

@@ -20,6 +20,7 @@ public class TestingVectors : MonoBehaviour
     public bool testQuaternioLook = false;
     public bool testBackflipDetection = false;
     public bool testUnitSphere = false;
+    public bool testZeroLookRotation = false;
 
     void Start()
     {
@@ -44,6 +45,8 @@ public class TestingVectors : MonoBehaviour
             TestBackflipDetection();
         if (testUnitSphere)
             TestUnitSphere();
+        if (testZeroLookRotation)
+            TestZeroLookRotation();
     }
 
     void TestQuaternionLook()
@@ -117,6 +120,22 @@ public class TestingVectors : MonoBehaviour
             rb.angularVelocity = Vector3.up * 1f;
         }
         Debug.Log(rb.angularVelocity);
+    }
+
+    void TestZeroLookRotation()
+    {
+
+        var dirToTarget = childObj.position - otherObj.position;
+        Quaternion lookRotation;
+        if (dirToTarget == Vector3.zero)
+            lookRotation = otherObj.rotation;
+        else
+            lookRotation = Quaternion.LookRotation(dirToTarget);
+        var targetDirMatrix = Matrix4x4.TRS(Vector3.zero, lookRotation, Vector3.one);
+        var bodyForwardRelativeToLookRotationToTarget = targetDirMatrix.inverse.MultiplyVector(otherObj.forward);
+        Debug.Log(bodyForwardRelativeToLookRotationToTarget);
+
+        //testObj.rotation = testObj.rotation;
     }
 
     public Quaternion ExtractRotation(Matrix4x4 matrix)

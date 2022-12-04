@@ -5,7 +5,7 @@ using UnityEngine;
 public class StaticFlyController : Fly, ISpawner
 {
     private Spawner spawner;
-    public void InitializeSpawnedObj(Transform parent, Spawner spawner)
+    public void InitializeSpawnedObj(Transform parent, Spawner spawner, Transform target)
     {
         this.spawner = spawner;
     }

@@ -129,10 +129,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rb: {fileID: 3858402326794362026}
   tagToDetect: agent
-  spawnRadius: 35
+  spawnRadius: 10
   respawnIfTouched: 0
   respawnIfFallsOffPlatform: 1
-  fallDistance: 10
+  fallDistance: 5
   onTriggerEnterEvent:
     m_PersistentCalls:
       m_Calls: []

@@ -47,8 +47,15 @@ public class Agent2 : MonoBehaviour
         {
             bodyPart.Reset(bodyPart);
         }
+
+        RandomlyRotateObjBeforeEpisode();
         SpawnTarget();
         orientationCube.UpdateOrientation(stabilizingPivot, targetTransform);
+    }
+
+    public virtual void RandomlyRotateObjBeforeEpisode()
+    {
+
     }
 
     public virtual void CollectObservations()

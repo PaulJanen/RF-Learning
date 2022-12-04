@@ -15,6 +15,17 @@ public class Fly : TargetBase
         protected set { isBeingConsumed = value; }
     }
 
+
+    void FixedUpdate()
+    {
+        UpdateBehaviour();
+    }
+
+    public virtual void UpdateBehaviour()
+    {
+
+    }
+
     public virtual void StartBeingConsumed()
     { 
 

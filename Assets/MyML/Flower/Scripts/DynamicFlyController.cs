@@ -32,6 +32,7 @@ public class DynamicFlyController : Fly, ISpawner
     private Vector3 finallSize;
     private float timeElapsed;    
     public float shrinkLength = 1f;
+    protected Transform target;
 
     private void Awake()
     {
@@ -45,15 +46,16 @@ public class DynamicFlyController : Fly, ISpawner
         disableParticleAfter = 0.2f;
     }
 
-    public void InitializeSpawnedObj(Transform parent, Spawner spawner)
+    public void InitializeSpawnedObj(Transform parent, Spawner spawner, Transform target)
     {
+        this.target = target;
         if(moveTowardsPlant==true)
             plantsCatchBoundaries = parent.GetComponent<PlantAgent>().catchBoundaries;
         glowParticles.gameObject.SetActive(particlesEnabled);
     }
+    
 
-    // Update is called once per frame
-    void FixedUpdate()
+    public override void UpdateBehaviour()
     {
         if (moveTowardsPlant == true)
         {

@@ -15,25 +15,33 @@ public class CalAgent : Agent2
     public float speed = 10f;
     public float rotSpeed = 10f;
 
+    //The direction an agent will walk during training.
+    [Header("Food and mouth managers")]
+
+    public FlySpawner flySpawner;
+    public Fly fly;
+    public PlantMouth mouthBottom;
+    public PlantMouth mouthTop;
+    public Fly restingPositionFly;
+
+
     [Header("Body Parts")]
     [Space(10)]
     public Transform MouthTop;
     public Transform MouthDown;
 
     public Transform ArmForwardLeft;
-    public Transform ArmForwardLeftHand;
     public Transform ArmForwardRight;
-    public Transform ArmForwardRightHand;
     public Transform ArmBackwardsRight;
-    public Transform ArmBackwardsRightHand;
     public Transform ArmBackwardsLeft;
-    public Transform ArmBackwardsLeftHand;
 
     [Header("RayPoints")]
     public Transform ForwardLeftHandRayPoint;
     public Transform ForwardRightHandRayPoint;
     public Transform BackRightHandRayPoint;
     public Transform BackLeftHandRayPoint;
+    public List<Transform> panRays;
+
 
     [Header("Target")]
     [Space(10)]
@@ -46,22 +54,30 @@ public class CalAgent : Agent2
     public float TargetWalkingSpeed
     {
         get { return targetWalkingSpeed; }
-        set { targetWalkingSpeed = Mathf.Clamp(value, .1f, maxWalkingSpeed); }
+        set { targetWalkingSpeed = Mathf.Clamp(value, 1f, 2f); }
     }
 
     Vector3 dirToTarget;
     Matrix4x4 targetDirMatrix;
     Quaternion lookRotation;
 
+    private Vector3 targetPos;
     private Vector3 transformFinalPos;
     private Vector3 balancedObjPrvVelocity;
     private Vector3 balancedObjPrvAngularVelocity;
     private Vector3 balancedObjStartingPos;
     private Quaternion balancedObjStartingRot;
     private bool isPanAlreadyFrozen;
-    private float maxPanHeight = 0.7181f;
+    private float maxPanHeight = 0.66f;
     private float minPanHeight = 0.6424f;
     private float rayLegth = 0.1f;
+
+    private float timeSpenTrainingCooking = 0;
+    private float timeSpenTrainingChasing = 0;
+    float timeSpentTouchingWall;
+    float wallTouchingThreshold = 3f;
+    float timeWallHasBeenTouched = 0;
+
 
     public bool isCooking;
 
@@ -69,8 +85,6 @@ public class CalAgent : Agent2
     protected override void Initialize()
     {
         base.Initialize();
-
-        transformFinalPos = transform.position;
 
         balancedObjStartingPos = rbBalancedObj.transform.position;
         balancedObjStartingRot = rbBalancedObj.transform.rotation;
@@ -80,13 +94,9 @@ public class CalAgent : Agent2
         jdController.SetupBodyPart(MouthDown);
 
         jdController.SetupBodyPart(ArmForwardLeft);
-        jdController.SetupBodyPart(ArmForwardLeftHand);
         jdController.SetupBodyPart(ArmForwardRight);
-        jdController.SetupBodyPart(ArmForwardRightHand);
         jdController.SetupBodyPart(ArmBackwardsRight);
-        jdController.SetupBodyPart(ArmBackwardsRightHand);
         jdController.SetupBodyPart(ArmBackwardsLeft);
-        jdController.SetupBodyPart(ArmBackwardsLeftHand);
 
         if (testingModel == false)
             FreezeRigidBody(true);
@@ -96,23 +106,46 @@ public class CalAgent : Agent2
     {
         base.OnEpisodeBegin();
 
-        rbBalancedObj.transform.position = stabilizingPivot.transform.position + Vector3.up*5f;
+        BeginNewTask();
+        transformFinalPos = stabilizingPivot.position;
+        Vector3 panPos = stabilizingPivot.transform.position;
+        panPos.y = minPanHeight;
+        rbBalancedObj.transform.position = panPos;
         rbBalancedObj.transform.rotation = balancedObjStartingRot;
         isPanAlreadyFrozen = false;
+        timeSpentTouchingWall = 0f;
+        timeWallHasBeenTouched = 0f;
 
         if (trainingEnvironment == true)
         {
-            //Random start rotation to help generalize
+            TargetWalkingSpeed = Random.Range(1f, maxWalkingSpeed); 
+            rbBalancedObj.velocity = Vector3.zero;
+            rbBalancedObj.angularVelocity = Vector3.zero;
+        }
+
+        mouthBottom.Restart();
+        mouthTop.Restart();
+        mouthTop.callback += FoodBeeingEaten;
+        mouthBottom.callback += FoodBeeingEaten;
+        mouthTop.foodWasReleased += FoodWasReleased;
+        mouthBottom.foodWasReleased += FoodWasReleased;
+    }
+
+    public override void RandomlyRotateObjBeforeEpisode()
+    {
+        if (trainingEnvironment == true)
+        {
             topHierarchyBodyPart.rotation = Quaternion.Euler(0, Random.Range(0.0f, 360.0f), 0);
-            TargetWalkingSpeed = Random.Range(0.1f, maxWalkingSpeed);
+            rbBalancedObj.transform.rotation = Quaternion.Euler(0, Random.Range(0.0f, 360.0f), 0);
         }
     }
 
     void BeginNewTask()
     {
-        int taskId = Random.Range(0, 1);
-
-        if(taskId == 0)
+        rbBalancedObj.gameObject.SetActive(true);
+        isCooking = true;
+        /*
+        if (timeSpenTrainingCooking > timeSpenTrainingChasing)
         {
             rbBalancedObj.gameObject.SetActive(false);
             isCooking = false;
@@ -120,8 +153,9 @@ public class CalAgent : Agent2
         else
         {
             rbBalancedObj.gameObject.SetActive(true);
-            isCooking =true;
+            isCooking = true;
         }
+        */
     }
 
 
@@ -135,36 +169,78 @@ public class CalAgent : Agent2
 
         Vector3 instPos = transform.parent.position;
         instPos.y += 3f;
-        targetTransform = Instantiate(TargetPrefab, instPos, Quaternion.identity, transform.parent);
+        //targetTransform = Instantiate(TargetPrefab, instPos, Quaternion.identity, transform.parent);
+        //targetTransform.GetComponent<TargetController>().MoveTargetToRandomPosition();
+
+        flySpawner.Restart();
+        targetTransform = flySpawner.Spawn();
+        fly = targetTransform.GetComponent<Fly>();
+        fly.touchedGround = FoodTouchedGround;
+        fly.flyWasConsumed = FoodWasConsumed;
     }
 
     public override void CollectObservations()
     {
-        if (isCooking == false)
-            CollectObservationsForChasing();
+        CollectMatchingObs();
+    }
+
+    void CollectMatchingObs()
+    {
+        jdController.GetCurrentJointForces();
+        currentStateData = new List<double>();
+        
+        if (isCooking)
+        {
+            targetPos = rbBalancedObj.worldCenterOfMass;
+            currentStateData.Add(1f);
+        }
         else
-            CollectObservationsForBalancing();
+        {
+            targetPos = targetTransform.position;
+            currentStateData.Add(0f);
+        }
+
+
+        
+
+        CollectObservationsForChasing();
+        CollectObservationsForBalancing();
+
+        foreach (var bodyPart in jdController.bodyPartsList)
+        {
+            CollectObservationBodyPart(bodyPart);
+        }
     }
 
     void CollectObservationsForChasing()
     {
-        currentStateData = new List<double>();
-
-        jdController.GetCurrentJointForces();
-        dirToTarget = targetTransform.position - stabilizingPivot.position;
+        var cubeForward = orientationCube.transform.forward;
+        dirToTarget = targetPos - stabilizingPivot.position;
         lookRotation = Quaternion.LookRotation(dirToTarget);
         targetDirMatrix = Matrix4x4.TRS(Vector3.zero, lookRotation, Vector3.one);
         var bodyForwardRelativeToLookRotationToTarget = targetDirMatrix.inverse.MultiplyVector(stabilizingPivot.forward);
         currentStateData.Add(bodyForwardRelativeToLookRotationToTarget.x);
         currentStateData.Add(bodyForwardRelativeToLookRotationToTarget.y);
         currentStateData.Add(bodyForwardRelativeToLookRotationToTarget.z);
-
         var bodyUpRelativeToLookRotationToTarget = targetDirMatrix.inverse.MultiplyVector(stabilizingPivot.up);
         currentStateData.Add(bodyUpRelativeToLookRotationToTarget.x);
         currentStateData.Add(bodyUpRelativeToLookRotationToTarget.y);
         currentStateData.Add(bodyUpRelativeToLookRotationToTarget.z);
 
-        var cubeForward = orientationCube.transform.forward;
+        //rotation delta
+        Quaternion QuaternionValues = Quaternion.FromToRotation(stabilizingPivot.forward, cubeForward);
+        currentStateData.Add(QuaternionValues.x);
+        currentStateData.Add(QuaternionValues.y);
+        currentStateData.Add(QuaternionValues.z);
+        currentStateData.Add(QuaternionValues.w);
+
+        //Add pos of target relative to orientation cube
+        Vector3 values = orientationCube.transform.InverseTransformPoint(targetPos);
+        currentStateData.Add(values.x);
+        currentStateData.Add(values.y);
+        currentStateData.Add(values.z);
+
+
         //velocity we want to match
         var velGoal = cubeForward * TargetWalkingSpeed;
         //ragdoll's avg vel
@@ -172,7 +248,7 @@ public class CalAgent : Agent2
         //current ragdoll velocity. normalized
         currentStateData.Add(Vector3.Distance(velGoal, avgVel));
         //avg body vel relative to cube
-        Vector3 values = orientationCube.transform.InverseTransformDirection(avgVel);
+        values = orientationCube.transform.InverseTransformDirection(avgVel);
 
         currentStateData.Add(values.x);
         currentStateData.Add(values.y);
@@ -182,6 +258,25 @@ public class CalAgent : Agent2
         currentStateData.Add(values.x);
         currentStateData.Add(values.y);
         currentStateData.Add(values.z);
+
+        GetSensorInfo();
+    }
+
+    void CollectObservationsForBalancing()
+    {
+        var cubeForward = orientationCube.transform.forward;
+        dirToTarget = targetPos - stabilizingPivot.position;
+        lookRotation = Quaternion.LookRotation(dirToTarget);
+        targetDirMatrix = Matrix4x4.TRS(Vector3.zero, lookRotation, Vector3.one);
+        var bodyForwardRelativeToLookRotationToTarget = targetDirMatrix.inverse.MultiplyVector(stabilizingPivot.forward);
+        currentStateData.Add(bodyForwardRelativeToLookRotationToTarget.x);
+        currentStateData.Add(bodyForwardRelativeToLookRotationToTarget.y);
+        currentStateData.Add(bodyForwardRelativeToLookRotationToTarget.z);
+        var bodyUpRelativeToLookRotationToTarget = targetDirMatrix.inverse.MultiplyVector(stabilizingPivot.up);
+        currentStateData.Add(bodyUpRelativeToLookRotationToTarget.x);
+        currentStateData.Add(bodyUpRelativeToLookRotationToTarget.y);
+        currentStateData.Add(bodyUpRelativeToLookRotationToTarget.z);
+
         //rotation delta
         Quaternion QuaternionValues = Quaternion.FromToRotation(stabilizingPivot.forward, cubeForward);
         currentStateData.Add(QuaternionValues.x);
@@ -190,33 +285,13 @@ public class CalAgent : Agent2
         currentStateData.Add(QuaternionValues.w);
 
         //Add pos of target relative to orientation cube
-        values = orientationCube.transform.InverseTransformPoint(targetTransform.transform.position);
+        Vector3 values = orientationCube.transform.InverseTransformPoint(targetPos);
         currentStateData.Add(values.x);
         currentStateData.Add(values.y);
         currentStateData.Add(values.z);
 
-        GetSensorInfo();
 
-        foreach (var bodyPart in jdController.bodyPartsList)
-        {
-            CollectObservationBodyPart(bodyPart);
-        }
-    }
 
-    void CollectObservationsForBalancing()
-    {
-        currentStateData = new List<double>();
-        dirToTarget = rbBalancedObj.worldCenterOfMass - stabilizingPivot.position;
-        lookRotation = Quaternion.LookRotation(dirToTarget);
-        targetDirMatrix = Matrix4x4.TRS(Vector3.zero, lookRotation, Vector3.one);
-        var bodyUpRelativeToLookRotationToTarget = targetDirMatrix.inverse.MultiplyVector(stabilizingPivot.up);
-        currentStateData.Add(bodyUpRelativeToLookRotationToTarget.x);
-        currentStateData.Add(bodyUpRelativeToLookRotationToTarget.y);
-        currentStateData.Add(bodyUpRelativeToLookRotationToTarget.z);
-        var bodyForwardRelativeToLookRotationToTarget = targetDirMatrix.inverse.MultiplyVector(stabilizingPivot.forward);
-        currentStateData.Add(bodyForwardRelativeToLookRotationToTarget.x);
-        currentStateData.Add(bodyForwardRelativeToLookRotationToTarget.y);
-        currentStateData.Add(bodyForwardRelativeToLookRotationToTarget.z);
 
         var balancedObjUpRelativeToLookRotationToTarget = targetDirMatrix.inverse.MultiplyVector(rbBalancedObj.transform.up);
         currentStateData.Add(balancedObjUpRelativeToLookRotationToTarget.x);
@@ -248,13 +323,11 @@ public class CalAgent : Agent2
         currentStateData.Add(HandRaycast(BackRightHandRayPoint));
         currentStateData.Add(HandRaycast(BackLeftHandRayPoint));
 
-        foreach (var bodyPart in jdController.bodyPartsList)
-        {
-            CollectObservationBodyPart(bodyPart);
-        }
-
         dirToTarget = transformFinalPos - stabilizingPivot.position;
-        lookRotation = Quaternion.LookRotation(dirToTarget);
+        if (dirToTarget == Vector3.zero)
+            lookRotation = stabilizingPivot.rotation;
+        else
+            lookRotation = Quaternion.LookRotation(dirToTarget);
         targetDirMatrix = Matrix4x4.TRS(Vector3.zero, lookRotation, Vector3.one);
         bodyForwardRelativeToLookRotationToTarget = targetDirMatrix.inverse.MultiplyVector(stabilizingPivot.forward);
         currentStateData.Add(bodyForwardRelativeToLookRotationToTarget.x);
@@ -267,11 +340,30 @@ public class CalAgent : Agent2
         RaycastHit hit;
         if (Physics.Raycast(origin.position, Vector3.up, out hit, rayLegth))
         {
-            if(hit.rigidbody == rbBalancedObj)
-                return(hit.distance / rayLegth);
+            if (hit.rigidbody == rbBalancedObj)
+            {
+                //Debug.DrawRay(origin.position, Vector3.up * hit.distance);
+                return (hit.distance / rayLegth);
+            }
         }
 
         return 1f;
+    }
+
+    bool IsAllPanTouchingGround()
+    {
+        RaycastHit hit;
+        for (int i = 0; i < panRays.Count; i++)
+        {
+            if (Physics.Raycast(panRays[i].position, Vector3.down, out hit, 1f))
+            {
+                if (hit.transform.tag != "ground")
+                {
+                    return false;
+                }                   
+            }
+        }
+        return true;
     }
 
     void GetSensorInfo()
@@ -330,23 +422,18 @@ public class CalAgent : Agent2
             bpDict[topHierarchyBodyPart].rb.AddTorque(Vector3.up * rotSpeed * y, ForceMode.VelocityChange);
 
         bpDict[ArmForwardLeft].SetJointTargetRotation(actionBuffers[++i], actionBuffers[++i], 0);
-        bpDict[ArmForwardLeftHand].SetJointTargetRotation(actionBuffers[++i], 0, 0);
         bpDict[ArmForwardRight].SetJointTargetRotation(actionBuffers[++i], actionBuffers[++i], 0);
-        bpDict[ArmForwardRightHand].SetJointTargetRotation(actionBuffers[++i], 0, 0);
         bpDict[ArmBackwardsRight].SetJointTargetRotation(actionBuffers[++i], actionBuffers[++i], 0);
-        bpDict[ArmBackwardsRightHand].SetJointTargetRotation(actionBuffers[++i], 0, 0);
         bpDict[ArmBackwardsLeft].SetJointTargetRotation(actionBuffers[++i], actionBuffers[++i], 0);
-        bpDict[ArmBackwardsLeftHand].SetJointTargetRotation(actionBuffers[++i], 0, 0);
-
+        bpDict[MouthTop].SetJointTargetRotation(actionBuffers[++i], 0, 0);
+        bpDict[MouthDown].SetJointTargetRotation(actionBuffers[++i], 0, 0);
 
         bpDict[ArmForwardLeft].SetJointStrength(actionBuffers[++i]);
-        bpDict[ArmForwardLeftHand].SetJointStrength(actionBuffers[++i]);
         bpDict[ArmForwardRight].SetJointStrength(actionBuffers[++i]);
-        bpDict[ArmForwardRightHand].SetJointStrength(actionBuffers[++i]);
         bpDict[ArmBackwardsRight].SetJointStrength(actionBuffers[++i]);
-        bpDict[ArmBackwardsRightHand].SetJointStrength(actionBuffers[++i]);
         bpDict[ArmBackwardsLeft].SetJointStrength(actionBuffers[++i]);
-        bpDict[ArmBackwardsLeftHand].SetJointStrength(actionBuffers[++i]);
+        bpDict[MouthTop].SetJointStrength(actionBuffers[++i]);
+        bpDict[MouthDown].SetJointStrength(actionBuffers[++i]);
     }
 
     void FixedUpdate()
@@ -355,13 +442,21 @@ public class CalAgent : Agent2
             return;
         decisionStep += 1;
 
+        if(isCooking)
+            timeSpenTrainingCooking += Time.deltaTime;
+        else
+            timeSpenTrainingChasing += Time.deltaTime;
+
+
         UpdateOrientationObjects();
 
         if (isCooking)
             RewardForCooking();
         else
             RewardForChasing();
-        
+
+        RewardForEating();
+
 
         if (stepCallBack != null && decisionStep >= decisionPeriod)
         {
@@ -372,7 +467,6 @@ public class CalAgent : Agent2
 
     void RewardForCooking()
     {
-
         if (BackFlipDetected())
         {
             SetReward(-1);
@@ -380,18 +474,16 @@ public class CalAgent : Agent2
             return;
         }
 
-
         float maxDistance = maxPanHeight - minPanHeight;
         float panDistance = rbBalancedObj.worldCenterOfMass.y - minPanHeight;
         float panRelativeDistance = Mathf.Lerp(0f, 1f, (panDistance / maxDistance));
         
-        AddReward(0.25f * panRelativeDistance);
+        //AddReward(0.25f * panRelativeDistance);
 
         float balancingReward = (Vector3.Dot(Vector3.up, rbBalancedObj.transform.up) + 1) * 0.5f;
-        AddReward(0.25f * balancingReward);
+        AddReward(0.01f * balancingReward);
 
-
-        Vector3 dirToTarget = transformFinalPos - stabilizingPivot.position;
+        Vector3 dirToTarget = targetTransform.position - stabilizingPivot.position;
         dirToTarget.y = 0f;
         lookRotation = Quaternion.LookRotation(dirToTarget);
         targetDirMatrix = Matrix4x4.TRS(Vector3.zero, lookRotation, Vector3.one);
@@ -399,12 +491,11 @@ public class CalAgent : Agent2
         stabilizingPivotForward.y = 0f;
         Vector3 bodyForwardRelativeToLookRotationToTarget = targetDirMatrix.inverse.MultiplyVector(stabilizingPivotForward);
         float lookingAtTarget = Vector3.Dot(bodyForwardRelativeToLookRotationToTarget, stabilizingPivot.forward);
-        AddReward(lookingAtTarget * 0.2f);
+        AddReward(lookingAtTarget * 0.1f);
 
         float distanceToTarget = Vector3.Distance(stabilizingPivot.position, transformFinalPos);
-        float distanceToTargetReward = Mathf.Lerp(1, 0, distanceToTarget / 3f);
-
-        AddReward(distanceToTargetReward * 0.2f);        
+        float distanceToTargetReward = Mathf.Lerp(1, 0, distanceToTarget / 2f);
+        AddReward(distanceToTargetReward * 0.2f);
     }
 
 
@@ -424,7 +515,7 @@ public class CalAgent : Agent2
         //This reward will approach 1 if it matches perfectly and approach zero as it deviates
         var matchSpeedReward = GetMatchingVelocityReward(cubeForward * TargetWalkingSpeed, rbVel);
         //AddReward(matchSpeedReward);
-        AddReward(matchSpeedReward * 0.2f);
+        AddReward(matchSpeedReward * 0.5f);
 
         //This reward will approach 1 if it faces the target direction perfectly and approach zero as it deviates
         Vector3 cubeForwardProjection = cubeForward;
@@ -432,32 +523,30 @@ public class CalAgent : Agent2
         Vector3 stabilizingPivotProjection = stabilizingPivot.forward;
         stabilizingPivotProjection.y = 0;
         float lookAtTargetReward = (Vector3.Dot(cubeForwardProjection, stabilizingPivotProjection) + 1) * .5F;
-        AddReward(lookAtTargetReward * 0.1f);
+        AddReward(lookAtTargetReward * 0.2f);
 
         float movingTowardsDot = Vector3.Dot(rbVel, cubeForward);
         AddReward(movingTowardsDot * 0.2f);
 
         float distanceToTarget = Vector3.Distance(stabilizingPivot.position, targetTransform.position);
 
-        if (distanceToTarget < targetReachDistance && trainingEnvironment == true)
+        if (distanceToTarget < targetReachDistance && trainingEnvironment == true && isCooking == false)
             TouchedTarget();
+    }
+
+    void RewardForEating()
+    {
+        if (mouthTop.caughtFood)
+            AddReward(0.1f);
+        if (mouthBottom.caughtFood)
+            AddReward(0.1f);
+        if (mouthTop.caughtFood && mouthBottom.caughtFood)
+            AddReward(1f);
     }
 
     Vector3 GetAvgVelocity()
     {
-        Vector3 velSum = Vector3.zero;
-
-        //ALL RBS
-        int numOfRb = 0;
-        foreach (var item in jdController.bodyPartsList)
-        {
-            numOfRb++;
-            velSum += item.rb.velocity;
-        }
-
-        var avgVel = velSum / numOfRb;
-
-        return avgVel;
+        return jdController.bodyPartsDict[topHierarchyBodyPart].rb.velocity;
     }
 
     //normalized value of the difference in avg speed vs goal walking speed.
@@ -473,7 +562,7 @@ public class CalAgent : Agent2
 
     public void TouchedTarget()
     {
-        AddReward(20f);
+        AddReward(200f);
         targetTransform.GetComponent<TargetController>().MoveTargetToRandomPosition();
     }
 
@@ -484,6 +573,77 @@ public class CalAgent : Agent2
             return true;
         return false;
     }
+
+    private void OnCollisionEnter(Collision col)
+    {
+        if (col.transform.CompareTag("wall"))
+        {
+            if(Time.time - timeWallHasBeenTouched > 0.5f)
+                timeSpentTouchingWall = 0;
+            AddReward(-0.01f);
+        }
+    }
+
+    private void OnCollisionStay(Collision col)
+    {
+        if (col.transform.CompareTag("wall"))
+        {
+            AddReward(-0.01f);
+            timeSpentTouchingWall += Time.deltaTime;
+            //Debug.Log("Agent:" + transform.parent.name + " time: " + timeSpentTouchingWall);
+            if (timeSpentTouchingWall > wallTouchingThreshold)
+            {
+                AddReward(-1f);
+                EndEpisode();
+            }
+        }
+    }
+
+    private void OnCollisionExit(Collision col)
+    {
+        if (col.transform.CompareTag("wall"))
+        {
+            timeWallHasBeenTouched = Time.time;
+        }
+    }
+
+    void FoodTouchedGround()
+    {
+        if (done)
+            return;
+        //SetReward(-1);
+        //EndEpisode();
+        SpawnTarget();
+    }
+
+    private void FoodBeeingEaten()
+    {
+        if (mouthBottom.caughtFood && mouthTop.caughtFood)
+        {
+            if (fly.IsBeingConsumed == false)
+            {
+                fly.StartBeingConsumed();
+            }
+        }
+    }
+
+    private void FoodWasReleased()
+    {
+        if (fly.IsBeingConsumed == true)
+        {
+            fly.StopBeingConsumed();
+        }
+    }
+
+    void FoodWasConsumed()
+    {
+        Debug.Log("food was eaten");
+        AddReward(20f);
+        mouthTop.caughtFood = false;
+        mouthBottom.caughtFood = false;
+        SpawnTarget();
+    }
+
 
     public override void FreezeRigidBody(bool freeze)
     {
@@ -502,11 +662,14 @@ public class CalAgent : Agent2
         }
         else
         {
-            isPanAlreadyFrozen = false;
-            rbBalancedObj.velocity = balancedObjPrvVelocity;
-            rbBalancedObj.angularVelocity = balancedObjPrvAngularVelocity;
-            rbBalancedObj.isKinematic = false;
-            rbBalancedObj.constraints = RigidbodyConstraints.None;
+            if (isPanAlreadyFrozen == true)
+            {
+                isPanAlreadyFrozen = false;
+                rbBalancedObj.velocity = balancedObjPrvVelocity;
+                rbBalancedObj.angularVelocity = balancedObjPrvAngularVelocity;
+                rbBalancedObj.constraints = RigidbodyConstraints.None;
+                rbBalancedObj.isKinematic = false;
+            }
         }
     }
 }

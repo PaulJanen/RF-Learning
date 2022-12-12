@@ -7,6 +7,7 @@ using Unity.MLAgents.Sensors;
 public class CalAgent : Agent2
 {
     public Rigidbody rbBalancedObj;
+    public Rigidbody rbMeat;
 
     public RayPerceptionSensor sensor;
 
@@ -67,9 +68,16 @@ public class CalAgent : Agent2
     private Vector3 balancedObjPrvAngularVelocity;
     private Vector3 balancedObjStartingPos;
     private Quaternion balancedObjStartingRot;
+
+    private Vector3 meatObjPrvVelocity;
+    private Vector3 meatObjPrvAngularVelocity;
+    private Vector3 meatObjStartingPos;
+    private Quaternion meatObjStartingRot;
+
     private bool isPanAlreadyFrozen;
     private float maxPanHeight = 0.66f;
     private float minPanHeight = 0.6424f;
+    private float minMeatHeight = 0.7f;
     private float rayLegth = 0.1f;
 
     private float timeSpenTrainingCooking = 0;
@@ -88,6 +96,8 @@ public class CalAgent : Agent2
 
         balancedObjStartingPos = rbBalancedObj.transform.position;
         balancedObjStartingRot = rbBalancedObj.transform.rotation;
+        meatObjStartingPos = rbMeat.transform.position;
+        meatObjStartingRot = rbMeat.transform.rotation;
 
         jdController.SetupBodyPart(topHierarchyBodyPart);
         jdController.SetupBodyPart(MouthTop);
@@ -110,8 +120,14 @@ public class CalAgent : Agent2
         transformFinalPos = stabilizingPivot.position;
         Vector3 panPos = stabilizingPivot.transform.position;
         panPos.y = minPanHeight;
+        Vector3 meatPos = stabilizingPivot.transform.position;
+        meatPos.y = minMeatHeight;
+
         rbBalancedObj.transform.position = panPos;
         rbBalancedObj.transform.rotation = balancedObjStartingRot;
+        rbMeat.transform.position = meatPos;
+        rbMeat.transform.rotation = meatObjStartingRot;
+
         isPanAlreadyFrozen = false;
         timeSpentTouchingWall = 0f;
         timeWallHasBeenTouched = 0f;
@@ -121,6 +137,8 @@ public class CalAgent : Agent2
             TargetWalkingSpeed = Random.Range(1f, maxWalkingSpeed); 
             rbBalancedObj.velocity = Vector3.zero;
             rbBalancedObj.angularVelocity = Vector3.zero;
+            rbMeat.velocity = Vector3.zero;
+            rbMeat.angularVelocity = Vector3.zero;
         }
 
         mouthBottom.Restart();
@@ -137,12 +155,14 @@ public class CalAgent : Agent2
         {
             topHierarchyBodyPart.rotation = Quaternion.Euler(0, Random.Range(0.0f, 360.0f), 0);
             rbBalancedObj.transform.rotation = Quaternion.Euler(0, Random.Range(0.0f, 360.0f), 0);
+            rbMeat.transform.rotation = Quaternion.Euler(0, Random.Range(0.0f, 360.0f), 0);
         }
     }
 
     void BeginNewTask()
     {
         rbBalancedObj.gameObject.SetActive(true);
+        rbMeat.gameObject.SetActive(true);
         isCooking = true;
         /*
         if (timeSpenTrainingCooking > timeSpenTrainingChasing)
@@ -641,7 +661,8 @@ public class CalAgent : Agent2
         AddReward(20f);
         mouthTop.caughtFood = false;
         mouthBottom.caughtFood = false;
-        SpawnTarget();
+        //SpawnTarget();
+        EndEpisode();
     }
 
 
@@ -656,8 +677,13 @@ public class CalAgent : Agent2
                 isPanAlreadyFrozen = true;
                 balancedObjPrvVelocity = rbBalancedObj.velocity;
                 balancedObjPrvAngularVelocity = rbBalancedObj.angularVelocity;
+                meatObjPrvVelocity = rbMeat.velocity;
+                meatObjPrvAngularVelocity= rbMeat.angularVelocity;
+
                 rbBalancedObj.constraints = RigidbodyConstraints.FreezeAll;
                 rbBalancedObj.isKinematic = true;
+                rbMeat.constraints = RigidbodyConstraints.FreezeAll;
+                rbMeat.isKinematic = true;
             }
         }
         else
@@ -669,6 +695,11 @@ public class CalAgent : Agent2
                 rbBalancedObj.angularVelocity = balancedObjPrvAngularVelocity;
                 rbBalancedObj.constraints = RigidbodyConstraints.None;
                 rbBalancedObj.isKinematic = false;
+
+                rbMeat.velocity = meatObjPrvVelocity;
+                rbMeat.angularVelocity = meatObjPrvAngularVelocity;
+                rbMeat.constraints = RigidbodyConstraints.None;
+                rbMeat.isKinematic = false;
             }
         }
     }

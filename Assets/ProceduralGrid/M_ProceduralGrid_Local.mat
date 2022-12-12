@@ -37,10 +37,10 @@ Material:
     m_Floats:
     - Boolean_a1588f281f4343ff8b59f75c07bd6dc0: 0
     - Checker_Contrast: 2
-    - Checker_Size: 200
+    - Checker_Size: 100
     - Metallic: 0
     - Primary_Grid_Line_Width: 0
-    - Primary_Grid_Size: 200
+    - Primary_Grid_Size: 100
     - Projection_Transition_Contrast: 0
     - Secondary_Grid_Fade_Length: 8
     - Secondary_Grid_Fade_Offset: 0

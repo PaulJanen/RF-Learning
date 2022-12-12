@@ -337,7 +337,7 @@ MonoBehaviour:
   maxPos: {x: 0.1, y: 0.572, z: 0.2}
   minSpawnRadius: 0.3
   maxSpawnRadius: 0.4
-  angle: 45
+  angle: 360
 --- !u!1 &2647355311810645086
 GameObject:
   m_ObjectHideFlags: 0
@@ -987,7 +987,7 @@ MonoBehaviour:
   m_RaysPerDirection: 5
   m_MaxRayDegrees: 163.3
   m_SphereCastRadius: 0.19
-  m_RayLength: 15
+  m_RayLength: 5
   m_RayLayerMask:
     serializedVersion: 2
     m_Bits: 4294964219

@@ -34,7 +34,7 @@ public class Client : MonoBehaviour
     {
         int _port = portGiver.GetPort();
 
-        if (agent.testingModel == true)
+        if (agent.trainingEnvironment == false)
         {
             receiveMessage = false;
             return;

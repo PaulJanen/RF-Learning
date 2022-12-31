@@ -32,7 +32,7 @@ public class DynamicFlyController : Fly, ISpawner
     private Vector3 finallSize;
     private float timeElapsed;    
     public float shrinkLength = 1f;
-    protected Transform target;
+    public Transform target;
 
     private void Awake()
     {
@@ -41,7 +41,7 @@ public class DynamicFlyController : Fly, ISpawner
         rb.AddTorque(Vector3.right*100f,ForceMode.Impulse);
         initialSize = transform.localScale;
         timeElapsed = 0;
-        finallSize = Vector3.one * 0.6f;
+        finallSize = transform.localScale * 0.6f;
         playbackTime = 0;
         disableParticleAfter = 0.2f;
     }
@@ -51,7 +51,9 @@ public class DynamicFlyController : Fly, ISpawner
         this.target = target;
         if(moveTowardsPlant==true)
             plantsCatchBoundaries = parent.GetComponent<PlantAgent>().catchBoundaries;
-        glowParticles.gameObject.SetActive(particlesEnabled);
+
+        if(glowParticles!=null)
+            glowParticles.gameObject.SetActive(particlesEnabled);
     }
     
 
@@ -95,8 +97,10 @@ public class DynamicFlyController : Fly, ISpawner
             StopCoroutine(disableParticle);
 
         if (particlesEnabled)
+        {
             chargingParticle.time = playbackTime;
             chargingParticle.gameObject.SetActive(true);
+        }
 
         consumed = ShrinkObject();
         StartCoroutine(consumed);
@@ -148,7 +152,11 @@ public class DynamicFlyController : Fly, ISpawner
         if (particlesEnabled)
         {
             chargingParticle.gameObject.SetActive(false);
-            Instantiate(deathParticles, transform.position, Quaternion.identity);
+            if (deathParticles != null)
+            {
+                GameObject obj = Instantiate(deathParticles, transform.position, Quaternion.identity);
+                obj.transform.parent = null;
+            }
         }
         Destroy(transform.gameObject);
     }

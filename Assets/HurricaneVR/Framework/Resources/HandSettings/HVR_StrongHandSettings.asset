@@ -14,13 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   XMaster: 1
   XDrive:
-    Spring: 6000
-    Damper: 600
-    MaxForce: 6000
+    Spring: 60000
+    Damper: 60
+    MaxForce: 60000
   SlerpDrive:
-    Spring: 500
-    Damper: 50
-    MaxForce: 80
+    Spring: 5000
+    Damper: 100
+    MaxForce: 8000
   ApplyMode: 0
   EnableCollision: 0
   EnablePreprocessing: 1

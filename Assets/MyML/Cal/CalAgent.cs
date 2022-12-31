@@ -24,6 +24,7 @@ public class CalAgent : Agent2
     public PlantMouth mouthBottom;
     public PlantMouth mouthTop;
     public Fly restingPositionFly;
+    public GeneralSpawner panSpawner;
 
 
     [Header("Body Parts")]
@@ -75,9 +76,9 @@ public class CalAgent : Agent2
     private Quaternion meatObjStartingRot;
 
     private bool isPanAlreadyFrozen;
-    private float maxPanHeight = 0.66f;
-    private float minPanHeight = 0.6424f;
-    private float minMeatHeight = 0.7f;
+    private float maxPanHeight = 0.1185f;
+    private float minPanHeight = 0.1185f;
+    private float minMeatHeight = 0.1485f;
     private float rayLegth = 0.1f;
 
     private float timeSpenTrainingCooking = 0;
@@ -88,11 +89,20 @@ public class CalAgent : Agent2
 
 
     public bool isCooking;
-
+    public GeneralContact panGeneralContact;
+    private bool panFirstContact = false;
+    private float ogDrag = 0;
+    private float ogAngularDrag = 0.05f;
+    private float newDrag = 30f;
+    private float newAngularDrag = 30f;
+    public bool freezePan = true;
 
     protected override void Initialize()
     {
         base.Initialize();
+
+        ogDrag = rbBalancedObj.drag;
+        ogAngularDrag= rbBalancedObj.angularDrag;
 
         balancedObjStartingPos = rbBalancedObj.transform.position;
         balancedObjStartingRot = rbBalancedObj.transform.rotation;
@@ -108,7 +118,7 @@ public class CalAgent : Agent2
         jdController.SetupBodyPart(ArmBackwardsRight);
         jdController.SetupBodyPart(ArmBackwardsLeft);
 
-        if (testingModel == false)
+        if (trainingEnvironment == true)
             FreezeRigidBody(true);
     }
 
@@ -117,17 +127,20 @@ public class CalAgent : Agent2
         base.OnEpisodeBegin();
 
         BeginNewTask();
-        transformFinalPos = stabilizingPivot.position;
-        Vector3 panPos = stabilizingPivot.transform.position;
-        panPos.y = minPanHeight;
-        Vector3 meatPos = stabilizingPivot.transform.position;
-        meatPos.y = minMeatHeight;
+        if(testingModel == false)
+            panSpawner.Spawn();
+        Vector3 meatPos = rbBalancedObj.transform.position;
+        meatPos.y += minMeatHeight;
 
-        rbBalancedObj.transform.position = panPos;
-        rbBalancedObj.transform.rotation = balancedObjStartingRot;
-        rbMeat.transform.position = meatPos;
-        rbMeat.transform.rotation = meatObjStartingRot;
-
+        if (testingModel == false)
+        {
+            //rbBalancedObj.transform.rotation = balancedObjStartingRot;
+            rbMeat.transform.position = meatPos;
+            rbMeat.transform.rotation = meatObjStartingRot;
+        }
+        
+        panGeneralContact.touchingTag = false;
+        ChangePanState(false);
         isPanAlreadyFrozen = false;
         timeSpentTouchingWall = 0f;
         timeWallHasBeenTouched = 0f;
@@ -147,6 +160,7 @@ public class CalAgent : Agent2
         mouthBottom.callback += FoodBeeingEaten;
         mouthTop.foodWasReleased += FoodWasReleased;
         mouthBottom.foodWasReleased += FoodWasReleased;
+
     }
 
     public override void RandomlyRotateObjBeforeEpisode()
@@ -187,8 +201,8 @@ public class CalAgent : Agent2
         if (targetTransform != null)
             Destroy(targetTransform.gameObject);
 
-        Vector3 instPos = transform.parent.position;
-        instPos.y += 3f;
+        //Vector3 instPos = transform.parent.position;
+        //instPos.y += 3f;
         //targetTransform = Instantiate(TargetPrefab, instPos, Quaternion.identity, transform.parent);
         //targetTransform.GetComponent<TargetController>().MoveTargetToRandomPosition();
 
@@ -343,6 +357,8 @@ public class CalAgent : Agent2
         currentStateData.Add(HandRaycast(BackRightHandRayPoint));
         currentStateData.Add(HandRaycast(BackLeftHandRayPoint));
 
+        transformFinalPos = rbBalancedObj.position;
+        transformFinalPos.y = stabilizingPivot.position.y;
         dirToTarget = transformFinalPos - stabilizingPivot.position;
         if (dirToTarget == Vector3.zero)
             lookRotation = stabilizingPivot.rotation;
@@ -458,7 +474,7 @@ public class CalAgent : Agent2
 
     void FixedUpdate()
     {
-        if (freezeBody || done || testingModel)
+        if (freezeBody || done || (testingModel && trainingEnvironment==false))
             return;
         decisionStep += 1;
 
@@ -501,7 +517,12 @@ public class CalAgent : Agent2
         //AddReward(0.25f * panRelativeDistance);
 
         float balancingReward = (Vector3.Dot(Vector3.up, rbBalancedObj.transform.up) + 1) * 0.5f;
-        AddReward(0.01f * balancingReward);
+        if (panGeneralContact.touchingTag == true)
+        {
+            AddReward(0.1f * balancingReward);
+            if (panFirstContact == false)
+                ChangePanState(true);
+        }
 
         Vector3 dirToTarget = targetTransform.position - stabilizingPivot.position;
         dirToTarget.y = 0f;
@@ -513,9 +534,11 @@ public class CalAgent : Agent2
         float lookingAtTarget = Vector3.Dot(bodyForwardRelativeToLookRotationToTarget, stabilizingPivot.forward);
         AddReward(lookingAtTarget * 0.1f);
 
+        transformFinalPos = rbBalancedObj.position;
+        transformFinalPos.y = stabilizingPivot.position.y;
         float distanceToTarget = Vector3.Distance(stabilizingPivot.position, transformFinalPos);
-        float distanceToTargetReward = Mathf.Lerp(1, 0, distanceToTarget / 2f);
-        AddReward(distanceToTargetReward * 0.2f);
+        float distanceToTargetReward = Mathf.Lerp(1, 0, distanceToTarget / 0.5f);
+        //AddReward(distanceToTargetReward * 0.05f);
     }
 
 
@@ -582,7 +605,7 @@ public class CalAgent : Agent2
 
     public void TouchedTarget()
     {
-        AddReward(200f);
+        AddReward(20f);
         targetTransform.GetComponent<TargetController>().MoveTargetToRandomPosition();
     }
 
@@ -627,13 +650,28 @@ public class CalAgent : Agent2
         }
     }
 
+    void ChangePanState(bool state)
+    {
+        panFirstContact = state;
+        if (panFirstContact == false)
+        {
+            rbBalancedObj.drag = newDrag;
+            rbBalancedObj.angularDrag = newAngularDrag;
+        }
+        else
+        {
+            rbBalancedObj.drag = ogDrag;
+            rbBalancedObj.angularDrag = ogAngularDrag;
+        }
+    }
+
     void FoodTouchedGround()
     {
         if (done)
             return;
         //SetReward(-1);
         //EndEpisode();
-        SpawnTarget();
+        //SpawnTarget();
     }
 
     private void FoodBeeingEaten()
@@ -657,18 +695,20 @@ public class CalAgent : Agent2
 
     void FoodWasConsumed()
     {
-        Debug.Log("food was eaten");
-        AddReward(20f);
+        AddReward(100f);
         mouthTop.caughtFood = false;
         mouthBottom.caughtFood = false;
-        //SpawnTarget();
-        EndEpisode();
+        SpawnTarget();
+        //EndEpisode();
     }
 
 
     public override void FreezeRigidBody(bool freeze)
     {
         base.FreezeRigidBody(freeze);
+
+        if (freezePan == false)
+            return;
 
         if (freeze)
         {

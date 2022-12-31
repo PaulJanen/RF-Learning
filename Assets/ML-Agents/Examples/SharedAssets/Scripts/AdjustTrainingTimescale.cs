@@ -26,10 +26,12 @@ namespace MLAgentsExamples
             }
             if (Input.GetKeyDown(KeyCode.Alpha4))
             {
+                Debug.Log("4");
                 Time.timeScale = 4f;
             }
             if (Input.GetKeyDown(KeyCode.Alpha5))
             {
+                Debug.Log("5");
                 Time.timeScale = 5f;
             }
             if (Input.GetKeyDown(KeyCode.Alpha6))

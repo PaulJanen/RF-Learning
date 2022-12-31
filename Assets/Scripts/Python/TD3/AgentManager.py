@@ -28,8 +28,8 @@ class AgentManager():
         monitor_dir = self.mkdir(work_dir, 'monitor')
         t0 = time.time()
         
-        self.loadModel = False
-        self.save_models = True
+        self.loadModel = True
+        self.save_models = False
         self.agent = CalAgent(1, self)
         self.policy = TD3(self.agent.state_dim, self.agent.action_dim, self.agent.env.maxAction, self.agent.env.minAction)
         self.replayBuffer = ReplayBuffer()
@@ -76,7 +76,7 @@ class AgentManager():
         
     def CreateAndStartWalkers(self):
         
-        for i in range(5555,5563):#63
+        for i in range(5555,5570):#63
             self.allWalkers.append(CalAgent(i, self))
     
         for i in self.allWalkers:

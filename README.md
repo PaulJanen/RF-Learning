@@ -32,7 +32,7 @@ https://user-images.githubusercontent.com/17176928/199803418-cca96e8a-1a44-42d5-
 
 https://user-images.githubusercontent.com/17176928/199802616-169cfc59-37fa-4591-ae02-fe17754412d3.mp4
 
-# 4 - Witch hut
+# 4 - Cal
 
 Task - I tried creating calcifer from howls moving castle who tries to balance a pan
 

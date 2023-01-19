@@ -1,4 +1,4 @@
-
+import pickle
 import os
 import time
 from pygame import init
@@ -7,7 +7,7 @@ import numpy as np
 from TD3 import TD3
 from ReplayBuffer import ReplayBuffer
 #from PlantAgent import PlantAgent
-from CalAgent import CalAgent
+from HowlCastlev1Agent import HowlCastlev1Agent
 import tensorflow as tf
 
 class AgentManager():
@@ -29,8 +29,8 @@ class AgentManager():
         t0 = time.time()
         
         self.loadModel = True
-        self.save_models = False
-        self.agent = CalAgent(1, self)
+        self.save_models = True
+        self.agent = HowlCastlev1Agent(1, self)
         self.policy = TD3(self.agent.state_dim, self.agent.action_dim, self.agent.env.maxAction, self.agent.env.minAction)
         self.replayBuffer = ReplayBuffer()
         self.evaluations = [0]
@@ -62,7 +62,7 @@ class AgentManager():
         self.timesteps_since_train = 0
         self.eval_freq = 20_000
         self.batch_size = 100
-        self.discount = 0.99 # Discount factor gamma, used in the calculation of the total discounted reward
+        self.discount = 0.99#0.99 # Discount factor gamma, used in the calculation of the total discounted reward
         self.tau = 0.005 # Target network update rate
         self.policy_noise = 0.2#0.1#0.05#0.2 # STD of Gaussian noise added to the actions for the exploration purposes
         self.noise_clip = 0.5#0.25#0.1#0.5 # Maximum value of the Gaussian noise added to the actions (policy)
@@ -77,7 +77,7 @@ class AgentManager():
     def CreateAndStartWalkers(self):
         
         for i in range(5555,5570):#63
-            self.allWalkers.append(CalAgent(i, self))
+            self.allWalkers.append(HowlCastlev1Agent(i, self))
     
         for i in self.allWalkers:
             i.name = "Thread - " + str(i.port)
@@ -88,10 +88,11 @@ class AgentManager():
 
         if(self.loadModel):
             self.policy.load(self.file_name, directory=self.modelDirectory)
-            #self.replayBuffer.load(self.file_name, directory=self.modelDirectory)
+            self.replayBuffer.load(self.file_name, directory=self.modelDirectory)
+            self.LoadGeneralStats(self.file_name, self.modelDirectory)
 
         while(self.total_timesteps < self.max_timesteps):
-            time.sleep(1)     
+            time.sleep(1)
             self.trainingCrashedDetection += 1
             
             '''if(self.trainingCrashedDetection >= self.crashedAfterThisManySteps):
@@ -103,14 +104,14 @@ class AgentManager():
                 self.trainingCrashedDetection = 0
                 self.CreateAndStartWalkers()
             '''
-            if(self.timesteps_since_train >= self.trainAfterSteps and self.agent.env.explorationSteps < self.total_timesteps and self.loadModel == False):
+            if(self.timesteps_since_train >= self.trainAfterSteps and self.agent.env.explorationSteps < self.total_timesteps and self.save_models == True):
                 self.trainingCrashedDetection = 0
                 self.timesteps_since_train = 0
                 if self.total_timesteps != 0:
                     avgReward = 0
                     for i in self.allWalkers:
                         avgReward += i.movingAvgReward
-                    avgReward /= len(self.allWalkers)
+                    avgReward = avgReward / len(self.allWalkers)
 
                     self.policy.isTraining = True
 
@@ -128,6 +129,7 @@ class AgentManager():
                         self.evaluations.append(avgReward)
                         self.policy.save(self.file_name, directory=self.modelDirectory)
                         self.replayBuffer.save(self.file_name, directory=self.modelDirectory)
+                        self.SaveGeneralStats(self.file_name, self.modelDirectory)
                         np.save("./results/%s" % (self.file_name), self.evaluations)
         else:
             print("training done")
@@ -137,6 +139,17 @@ class AgentManager():
         self.total_timesteps += 1
         self.timesteps_since_eval += 1
         self.timesteps_since_train += 1
+
+    def SaveGeneralStats(self, filename,directory):
+        allData = []
+        allData.append(self.total_timesteps)
+        with open('%s/%s_generalStats' % (directory, filename), 'wb') as f:
+            pickle.dump(allData, f)
+
+    def LoadGeneralStats(self, filename, directory):
+        with open('%s/%s_generalStats' % (directory, filename), 'rb') as f:  
+            allData = pickle.load(f)
+        self.total_timesteps = allData[0]
 
 
 mng = AgentManager()

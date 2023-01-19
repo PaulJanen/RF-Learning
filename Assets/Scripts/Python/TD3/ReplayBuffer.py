@@ -34,14 +34,15 @@ class ReplayBuffer(object):
     allData.append(self.max_size)
 
     with open('%s/%s_storage' % (directory, filename), 'wb') as f:
-      pickle.dump(self.storage, f)
+      pickle.dump(allData, f)
   
   # Making a load method to load a pre-trained model
   def load(self, filename, directory):
-    with open('%s/%s_storage' % (directory, filename), 'rb') as f:
-      allData = pickle.load(f)
+    #with open('%s/%s_storage' % (directory, filename), 'rb') as f:  
+    #  allData = pickle.load(f)
     
-    self.storage = allData[0]
-    self.ptr = allData[1]
-    self.max_size = allData[2]
+    #self.storage = allData[0]
+    #self.ptr = allData[1]
+    #self.max_size = allData[2]
+    print("not working properly")
 

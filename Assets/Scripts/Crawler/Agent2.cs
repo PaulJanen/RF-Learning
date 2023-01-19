@@ -7,6 +7,7 @@ using Random = UnityEngine.Random;
 [RequireComponent(typeof(JointDriveController2))] // Required to set joint forces
 public class Agent2 : MonoBehaviour
 {
+    public EnvironmentManager environmentManager;
     public int decisionPeriod = 5;
     public List<double> currentStateData;
     public double m_Reward;
@@ -48,6 +49,7 @@ public class Agent2 : MonoBehaviour
             bodyPart.Reset(bodyPart);
         }
 
+        environmentManager.InitializeEnvironmentRandomly();
         RandomlyRotateObjBeforeEpisode();
         SpawnTarget();
         orientationCube.UpdateOrientation(stabilizingPivot, targetTransform);

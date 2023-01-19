@@ -12,6 +12,7 @@ public class JointDriveController2 : MonoBehaviour
     public float jointDampen;
     public float maxJointForceLimit;
     public float massScale = 1;
+    public bool slerpAcceleration = true;
     float m_FacingDot;
 
     [HideInInspector] public Dictionary<Transform, BodyPart2> bodyPartsDict = new Dictionary<Transform, BodyPart2>();
@@ -22,9 +23,9 @@ public class JointDriveController2 : MonoBehaviour
     /// <summary>
     /// Create BodyPart object and add it to dictionary.
     /// </summary>
-    public virtual void SetupBodyPart(Transform t)
+    public virtual void SetupBodyPart(Transform t, bool isOverride = false)
     {
-        var bp = new BodyPart2
+        var bp = new BodyPart2(this, isOverride, t.GetComponent<ConfigurableJoint>())
         {
             rb = t.GetComponent<Rigidbody>(),
             joint = t.GetComponent<ConfigurableJoint>(),
@@ -46,13 +47,14 @@ public class JointDriveController2 : MonoBehaviour
             bp.groundContact.agent = gameObject.GetComponent<Agent2>();
         }
 
-        if (bp.joint)
+        if (bp.joint && isOverride == false)
         {
             var jd = new JointDrive
             {
                 positionSpring = maxJointSpring,
                 positionDamper = jointDampen,
-                maximumForce = maxJointForceLimit
+                maximumForce = maxJointForceLimit,
+                useAcceleration = slerpAcceleration
             };
             bp.joint.slerpDrive = jd;
             bp.joint.massScale = massScale;
@@ -97,6 +99,13 @@ public class JointDriveController2 : MonoBehaviour
 [System.Serializable]
 public class BodyPart2
 {
+
+    private float maxJointSpring;
+    private float jointDampen;
+    private float maxJointForceLimit;
+    private float massScale = 1;
+    private bool slerpAcceleration = true;
+
     [Header("Body Part Info")][Space(10)] public ConfigurableJoint joint;
     public Rigidbody rb;
     [HideInInspector] public Vector3 startingPos;
@@ -134,6 +143,28 @@ public class BodyPart2
     public Vector3 prvAngularVelocity;
     public bool isAlreadyFroozen = false;
     public RigidbodyConstraints rbInitialConstraints;
+
+
+    public BodyPart2(JointDriveController2 jd, bool isOverride, ConfigurableJoint joint)
+    {
+
+        if (isOverride)
+        {
+            this.maxJointSpring = joint.slerpDrive.positionSpring;
+            this.jointDampen = joint.slerpDrive.positionDamper;
+            this.maxJointForceLimit = joint.slerpDrive.maximumForce;
+            this.massScale = joint.massScale;
+            this.slerpAcceleration = joint.slerpDrive.useAcceleration;
+        }
+        else
+        {
+            this.maxJointSpring = jd.maxJointSpring;
+            this.jointDampen = jd.jointDampen;
+            this.maxJointForceLimit = jd.maxJointForceLimit;
+            this.massScale = jd.massScale;
+            this.slerpAcceleration = jd.slerpAcceleration;
+        }
+    }
 
     /// <summary>
     /// Reset body part to initial configuration.
@@ -190,11 +221,11 @@ public class BodyPart2
     {
         float strength = (float)_strength;
 
-        var rawVal = (strength + 1f) * 0.5f * thisJdController.maxJointForceLimit;
+        var rawVal = (strength + 1f) * 0.5f * maxJointForceLimit;
         var jd = new JointDrive
         {
-            positionSpring = thisJdController.maxJointSpring,
-            positionDamper = thisJdController.jointDampen,
+            positionSpring = maxJointSpring,
+            positionDamper = jointDampen,
             maximumForce = rawVal
         };
         joint.slerpDrive = jd;

@@ -308,6 +308,7 @@ public class CrawlerAgent2 : Agent2
         //This reward will approach 1 if it matches perfectly and approach zero as it deviates
 
         var matchSpeedReward = GetMatchingVelocityReward(cubeForward * TargetWalkingSpeed, GetAvgVelocity());
+        AddReward(0.03f * matchSpeedReward);
         /*
         // b. Rotation alignment with target direction.
         //This reward will approach 1 if it faces the target direction perfectly and approach zero as it deviates
@@ -327,7 +328,6 @@ public class CrawlerAgent2 : Agent2
         m_MovingTowardsDot = Vector3.Dot(m_JdController.bodyPartsDict[body].rb.velocity, m_DirToTarget.normalized);
         AddReward(0.03f * m_MovingTowardsDot);
 
-        AddReward(0.03f * matchSpeedReward);
 
         m_FacingDot = Vector3.Dot(m_DirToTarget.normalized, body.forward);
         AddReward(0.01f * m_FacingDot );

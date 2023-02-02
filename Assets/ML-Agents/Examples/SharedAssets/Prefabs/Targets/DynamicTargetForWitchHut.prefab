@@ -153,6 +153,7 @@ MonoBehaviour:
   respawnIfFallsOffPlatform: 1
   fallDistance: 10
   minDistance: 20
+  highDistance: 30
   onTriggerEnterEvent:
     m_PersistentCalls:
       m_Calls: []

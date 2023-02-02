@@ -33,7 +33,7 @@ public class HowCastleAgentV1 : Agent2
     Vector3 dirToTarget;
     Matrix4x4 targetDirMatrix;
     Quaternion lookRotation;
-    const float m_maxWalkingSpeed = 13f;
+    const float m_maxWalkingSpeed = 10f;
 
     protected override void Initialize()
     {
@@ -262,33 +262,32 @@ public class HowCastleAgentV1 : Agent2
         //Gizmos.color = Color.red;
         //Gizmos.DrawRay(transform.position, cubeForward * m_maxWalkingSpeed);
         //This is what we want:
-        //Debug.DrawRay(stabilizingPivot.position, cubeForward * m_maxWalkingSpeed, Color.yellow);
+        Debug.DrawRay(stabilizingPivot.position, cubeForward * m_maxWalkingSpeed, Color.yellow);
         //Gizmos.color = Color.blue;
         //Gizmos.DrawRay(transform.position, rbVel);
         //This is what we have:
-        //Debug.DrawRay(stabilizingPivot.position, rbVel, Color.blue);
+        Debug.DrawRay(stabilizingPivot.position, rbVel, Color.blue);
 
 
         //This reward will approach 1 if it matches perfectly and approach zero as it deviates
         var matchSpeedReward = GetMatchingVelocityReward(cubeForward * m_maxWalkingSpeed, rbVel);
-        AddReward(matchSpeedReward * 0.01f);
+        AddReward(matchSpeedReward * 0.2f);
 
 
         //This reward will approach 1 if it faces the target direction perfectly and approach zero as it deviates
+        float movingTowardsDot = Vector3.Dot(rbVel, cubeForward);
+        AddReward(movingTowardsDot * 0.3f);
         
         Vector3 cubeForwardProjection = cubeForward;
         cubeForwardProjection.y = 0;
         Vector3 stabilizingPivotProjection = stabilizingPivot.forward;
         stabilizingPivotProjection.y = 0;
         float lookAtTargetReward = (Vector3.Dot(cubeForwardProjection, stabilizingPivotProjection) + 1) * .5F;
-        AddReward(lookAtTargetReward * 0.01f);
-        
+        AddReward(movingTowardsDot * lookAtTargetReward * 0.2f);
 
-        float movingTowardsDot = Vector3.Dot(jdController.bodyPartsDict[topHierarchyBodyPart].rb.velocity, cubeForward);
-        AddReward(movingTowardsDot * 0.03f);
 
         float balancingReward = (Vector3.Dot(Vector3.up, floor.up) + 1) * 0.5f;
-        AddReward(balancingReward * 0.01f);
+        AddReward(movingTowardsDot * balancingReward * 0.3f);
 
         float distanceToTarget = Vector3.Distance(stabilizingPivot.position, targetTransform.position);
         if (distanceToTarget < targetReachDistance && trainingEnvironment == true)

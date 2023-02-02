@@ -1018,7 +1018,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3797308720563778372}
   serializedVersion: 4
-  m_Mass: 70
+  m_Mass: 20
   m_Drag: 0.05
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -1051,7 +1051,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxJointSpring: 40000
   jointDampen: 5000
-  maxJointForceLimit: 5000
+  maxJointForceLimit: 15000
   massScale: 1
   slerpAcceleration: 1
   bodyPartsList: []
@@ -1227,7 +1227,6 @@ GameObject:
   - component: {fileID: 3797308720634959117}
   - component: {fileID: 3797308720634959118}
   - component: {fileID: 3797308720634959107}
-  - component: {fileID: 1473790775}
   m_Layer: 10
   m_Name: foreleg0
   m_TagString: agent
@@ -1421,29 +1420,6 @@ MonoBehaviour:
   penalizeGroundContact: 0
   groundContactPenalty: 0
   touchingGround: 0
---- !u!136 &1473790775
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3797308720634959113}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.17
-  m_Height: 0.44
-  m_Direction: 0
-  m_Center: {x: 0, y: 0.65, z: 0}
 --- !u!1 &3797308720638578576
 GameObject:
   m_ObjectHideFlags: 0
@@ -1682,7 +1658,6 @@ GameObject:
   - component: {fileID: 3797308720774139212}
   - component: {fileID: 3797308720774139213}
   - component: {fileID: 3797308720774139202}
-  - component: {fileID: 1473790773}
   m_Layer: 10
   m_Name: foreleg2
   m_TagString: agent
@@ -1875,29 +1850,6 @@ MonoBehaviour:
   penalizeGroundContact: 0
   groundContactPenalty: 0
   touchingGround: 0
---- !u!136 &1473790773
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3797308720774139208}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.17
-  m_Height: 0.44
-  m_Direction: 0
-  m_Center: {x: 0, y: 0.65, z: 0}
 --- !u!1 &3797308720827048752
 GameObject:
   m_ObjectHideFlags: 0
@@ -1994,7 +1946,6 @@ GameObject:
   - component: {fileID: 3797308721281007268}
   - component: {fileID: 3797308721281007269}
   - component: {fileID: 3797308721281007258}
-  - component: {fileID: 1473790772}
   m_Layer: 10
   m_Name: foreleg3
   m_TagString: agent
@@ -2188,29 +2139,6 @@ MonoBehaviour:
   penalizeGroundContact: 0
   groundContactPenalty: 0
   touchingGround: 0
---- !u!136 &1473790772
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3797308721281007264}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.17
-  m_Height: 0.44
-  m_Direction: 0
-  m_Center: {x: 0, y: 0.65, z: 0}
 --- !u!1 &3797308721339257244
 GameObject:
   m_ObjectHideFlags: 0
@@ -2505,7 +2433,6 @@ GameObject:
   - component: {fileID: 3797308721480391134}
   - component: {fileID: 3797308721480391135}
   - component: {fileID: 3797308721480391132}
-  - component: {fileID: 1473790774}
   m_Layer: 10
   m_Name: foreleg1
   m_TagString: agent
@@ -2699,29 +2626,6 @@ MonoBehaviour:
   penalizeGroundContact: 0
   groundContactPenalty: 0
   touchingGround: 0
---- !u!136 &1473790774
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3797308721480391130}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.17
-  m_Height: 0.44
-  m_Direction: 0
-  m_Center: {x: 0, y: 0.65, z: 0}
 --- !u!1 &3797308721504472064
 GameObject:
   m_ObjectHideFlags: 0

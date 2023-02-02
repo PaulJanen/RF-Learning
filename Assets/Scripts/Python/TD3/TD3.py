@@ -3,7 +3,8 @@ from Actor import Actor
 from Critic import Critic
 import torch.nn.functional as F
 import numpy as np
-
+import tf2onnx
+import onnx
 
 class TD3(object):
   
@@ -21,6 +22,7 @@ class TD3(object):
     self.min_action = min_action
     self.isTraining = False
     self.agentsSelectingActionCount = 0
+    self.stateDim = state_dim
 
   def select_action(self, state):
     self.agentsSelectingActionCount += 1
@@ -116,3 +118,9 @@ class TD3(object):
     print ("Average Reward over the Evaluation Step: %f" % (avg_reward))
     print ("---------------------------------------")
     return avg_reward
+
+  def SaveModelToONNX(self):
+    self.actor.train(False)
+    dummy_input = torch.randn(1, self.stateDim, requires_grad=True)  
+    torch.onnx.export(self.actor, dummy_input, "actor.onnx", verbose=False)
+    self.actor.train(True)

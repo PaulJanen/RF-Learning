@@ -27,9 +27,9 @@ class AgentManager():
         work_dir = self.mkdir('exp', 'brs')
         monitor_dir = self.mkdir(work_dir, 'monitor')
         t0 = time.time()
-        
+        12
         self.loadModel = True
-        self.save_models = True
+        self.save_models = False
         self.agent = HowlCastlev1Agent(1, self)
         self.policy = TD3(self.agent.state_dim, self.agent.action_dim, self.agent.env.maxAction, self.agent.env.minAction)
         self.replayBuffer = ReplayBuffer()
@@ -130,6 +130,7 @@ class AgentManager():
                         self.policy.save(self.file_name, directory=self.modelDirectory)
                         self.replayBuffer.save(self.file_name, directory=self.modelDirectory)
                         self.SaveGeneralStats(self.file_name, self.modelDirectory)
+                        self.policy.SaveModelToONNX()
                         np.save("./results/%s" % (self.file_name), self.evaluations)
         else:
             print("training done")

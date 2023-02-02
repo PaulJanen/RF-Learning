@@ -24,6 +24,7 @@ namespace Unity.MLAgentsExamples
         public bool respawnIfFallsOffPlatform = true; //If the target falls off the platform, reset the position.
         public float fallDistance = 5; //distance below the starting height that will trigger a respawn 
         public float minDistance = 20f;
+        public float highDistance = 15f;
 
         private Vector3 m_startingPos; //the starting position of the target
         private Agent m_agentTouching; //the agent currently touching the target
@@ -88,7 +89,7 @@ namespace Unity.MLAgentsExamples
 
             newTargetPos.y = m_startingPos.y + 10f;
             RaycastHit hit;
-            if (Physics.Raycast(newTargetPos, -Vector3.up * 15f, out hit))
+            if (Physics.Raycast(newTargetPos, -Vector3.up * highDistance, out hit))
             {
                 if (hit.collider.tag == "ground")
                 {

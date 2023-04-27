@@ -7,7 +7,7 @@ import numpy as np
 from TD3 import TD3
 from ReplayBuffer import ReplayBuffer
 #from PlantAgent import PlantAgent
-from HowlCastlev1Agent import HowlCastlev1Agent
+from ArmThingAgent import ArmThingAgent
 import tensorflow as tf
 
 class AgentManager():
@@ -27,10 +27,9 @@ class AgentManager():
         work_dir = self.mkdir('exp', 'brs')
         monitor_dir = self.mkdir(work_dir, 'monitor')
         t0 = time.time()
-        12
-        self.loadModel = True
-        self.save_models = False
-        self.agent = HowlCastlev1Agent(1, self)
+        self.loadModel = False
+        self.save_models = True
+        self.agent = ArmThingAgent(1, self)
         self.policy = TD3(self.agent.state_dim, self.agent.action_dim, self.agent.env.maxAction, self.agent.env.minAction)
         self.replayBuffer = ReplayBuffer()
         self.evaluations = [0]
@@ -76,8 +75,8 @@ class AgentManager():
         
     def CreateAndStartWalkers(self):
         
-        for i in range(5555,5570):#63
-            self.allWalkers.append(HowlCastlev1Agent(i, self))
+        for i in range(5555,5565):#63
+            self.allWalkers.append(ArmThingAgent(i, self))
     
         for i in self.allWalkers:
             i.name = "Thread - " + str(i.port)

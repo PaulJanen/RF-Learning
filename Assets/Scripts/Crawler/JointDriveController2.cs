@@ -23,9 +23,9 @@ public class JointDriveController2 : MonoBehaviour
     /// <summary>
     /// Create BodyPart object and add it to dictionary.
     /// </summary>
-    public virtual void SetupBodyPart(Transform t, bool isOverride = false)
+    public virtual void SetupBodyPart(Transform t, bool isOverridingConfgJoint = false)
     {
-        var bp = new BodyPart2(this, isOverride, t.GetComponent<ConfigurableJoint>())
+        var bp = new BodyPart2(this, isOverridingConfgJoint, t.GetComponent<ConfigurableJoint>())
         {
             rb = t.GetComponent<Rigidbody>(),
             joint = t.GetComponent<ConfigurableJoint>(),
@@ -47,7 +47,7 @@ public class JointDriveController2 : MonoBehaviour
             bp.groundContact.agent = gameObject.GetComponent<Agent2>();
         }
 
-        if (bp.joint && isOverride == false)
+        if (bp.joint && isOverridingConfgJoint == false)
         {
             var jd = new JointDrive
             {

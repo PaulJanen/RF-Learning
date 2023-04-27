@@ -21,7 +21,7 @@ public class Data
 
 public class Client : MonoBehaviour
 {
-    private bool receiveMessage = true;
+    public bool receiveMessage = true;
 
     Action callback;
 
@@ -30,7 +30,7 @@ public class Client : MonoBehaviour
     public GivePorts portGiver;
 
     // Start is called before the first frame update
-    void Start()
+    public void StartClient()
     {
         int _port = portGiver.GetPort();
 
@@ -41,10 +41,10 @@ public class Client : MonoBehaviour
         }
 
         ForceDotNet.Force();
-        NetMQConfig.Linger = new TimeSpan(0, 0, 1);
+        NetMQConfig.Linger = new TimeSpan(0, 1, 1);
 
         _server = new ResponseSocket();
-        _server.Options.Linger = new TimeSpan(0, 0, 1);
+        _server.Options.Linger = new TimeSpan(0, 1, 1);
         _server.Bind($"tcp://*:{_port}");
 
         Assert.IsNotNull(_server);

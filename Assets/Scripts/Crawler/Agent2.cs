@@ -8,6 +8,7 @@ using Random = UnityEngine.Random;
 public class Agent2 : MonoBehaviour
 {
     public EnvironmentManager environmentManager;
+    private Client client;
     public int decisionPeriod = 5;
     public List<double> currentStateData;
     public double m_Reward;
@@ -21,6 +22,8 @@ public class Agent2 : MonoBehaviour
     public Transform topHierarchyBodyPart;
     public bool trainingEnvironment = true;
     public bool testingModel = false;
+    public bool isModelAwake = false;
+
 
     //This will be used as a stabilized model space reference point for observations
     //Because ragdolls can move erratically during training, using a stabilized reference transform improves learning
@@ -32,11 +35,24 @@ public class Agent2 : MonoBehaviour
         Initialize();
     }
 
+    public void AwakeModel(bool isAwake)
+    {
+        client.receiveMessage = isAwake;
+        isModelAwake = isAwake;
+
+        if(isAwake)
+            client.StartClient();
+    }
+
     protected virtual void Initialize()
     {
         jdController = GetComponent<JointDriveController2>();
         currentStateData = new List<double>();
         orientationCube.Initialize(stabilizingPivot);
+        client= GetComponent<Client>();
+
+        AwakeModel(isModelAwake);
+        //StartCoroutine(ss());
     }
 
     public virtual void OnEpisodeBegin()
@@ -49,7 +65,8 @@ public class Agent2 : MonoBehaviour
             bodyPart.Reset(bodyPart);
         }
 
-        environmentManager.InitializeEnvironmentRandomly();
+        if(environmentManager!=null)
+            environmentManager.InitializeEnvironmentRandomly();
         RandomlyRotateObjBeforeEpisode();
         SpawnTarget();
         orientationCube.UpdateOrientation(stabilizingPivot, targetTransform);

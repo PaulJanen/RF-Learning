@@ -23,9 +23,11 @@ namespace Unity.MLAgentsExamples
         [Header("Target Fell Protection")]
         public bool respawnIfFallsOffPlatform = true; //If the target falls off the platform, reset the position.
         public float fallDistance = 5; //distance below the starting height that will trigger a respawn 
-        public float minDistance = 20f;
+        public float minSpawingDistance = 20f;
         public float highDistance = 15f;
 
+        private int retryMaxCount = 100;
+        private int retryCount = 0;
         private Vector3 m_startingPos; //the starting position of the target
         private Agent m_agentTouching; //the agent currently touching the target
 
@@ -77,17 +79,25 @@ namespace Unity.MLAgentsExamples
         /// </summary>
         public void MoveTargetToRandomPosition()
         {
+            retryCount = 0;
             transform.position = FindNewPosToMove(); ;
         }
 
         Vector3 FindNewPosToMove()
         {
-            var newTargetPos = m_startingPos + (Random.insideUnitSphere * spawnRadius);
+            retryCount++;
 
-            if(Vector3.Distance(newTargetPos,m_startingPos) < minDistance)
+            if(retryCount > retryMaxCount)
+            {
+                retryCount = 0;
+                return m_startingPos;
+            }
+
+            var newTargetPos = m_startingPos + (Random.insideUnitSphere * spawnRadius);
+            if(Vector3.Distance(newTargetPos,m_startingPos) < minSpawingDistance)
                 return FindNewPosToMove();
 
-            newTargetPos.y = m_startingPos.y + 10f;
+            newTargetPos.y = m_startingPos.y + 0f;
             RaycastHit hit;
             if (Physics.Raycast(newTargetPos, -Vector3.up * highDistance, out hit))
             {

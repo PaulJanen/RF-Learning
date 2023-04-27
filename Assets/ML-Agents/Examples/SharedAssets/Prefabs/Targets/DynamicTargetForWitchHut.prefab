@@ -43,7 +43,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3840539935788495952}
-  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+  m_Mesh: {fileID: 4300000, guid: 7ec07638549d12a428ed956faec94121, type: 3}
 --- !u!65 &3868551391811062596
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -63,8 +63,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 0.20071457, y: 0.16651788, z: 0.21258056}
+  m_Center: {x: 0.000000059604645, y: 0.08325893, z: 0.00000014901161}
 --- !u!23 &3826955612593018128
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -85,7 +85,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: c67450f290f3e4897bc40276a619e78d, type: 2}
+  - {fileID: 2100000, guid: 2f834016e53f12c42a12baecd4450e34, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -148,11 +148,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rb: {fileID: 3858402326794362026}
   tagToDetect: agent
-  spawnRadius: 60
-  respawnIfTouched: 0
+  spawnRadius: 6
+  respawnIfTouched: 1
   respawnIfFallsOffPlatform: 1
   fallDistance: 10
-  minDistance: 20
+  minSpawingDistance: 2
   highDistance: 30
   onTriggerEnterEvent:
     m_PersistentCalls:
